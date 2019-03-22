@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MovieTracker</string>
+    <string name="tmdb_api">144fd08a3ef3ff0aef7a4ff25cbb980d</string>
+    <string name="main_fragment_toolbar_title"> </string>
+    <string name="main_error">Error occurred</string>
+    <string name="genres_title">Choose genres you want to WATCH!</string>
+</resources>
