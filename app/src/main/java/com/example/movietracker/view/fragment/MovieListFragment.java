@@ -12,6 +12,8 @@ import com.example.movietracker.data.entity.MovieListEntity;
 import com.example.movietracker.di.components.CoreComponent;
 import com.example.movietracker.presenter.MainPresenter;
 import com.example.movietracker.presenter.MovieListPresenter;
+import com.example.movietracker.view.adapter.GenreViewAdapter;
+import com.example.movietracker.view.adapter.MovieListAdapter;
 import com.example.movietracker.view.contract.MainView;
 import com.example.movietracker.view.contract.MovieListView;
 import com.example.movietracker.view.custom_view.GenreView;
@@ -23,6 +25,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -35,8 +39,8 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
     @Inject
     MovieListPresenter movieListPresenter;
 
-    @BindView(R.id.drawerLayout)
-    DrawerLayout drawerLayout;
+    @BindView(R.id.recyclerView_movies)
+    RecyclerView movieRecyclerView;
 
     public MovieListFragment() {
         setRetainInstance(true);
@@ -54,7 +58,7 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
             @NonNull LayoutInflater inflater,
             ViewGroup container,
             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_movie_list, container, false);
 
         ButterKnife.bind(this, rootView);
 
@@ -69,25 +73,12 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
         this.movieListPresenter.initialize();
 
         setSupportActionBar();
-        setTransparentToolbar();
-        setToolbarTitle(getString(R.string.main_fragment_toolbar_title));
         this.setupMenuDrawer();
     }
 
     private void setupMenuDrawer() {
         ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                this.drawerLayout.openDrawer(GravityCompat.START);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
+        actionBar.setHomeButtonEnabled(true);
     }
 
     @Override
@@ -97,6 +88,11 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
 
     @Override
     public void renderMoviesList(MovieListEntity movieListEntity) {
-        showToast(movieListEntity.getMovies().toString());
+        RecyclerView.LayoutManager rowLayoutManager = new LinearLayoutManager(
+               getContext(), RecyclerView.VERTICAL, false);
+
+        movieRecyclerView.setLayoutManager(rowLayoutManager);
+        MovieListAdapter movieListAdapter = new MovieListAdapter(getContext(), movieListEntity);
+        movieRecyclerView.setAdapter(movieListAdapter);
     }
 }

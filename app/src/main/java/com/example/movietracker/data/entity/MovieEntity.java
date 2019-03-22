@@ -23,19 +23,24 @@ public class MovieEntity {
     private boolean isAdult;
 
     @SerializedName("overview")
-    private String overview;
+    private String movieOverview;
+
+    @SerializedName("vote_average")
+    private double movieVoteAverage;
 
     @SerializedName("release_date")
-    private Date releaseDate;
+    private Date movieReleaseDate;
 
-    public MovieEntity(int movieId, String movieTitle, String posterPath, List<Integer> genreIds, boolean isAdult, String overview, Date releaseDate) {
+
+    public MovieEntity(int movieId, String movieTitle, String posterPath, List<Integer> genreIds, boolean isAdult, String movieOverview, Date movieReleaseDate, double movieVoteAverage) {
         this.movieId = movieId;
         this.movieTitle = movieTitle;
         this.posterPath = posterPath;
         this.genreIds = genreIds;
         this.isAdult = isAdult;
-        this.overview = overview;
-        this.releaseDate = releaseDate;
+        this.movieOverview = movieOverview;
+        this.movieReleaseDate = movieReleaseDate;
+        this.movieVoteAverage = movieVoteAverage;
     }
 
     public int getMovieId() {
@@ -78,19 +83,27 @@ public class MovieEntity {
         this.isAdult = adult;
     }
 
-    public String getOverview() {
-        return this.overview;
+    public String getMovieOverview() {
+        return this.movieOverview;
     }
 
-    public void setOverview(String overview) {
-        this.overview = overview;
+    public void setMovieOverview(String movieOverview) {
+        this.movieOverview = movieOverview;
     }
 
-    public Date getReleaseDate() {
-        return this.releaseDate;
+    public double getMovieVoteAverage() {
+        return this.movieVoteAverage;
     }
 
-    public void setReleaseDate(Date releaseDate) {
-        this.releaseDate = releaseDate;
+    public void setMovieVoteAverage(double movieVoteAverage) {
+        this.movieVoteAverage = movieVoteAverage;
+    }
+
+    public Date getMovieReleaseDate() {
+        return this.movieReleaseDate;
+    }
+
+    public void setMovieReleaseDate(Date movieReleaseDate) {
+        this.movieReleaseDate = movieReleaseDate;
     }
 }

@@ -130,7 +130,7 @@ public class MainFragment extends BaseFragment implements MainView {
     @Optional
     @OnClick(R.id.main_button_search)
     public void onSearchButtonClicked(){
-        this.mainPresenter.onShowStatisticsButtonClicked();
+        this.mainPresenter.onSearchButtonClicked();
     }
 
     @Override

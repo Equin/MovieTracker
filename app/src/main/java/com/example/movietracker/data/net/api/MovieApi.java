@@ -13,6 +13,6 @@ public interface MovieApi {
     @GET("genre/movie/list")
     Observable<GenresEntity> getGenres();
 
-    @GET("genre/movie/list")
+    @GET("discover/movie")
     Observable<MovieListEntity> getMoviesByGenres();
 }

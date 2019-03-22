@@ -35,6 +35,15 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if (this.getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+        }  else {
+            super.onBackPressed();
+        }
+    }
+
     protected void addFragment(int containerViewId, Fragment fragment) {
         setFragment(containerViewId, fragment, FragmentAction.ADD);
     }
@@ -64,6 +73,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         switch (fragmentAction) {
             case REPLACE:
                 fragmentTransaction.replace(containerViewId, fragment);
+                fragmentTransaction.addToBackStack("replacedFragment");
                 break;
             case ADD:
                 fragmentTransaction.replace(containerViewId, fragment);
