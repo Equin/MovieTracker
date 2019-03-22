@@ -32,8 +32,14 @@ import butterknife.ButterKnife;
 
 public class MovieListFragment extends BaseFragment implements MovieListView {
 
-    public static MovieListFragment newInstance() {
-        return new MovieListFragment();
+    private static final String ARG_SELECTED_GENRES = "args_selected_genres";
+
+    public static MovieListFragment newInstance(GenresEntity genresEntity) {
+        MovieListFragment movieListFragment = new MovieListFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ARG_SELECTED_GENRES, genresEntity);
+        movieListFragment.setArguments(bundle);
+        return movieListFragment;
     }
 
     @Inject
@@ -70,7 +76,7 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
         super.onViewCreated(view, savedInstanceState);
 
         this.movieListPresenter.setView(this);
-        this.movieListPresenter.initialize();
+        this.movieListPresenter.initialize(getGenres());
 
         setSupportActionBar();
         this.setupMenuDrawer();
@@ -94,5 +100,13 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
         movieRecyclerView.setLayoutManager(rowLayoutManager);
         MovieListAdapter movieListAdapter = new MovieListAdapter(getContext(), movieListEntity);
         movieRecyclerView.setAdapter(movieListAdapter);
+    }
+
+    private GenresEntity getGenres() {
+        if(getArguments() != null) {
+            return  (GenresEntity) getArguments().getSerializable(ARG_SELECTED_GENRES);
+        }
+
+        return null;
     }
 }

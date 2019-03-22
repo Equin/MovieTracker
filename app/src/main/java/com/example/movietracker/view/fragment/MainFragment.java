@@ -32,7 +32,7 @@ import butterknife.Optional;
 public class MainFragment extends BaseFragment implements MainView {
 
     public interface MainFragmentInteractionListener {
-        void showMovieListScreen();
+        void showMovieListScreen(GenresEntity genreList);
     }
 
     public static MainFragment newInstance() {
@@ -44,6 +44,8 @@ public class MainFragment extends BaseFragment implements MainView {
 
     @Inject
     GenreView genreView;
+
+    private GenresEntity genresEntity;
 
     private MainFragmentInteractionListener mainFragmentInteractionListener;
 
@@ -124,17 +126,18 @@ public class MainFragment extends BaseFragment implements MainView {
 
     @Override
     public void renderGenreView(GenresEntity genreList) {
-        this.genreView.renderGenreView(genreList);
+        this.genresEntity = genreList;
+        this.genreView.renderGenreView(this.genresEntity);
     }
 
     @Optional
     @OnClick(R.id.main_button_search)
     public void onSearchButtonClicked(){
-        this.mainPresenter.onSearchButtonClicked();
+        this.mainPresenter.onSearchButtonClicked(this.genresEntity);
     }
 
     @Override
-    public void openMovieListView() {
-        this.mainFragmentInteractionListener.showMovieListScreen();
+    public void openMovieListView(GenresEntity genreList) {
+        this.mainFragmentInteractionListener.showMovieListScreen(genreList);
     }
 }

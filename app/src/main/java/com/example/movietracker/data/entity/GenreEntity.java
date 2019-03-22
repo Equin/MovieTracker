@@ -10,9 +10,13 @@ public class GenreEntity {
     @SerializedName("name")
     private String genreName;
 
-    public GenreEntity(int genreId, String genreName) {
+    private boolean isSelected;
+
+
+    public GenreEntity(int genreId, String genreName, boolean isSelected) {
         this.genreId = genreId;
         this.genreName = genreName;
+        this.isSelected = isSelected;
     }
 
     public int getGenreId() {
@@ -29,5 +33,13 @@ public class GenreEntity {
 
     public void setGenreName(String genreName) {
         this.genreName = genreName;
+    }
+
+    public boolean isSelected() {
+        return this.isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.isSelected = selected;
     }
 }

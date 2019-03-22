@@ -7,12 +7,14 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface MovieApi {
 
     @GET("genre/movie/list")
     Observable<GenresEntity> getGenres();
 
-    @GET("discover/movie")
-    Observable<MovieListEntity> getMoviesByGenres();
+    @GET("discover/movie/")
+    Observable<MovieListEntity> getMoviesByGenres(@Query("with_genres") String genresIds);
 }

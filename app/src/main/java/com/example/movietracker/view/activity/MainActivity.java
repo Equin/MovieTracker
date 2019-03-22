@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.movietracker.R;
+import com.example.movietracker.data.entity.GenresEntity;
 import com.example.movietracker.di.HasComponent;
 import com.example.movietracker.di.components.CoreComponent;
 import com.example.movietracker.di.components.DaggerCoreComponent;
@@ -52,7 +53,7 @@ public class MainActivity extends BaseActivity implements HasComponent<CoreCompo
     }
 
     @Override
-    public void showMovieListScreen() {
-        replaceFragment(R.id.container_for_fragment, MovieListFragment.newInstance());
+    public void showMovieListScreen(GenresEntity genresEntity) {
+        replaceFragment(R.id.container_for_fragment, MovieListFragment.newInstance(genresEntity));
     }
 }

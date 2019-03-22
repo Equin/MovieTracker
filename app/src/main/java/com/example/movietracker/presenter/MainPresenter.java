@@ -45,8 +45,24 @@ public class MainPresenter extends BasePresenter {
         this.getGenresUseCase.dispose();
     }
 
-    public void onSearchButtonClicked() {
-       this.mainView.openMovieListView();
+    public void onSearchButtonClicked(GenresEntity genresEntity) {
+
+
+       this.mainView.openMovieListView(getSelectedGenres(genresEntity));
+    }
+
+    private GenresEntity getSelectedGenres(GenresEntity genresEntity) {
+        GenresEntity genres = new GenresEntity();
+        List<GenreEntity> genreList = new ArrayList<>();
+
+        for ( GenreEntity genre : genresEntity.getGenres()) {
+            if (genre.isSelected()) {
+                genreList.add(genre);
+            }
+        }
+        genres.setGenres(genreList);
+
+        return genres;
     }
 
     private class GetGenresObserver extends DefaultObserver<GenresEntity> {

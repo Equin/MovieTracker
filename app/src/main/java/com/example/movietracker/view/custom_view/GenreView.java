@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class GenreView {
 
-    private static final int GENRES_PER_ROW = 3;
     private final Context context;
     private View view;
 
@@ -28,14 +27,15 @@ public class GenreView {
     }
 
     public void renderGenreView(GenresEntity genreList) {
+
         RecyclerView.LayoutManager rowLayoutManager = new LinearLayoutManager(
                 this.context, RecyclerView.VERTICAL, false);
 
         RecyclerView rowRecyclerView = this.view.findViewById(R.id.recyclerView_content);
         rowRecyclerView.setLayoutManager(rowLayoutManager);
 
-        GenreViewAdapter genreRowAdapter = new GenreViewAdapter(this.context, genreList);
-        rowRecyclerView.setAdapter(genreRowAdapter);
+        GenreViewAdapter genreViewAdapter = new GenreViewAdapter(this.context, genreList);
+        rowRecyclerView.setAdapter(genreViewAdapter);
 
 
     }

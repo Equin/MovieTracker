@@ -6,12 +6,8 @@
     android:layout_centerHorizontal="false"
     android:layout_centerVertical="false"
     android:gravity="center"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:id="@+id/linearLayout_containerForButtons">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView_row"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
 
-    </androidx.recyclerview.widget.RecyclerView>
 </LinearLayout>

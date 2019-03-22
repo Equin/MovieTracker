@@ -5,6 +5,8 @@ import com.example.movietracker.data.entity.MovieListEntity;
 import com.example.movietracker.data.net.RestClient;
 import com.example.movietracker.data.net.api.MovieApi;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
@@ -24,7 +26,7 @@ public class MovieDataRepository implements MovieRepository {
     }
 
     @Override
-    public Observable<MovieListEntity> getMovies() {
-        return this.movieApi.getMoviesByGenres();
+    public Observable<MovieListEntity> getMovies(String genresIds) {
+        return this.movieApi.getMoviesByGenres(genresIds);
     }
 }

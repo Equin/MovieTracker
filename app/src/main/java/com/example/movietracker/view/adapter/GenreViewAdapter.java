@@ -4,15 +4,17 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.ToggleButton;
 
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.GenreEntity;
 import com.example.movietracker.data.entity.GenresEntity;
+import com.example.movietracker.view.custom_view.ToggleButtonsView;
 import com.google.common.collect.Lists;
 
 import java.util.List;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class GenreViewAdapter extends RecyclerView.Adapter<GenreViewAdapter.ViewHolder> {
@@ -36,12 +38,8 @@ public class GenreViewAdapter extends RecyclerView.Adapter<GenreViewAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.rowRecycleView.setLayoutManager(holder.layoutManager);
-
         List<List<GenreEntity>> f = Lists.partition(list.getGenres(), COUNT_TABLE_RECYCLER_VIEWS);
-
-        GenreRowAdapter genreRowAdapter = new GenreRowAdapter(context, f.get(position));
-        holder.rowRecycleView.setAdapter(genreRowAdapter);
+        holder.toggleButtonsView.createButtons(f.get(position), new onCheckedListener());
     }
 
 
@@ -52,15 +50,20 @@ public class GenreViewAdapter extends RecyclerView.Adapter<GenreViewAdapter.View
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        private RecyclerView rowRecycleView;
-        private RecyclerView.LayoutManager layoutManager;
+        private ToggleButtonsView toggleButtonsView;
 
         ViewHolder(View itemView) {
             super(itemView);
 
-            this.rowRecycleView = itemView.findViewById(R.id.recyclerView_row);
-            this.layoutManager = new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false);
+            this.toggleButtonsView = new ToggleButtonsView(context, itemView);
         };
+    }
+
+    public class onCheckedListener implements ToggleButton.OnCheckedChangeListener {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            ((GenreEntity)buttonView.getTag()).setSelected(isChecked);
+        }
     }
 
    /* public void setListeners(RecyclerView.OnScrollListener scrollListener, RecyclerView.OnItemTouchListener touchListener) {

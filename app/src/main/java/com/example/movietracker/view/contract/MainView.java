@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface MainView extends View {
     void renderGenreView(GenresEntity genreList);
-    void openMovieListView();
+    void openMovieListView(GenresEntity genreList);
 
 }
