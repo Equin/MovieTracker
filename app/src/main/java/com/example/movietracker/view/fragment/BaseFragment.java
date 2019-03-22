@@ -7,7 +7,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.example.movietracker.R;
-import com.example.movietracker.di.HasComponent;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -43,11 +42,6 @@ public abstract class BaseFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-    }
-
-    @SuppressWarnings("unchecked")
-    protected <C> C getComponent(Class<C> componentType) {
-        return componentType.cast(((HasComponent<C>) getActivity()).getComponent());
     }
 
     public void setSupportActionBar() {

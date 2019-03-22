@@ -5,18 +5,23 @@ import com.example.movietracker.data.entity.MovieListEntity;
 import com.example.movietracker.data.net.RestClient;
 import com.example.movietracker.data.net.api.MovieApi;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
 import io.reactivex.Observable;
 
 public class MovieDataRepository implements MovieRepository {
 
-    private final MovieApi movieApi;
+    private MovieApi movieApi;
 
-    @Inject
-    public MovieDataRepository(RestClient restClient) {
+    private MovieDataRepository() {}
+
+    private static class SingletonHelper {
+        private static final MovieDataRepository INSTANCE = new MovieDataRepository();
+    }
+
+    public static MovieDataRepository getInstance(){
+        return SingletonHelper.INSTANCE;
+    }
+
+    public void init(RestClient restClient) {
         this.movieApi = restClient.getMovieApi();
     }
 

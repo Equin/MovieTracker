@@ -4,22 +4,26 @@ import com.example.movietracker.data.net.api.MovieApi;
 import com.example.movietracker.data.net.interceptor.QueryParameterInterceptor;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-@Singleton
 public class RestClientImpl implements RestClient {
 
-    private final Retrofit retrofit;
+    private Retrofit retrofit;
 
-    @Inject
-    public RestClientImpl(String baseUrl) {
+    private RestClientImpl() {}
 
+    private static class SingletonHelper {
+        private static final RestClientImpl INSTANCE = new RestClientImpl();
+    }
+
+    public static RestClientImpl getInstance(){
+        return SingletonHelper.INSTANCE;
+    }
+
+    public void init(String baseUrl) {
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 

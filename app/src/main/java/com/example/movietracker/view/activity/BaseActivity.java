@@ -2,10 +2,10 @@ package com.example.movietracker.view.activity;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 import com.example.movietracker.AndroidApplication;
-import com.example.movietracker.di.components.ApplicationComponent;
-import com.example.movietracker.di.modules.ActivityModule;
+import com.example.movietracker.di.ClassProvider;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -22,7 +22,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getApplicationComponent().inject(this);
         getAndroidApplication().setRunningActivity(this);
     }
 
@@ -30,9 +29,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
+        Log.d("onDestroy", "destroyed");
+
         if (this.equals(getAndroidApplication().getRunningActivity())) {
             getAndroidApplication().setRunningActivity(null);
         }
+
+        ClassProvider.onDestroy();
     }
 
     @Override
@@ -50,14 +53,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected void replaceFragment(int containerViewId, Fragment fragment) {
         setFragment(containerViewId, fragment, FragmentAction.REPLACE);
-    }
-
-    protected ApplicationComponent getApplicationComponent() {
-        return getAndroidApplication().getApplicationComponent();
-    }
-
-    protected ActivityModule getActivityModule() {
-        return new ActivityModule(this);
     }
 
     private void setFragment(

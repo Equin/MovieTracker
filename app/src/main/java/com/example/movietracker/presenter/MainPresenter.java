@@ -21,7 +21,6 @@ public class MainPresenter extends BasePresenter {
 
     private MainView mainView;
 
-    @Inject
     public MainPresenter(GetGenresUseCase getGenresUseCase) {
             this.getGenresUseCase = getGenresUseCase;
     }

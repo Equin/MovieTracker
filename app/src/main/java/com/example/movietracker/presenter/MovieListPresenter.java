@@ -23,7 +23,6 @@ public class MovieListPresenter extends BasePresenter {
 
     private MovieListView view;
 
-    @Inject
     public MovieListPresenter(GetMoviesUseCase getMoviesUseCase) {
             this.getMoviesUseCase = getMoviesUseCase;
     }

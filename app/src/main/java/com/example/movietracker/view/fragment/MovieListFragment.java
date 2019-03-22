@@ -9,22 +9,14 @@ import android.view.ViewGroup;
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.GenresEntity;
 import com.example.movietracker.data.entity.MovieListEntity;
-import com.example.movietracker.di.components.CoreComponent;
-import com.example.movietracker.presenter.MainPresenter;
+import com.example.movietracker.di.ClassProvider;
 import com.example.movietracker.presenter.MovieListPresenter;
-import com.example.movietracker.view.adapter.GenreViewAdapter;
 import com.example.movietracker.view.adapter.MovieListAdapter;
-import com.example.movietracker.view.contract.MainView;
 import com.example.movietracker.view.contract.MovieListView;
-import com.example.movietracker.view.custom_view.GenreView;
-
-import javax.inject.Inject;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -42,8 +34,7 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
         return movieListFragment;
     }
 
-    @Inject
-    MovieListPresenter movieListPresenter;
+    private MovieListPresenter movieListPresenter;
 
     @BindView(R.id.recyclerView_movies)
     RecyclerView movieRecyclerView;
@@ -55,7 +46,6 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.getComponent(CoreComponent.class).inject(this);
         setHasOptionsMenu(true);
     }
 
@@ -75,6 +65,7 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        this.movieListPresenter = ClassProvider.movieListPresenter;
         this.movieListPresenter.setView(this);
         this.movieListPresenter.initialize(getGenres());
 

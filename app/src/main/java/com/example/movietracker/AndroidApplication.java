@@ -2,13 +2,9 @@ package com.example.movietracker;
 
 import android.app.Activity;
 import android.app.Application;
-
-import com.example.movietracker.di.components.ApplicationComponent;
-import com.example.movietracker.di.components.DaggerApplicationComponent;
-import com.example.movietracker.di.modules.ApplicationModule;
+import com.example.movietracker.di.ClassProvider;
 
 public class AndroidApplication extends Application {
-    private ApplicationComponent applicationComponent;
 
     private Activity runningActivity;
 
@@ -19,17 +15,7 @@ public class AndroidApplication extends Application {
     }
 
     private void initializeInjector() {
-        this.applicationComponent = DaggerApplicationComponent.builder()
-                .applicationModule(new ApplicationModule(this))
-                .build();
-    }
-
-    public ApplicationComponent getApplicationComponent() {
-        return this.applicationComponent;
-    }
-
-    public void setApplicationComponent(ApplicationComponent applicationComponent) {
-        this.applicationComponent = applicationComponent;
+        ClassProvider.initialize(getApplicationContext());
     }
 
     public Activity getRunningActivity() {

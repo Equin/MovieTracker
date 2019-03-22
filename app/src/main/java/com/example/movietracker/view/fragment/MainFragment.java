@@ -10,14 +10,10 @@ import android.view.ViewGroup;
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.GenreEntity;
 import com.example.movietracker.data.entity.GenresEntity;
-import com.example.movietracker.di.components.CoreComponent;
+import com.example.movietracker.di.ClassProvider;
 import com.example.movietracker.presenter.MainPresenter;
 import com.example.movietracker.view.contract.MainView;
 import com.example.movietracker.view.custom_view.GenreView;
-
-import java.util.List;
-
-import javax.inject.Inject;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,12 +35,8 @@ public class MainFragment extends BaseFragment implements MainView {
         return new MainFragment();
     }
 
-    @Inject
-    MainPresenter mainPresenter;
-
-    @Inject
-    GenreView genreView;
-
+    private MainPresenter mainPresenter;
+    private GenreView genreView;
     private GenresEntity genresEntity;
 
     private MainFragmentInteractionListener mainFragmentInteractionListener;
@@ -59,7 +51,6 @@ public class MainFragment extends BaseFragment implements MainView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.getComponent(CoreComponent.class).inject(this);
         setHasOptionsMenu(true);
     }
 
@@ -79,8 +70,12 @@ public class MainFragment extends BaseFragment implements MainView {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        this.mainPresenter = ClassProvider.mainPresenter;
+
         this.mainPresenter.setView(this);
         this.mainPresenter.initialize();
+
+        this.genreView = new GenreView(getContext());
 
         setSupportActionBar();
         setTransparentToolbar();
