@@ -26,7 +26,7 @@ public class MainActivity extends BaseActivity implements
         setContentView(R.layout.activity_for_fragment);
 
         if (savedInstanceState == null) {
-            replaceFragment(R.id.container_for_fragment, MainFragment.newInstance());
+            addFragment(R.id.container_for_fragment, MainFragment.newInstance());
         }
     }
 

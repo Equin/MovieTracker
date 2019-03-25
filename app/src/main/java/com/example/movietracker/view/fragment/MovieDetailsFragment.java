@@ -3,22 +3,20 @@ package com.example.movietracker.view.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.movietracker.R;
 import com.example.movietracker.presenter.MovieDetailsPresenter;
-import com.example.movietracker.view.adapter.ViewPagerAdapter;
 import com.example.movietracker.view.contract.MovieDetailsView;
-import com.google.android.material.tabs.TabItem;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.viewpager.widget.ViewPager;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -40,16 +38,12 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
 
     private MovieDetailsPresenter movieDetailsPresenter;
     private MainFragment.MainFragmentInteractionListener mainFragmentInteractionListener;
-    private ViewPagerAdapter viewPagerAdapter;
 
     @BindView(R.id.drawerLayout)
     DrawerLayout drawerLayout;
 
     @BindView(R.id.tabLayout_movieDetails)
     TabLayout tabLayoutMovieDetails;
-
-    @BindView(R.id.viewPager_movieDetails)
-    ViewPager viewPagerMovieDetails;
 
     public MovieDetailsFragment() {
         setRetainInstance(true);
@@ -84,10 +78,48 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
         setupTabLayout();
     }
 
+    private static String[] tabTitles = new String[]{"Info", "Cast", "Review", "Video"};
+
     private void setupTabLayout() {
-        this.viewPagerAdapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
-        this.viewPagerMovieDetails.setAdapter(this.viewPagerAdapter);
-        this.tabLayoutMovieDetails.setupWithViewPager(this.viewPagerMovieDetails);
+        for (int i = 0; i<tabTitles.length; i++) {
+            tabLayoutMovieDetails.addTab(tabLayoutMovieDetails.newTab().setText(tabTitles[i]), i == 0);
+        }
+        replaceFragment(new MovieInfoTabFragment());
+
+      tabLayoutMovieDetails.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+          @Override
+          public void onTabSelected(TabLayout.Tab tab) {
+              switch (tab.getPosition()) {
+                  case 0 : replaceFragment(new MovieInfoTabFragment());
+                      break;
+                  case 1 : replaceFragment(new MovieCastTabFragment());
+                      break;
+                  case 2 : replaceFragment(new MovieCastTabFragment());
+                      break;
+                  case 3 : replaceFragment(new MovieCastTabFragment());
+                      break;
+                  default: replaceFragment(new MovieCastTabFragment());
+              }
+          }
+
+          @Override
+          public void onTabUnselected(TabLayout.Tab tab) {
+
+          }
+
+          @Override
+          public void onTabReselected(TabLayout.Tab tab) {
+
+          }
+      });
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment);
+
+        transaction.commit();
     }
 
     @Override

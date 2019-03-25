@@ -18,8 +18,8 @@ public class AndroidApplication extends Application {
     }
 
     private void initializeInjector() {
-        ClassProvider.initialize();
-        DataProvider.initialize();
+       // ClassProvider.initialize();
+     //   DataProvider.initialize();
     }
 
     public Activity getRunningActivity() {

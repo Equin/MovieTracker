@@ -23,6 +23,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         getAndroidApplication().setRunningActivity(this);
+
+        ClassProvider.initialize();
     }
 
     @Override
@@ -43,7 +45,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (this.getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
         }  else {
-            super.onBackPressed();
+           // super.onBackPressed();
+           finish();
         }
     }
 
@@ -71,7 +74,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 fragmentTransaction.addToBackStack("replacedFragment");
                 break;
             case ADD:
-                fragmentTransaction.replace(containerViewId, fragment);
+                fragmentTransaction.add(containerViewId, fragment);
                 fragmentTransaction.addToBackStack(null);
                 break;
         }
