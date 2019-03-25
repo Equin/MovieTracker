@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.GenresEntity;
+import com.example.movietracker.di.ClassProvider;
 import com.example.movietracker.view.adapter.GenreViewAdapter;
 
 
@@ -17,7 +18,6 @@ public class GenreView {
     private final Context context;
     private View view;
 
-    @Inject
     public GenreView(Context context) {
         this.context = context;
     }

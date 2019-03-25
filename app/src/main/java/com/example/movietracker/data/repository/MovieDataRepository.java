@@ -1,7 +1,11 @@
 package com.example.movietracker.data.repository;
 
 import com.example.movietracker.data.entity.GenresEntity;
-import com.example.movietracker.data.entity.MovieListEntity;
+import com.example.movietracker.data.entity.MovieCastsEntity;
+import com.example.movietracker.data.entity.MovieDetailsEntity;
+import com.example.movietracker.data.entity.MovieReviewsEntity;
+import com.example.movietracker.data.entity.MovieVideosEntity;
+import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.data.net.RestClient;
 import com.example.movietracker.data.net.api.MovieApi;
 
@@ -31,7 +35,27 @@ public class MovieDataRepository implements MovieRepository {
     }
 
     @Override
-    public Observable<MovieListEntity> getMovies(String genresIds) {
+    public Observable<MoviesEntity> getMovies(String genresIds) {
         return this.movieApi.getMoviesByGenres(genresIds);
+    }
+
+    @Override
+    public Observable<MovieDetailsEntity> getMovieDetails(int movieId) {
+        return this.movieApi.getMovieDetailsById(movieId);
+    }
+
+    @Override
+    public Observable<MovieCastsEntity> getMovieCasts(int movieId) {
+        return this.movieApi.getMovieCasts(movieId);
+    }
+
+    @Override
+    public Observable<MovieVideosEntity> getMovieVideos(int movieId) {
+        return this.movieApi.getMovieVideos(movieId);
+    }
+
+    @Override
+    public Observable<MovieReviewsEntity> getMovieReviews(int movieId) {
+        return this.movieApi.getMovieReviews(movieId);
     }
 }

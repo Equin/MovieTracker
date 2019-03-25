@@ -140,5 +140,10 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+    <include
+        layout="@layout/view_progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

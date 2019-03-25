@@ -7,12 +7,14 @@ import android.os.Bundle;
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.GenresEntity;
 import com.example.movietracker.view.fragment.MainFragment;
+import com.example.movietracker.view.fragment.MovieDetailsFragment;
 import com.example.movietracker.view.fragment.MovieListFragment;
 
 import androidx.annotation.Nullable;
 
 public class MainActivity extends BaseActivity implements
-        MainFragment.MainFragmentInteractionListener  {
+        MainFragment.MainFragmentInteractionListener,
+        MovieListFragment.MovieListFragmentInteractionListener {
 
     public static Intent getCallingIntent(Context context) {
         return new Intent(context, MainActivity.class);
@@ -31,5 +33,10 @@ public class MainActivity extends BaseActivity implements
     @Override
     public void showMovieListScreen(GenresEntity genresEntity) {
         replaceFragment(R.id.container_for_fragment, MovieListFragment.newInstance(genresEntity));
+    }
+
+    @Override
+    public void showMovieDetailScreen(int movieId) {
+        replaceFragment(R.id.container_for_fragment, MovieDetailsFragment.newInstance(movieId));
     }
 }

@@ -10,8 +10,8 @@
 
 
     <color name="colorCardViewDark">#272727</color>
-
-
+    <color name="fragment_movie_details_info_background">#4F8B8B8B</color>
+    <color name="tab_text_color">#AD000000</color>
 
 
 

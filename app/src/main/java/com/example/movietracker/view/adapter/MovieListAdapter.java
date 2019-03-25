@@ -9,9 +9,10 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.MovieEntity;
-import com.example.movietracker.data.entity.MovieListEntity;
+import com.example.movietracker.data.entity.MovieResultEntity;
+import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.data.net.constant.NetConstant;
+import com.example.movietracker.view.diff_utill.MovieDiffCallback;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -19,16 +20,18 @@ import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.ViewHolder> {
 
-    private MovieListEntity list;
+    private MoviesEntity movieList;
     private Context context;
+    View.OnClickListener clickListener;
 
-    public MovieListAdapter(Context context, MovieListEntity list) {
+    public MovieListAdapter(Context context, MoviesEntity movieList) {
         this.context = context;
-        this.list = list;
+        this.movieList = movieList;
     }
 
     @NonNull
@@ -40,7 +43,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        MovieEntity movie =  this.list.getMovies().get(position);
+        MovieResultEntity movie =  this.movieList.getMovies().get(position);
         holder.movieTitle.setText(
                 getAppropriateValue(
                         movie.getMovieTitle()));
@@ -64,6 +67,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
           .into(holder.moviePoster);
 
         holder.movieCardView.setTag(movie.getMovieId());
+        holder.movieCardView.setOnClickListener(this.clickListener);
     }
 
     private int getYear(Date date) {
@@ -78,7 +82,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
 
     @Override
     public int getItemCount() {
-        return this.list.getMovies().size();
+        return this.movieList.getMovies().size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -90,7 +94,6 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
         private TextView movieRating;
         private CardView movieCardView;
 
-
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             this.moviePoster = itemView.findViewById(R.id.imageView_moviePoster);
@@ -100,5 +103,14 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
             this.movieRating = itemView.findViewById(R.id.textView_movieRating);
             this.movieCardView = itemView.findViewById(R.id.cardView_movieCard);
         }
+    }
+
+    public void setClickListener(View.OnClickListener clickListener) {
+        this.clickListener = clickListener;
+    }
+
+    public void updateMovieList(MoviesEntity newMovieList) {
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new MovieDiffCallback(this.movieList, newMovieList));
+        diffResult.dispatchUpdatesTo(this);
     }
 }

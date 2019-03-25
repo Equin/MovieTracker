@@ -4,14 +4,11 @@ import com.example.movietracker.R;
 import com.example.movietracker.data.entity.GenreEntity;
 import com.example.movietracker.data.entity.GenresEntity;
 import com.example.movietracker.interactor.DefaultObserver;
-import com.example.movietracker.interactor.genre.GetGenresUseCase;
+import com.example.movietracker.interactor.use_cases.GetGenresUseCase;
 import com.example.movietracker.view.contract.MainView;
-import com.example.movietracker.view.contract.View;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.inject.Inject;
 
 import io.reactivex.annotations.NonNull;
 
@@ -21,8 +18,8 @@ public class MainPresenter extends BasePresenter {
 
     private MainView mainView;
 
-    public MainPresenter(GetGenresUseCase getGenresUseCase) {
-            this.getGenresUseCase = getGenresUseCase;
+    public MainPresenter() {
+        this.getGenresUseCase = new GetGenresUseCase();
     }
 
     public void setView(MainView mainView) {
@@ -30,12 +27,20 @@ public class MainPresenter extends BasePresenter {
     }
 
     public void initialize() {
-        this.mainView.showToast(R.string.app_name);
+        showLoading();
         this.getGenres();
     }
 
     private void getGenres() {
         this.getGenresUseCase.execute(new GetGenresObserver(), null);
+    }
+
+    private void showLoading() {
+        this.mainView.showLoading();
+    }
+
+    private void hideLoading() {
+        this.mainView.hideLoading();
     }
 
     @Override
@@ -45,8 +50,6 @@ public class MainPresenter extends BasePresenter {
     }
 
     public void onSearchButtonClicked(GenresEntity genresEntity) {
-
-
        this.mainView.openMovieListView(getSelectedGenres(genresEntity));
     }
 
@@ -68,14 +71,14 @@ public class MainPresenter extends BasePresenter {
         @Override
         public void onNext(GenresEntity genreList) {
             MainPresenter.this.mainView.renderGenreView(genreList);
+            MainPresenter.this.hideLoading();
         }
-
 
         @Override
         public void onError(@NonNull Throwable e) {
             MainPresenter.this.mainView.showToast(R.string.main_error);
+            MainPresenter.this.hideLoading();
         }
     }
-
 }
 

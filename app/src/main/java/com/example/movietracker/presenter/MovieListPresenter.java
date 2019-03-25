@@ -3,17 +3,12 @@ package com.example.movietracker.presenter;
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.GenreEntity;
 import com.example.movietracker.data.entity.GenresEntity;
-import com.example.movietracker.data.entity.MovieListEntity;
+import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.interactor.DefaultObserver;
-import com.example.movietracker.interactor.genre.GetGenresUseCase;
-import com.example.movietracker.interactor.genre.GetMoviesUseCase;
-import com.example.movietracker.view.contract.MainView;
+import com.example.movietracker.interactor.use_cases.GetMoviesUseCase;
 import com.example.movietracker.view.contract.MovieListView;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.inject.Inject;
 
 import io.reactivex.annotations.NonNull;
 
@@ -23,8 +18,8 @@ public class MovieListPresenter extends BasePresenter {
 
     private MovieListView view;
 
-    public MovieListPresenter(GetMoviesUseCase getMoviesUseCase) {
-            this.getMoviesUseCase = getMoviesUseCase;
+    public MovieListPresenter() {
+        this.getMoviesUseCase = new GetMoviesUseCase();
     }
 
     public void setView(MovieListView view) {
@@ -32,8 +27,12 @@ public class MovieListPresenter extends BasePresenter {
     }
 
     public void initialize(GenresEntity genresEntity) {
-        this.view.showToast(R.string.app_name);
+        showLoading();
         this.getGenres(genresEntity);
+    }
+
+    public void onMovieItemClicked(int clickedMovieId) {
+        this.view.showMovieDetailScreen(clickedMovieId);
     }
 
     private void getGenres(GenresEntity genresEntity) {
@@ -47,21 +46,33 @@ public class MovieListPresenter extends BasePresenter {
         this.getMoviesUseCase.execute(new GetMoviesObserver(), sb.toString());
     }
 
+    private void showLoading() {
+        this.view.showLoading();
+    }
+
+    private void hideLoading() {
+        this.view.hideLoading();
+    }
+
+
     @Override
     public void destroy() {
+        this.getMoviesUseCase.dispose();
         this.view = null;
     }
 
 
-    private class GetMoviesObserver extends DefaultObserver<MovieListEntity> {
+    private class GetMoviesObserver extends DefaultObserver<MoviesEntity> {
         @Override
-        public void onNext(MovieListEntity movieListEntity) {
-            MovieListPresenter.this.view.renderMoviesList(movieListEntity);
+        public void onNext(MoviesEntity moviesEntity) {
+            MovieListPresenter.this.view.renderMoviesList(moviesEntity);
+            MovieListPresenter.this.hideLoading();
         }
 
         @Override
         public void onError(@NonNull Throwable e) {
             MovieListPresenter.this.view.showToast(R.string.main_error);
+            MovieListPresenter.this.hideLoading();
         }
     }
 

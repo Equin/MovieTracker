@@ -1,9 +1,11 @@
 package com.example.movietracker.data.net.api;
 
 import com.example.movietracker.data.entity.GenresEntity;
-import com.example.movietracker.data.entity.MovieListEntity;
-
-import java.util.List;
+import com.example.movietracker.data.entity.MovieCastsEntity;
+import com.example.movietracker.data.entity.MovieDetailsEntity;
+import com.example.movietracker.data.entity.MovieReviewsEntity;
+import com.example.movietracker.data.entity.MovieVideosEntity;
+import com.example.movietracker.data.entity.MoviesEntity;
 
 import io.reactivex.Observable;
 import retrofit2.http.GET;
@@ -16,5 +18,18 @@ public interface MovieApi {
     Observable<GenresEntity> getGenres();
 
     @GET("discover/movie/")
-    Observable<MovieListEntity> getMoviesByGenres(@Query("with_genres") String genresIds);
+    Observable<MoviesEntity> getMoviesByGenres(@Query("with_genres") String genresIds);
+
+    @GET("movie/{movie_id}")
+    Observable<MovieDetailsEntity> getMovieDetailsById(@Path("movie_id") int movieId);
+
+    @GET("movie/{movie_id}/videos")
+    Observable<MovieVideosEntity> getMovieVideos(@Path("movie_id") int movieId);
+
+    @GET("movie/{movie_id}/credits")
+    Observable<MovieCastsEntity> getMovieCasts(@Path("movie_id") int movieId);
+
+    @GET("movie/{movie_id}/reviews")
+    Observable<MovieReviewsEntity> getMovieReviews(@Path("movie_id") int movieId);
+
 }

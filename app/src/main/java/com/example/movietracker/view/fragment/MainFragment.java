@@ -8,9 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.GenreEntity;
 import com.example.movietracker.data.entity.GenresEntity;
-import com.example.movietracker.di.ClassProvider;
 import com.example.movietracker.presenter.MainPresenter;
 import com.example.movietracker.view.contract.MainView;
 import com.example.movietracker.view.custom_view.GenreView;
@@ -70,7 +68,7 @@ public class MainFragment extends BaseFragment implements MainView {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        this.mainPresenter = ClassProvider.mainPresenter;
+        this.mainPresenter = new MainPresenter();
 
         this.mainPresenter.setView(this);
         this.mainPresenter.initialize();
@@ -98,6 +96,12 @@ public class MainFragment extends BaseFragment implements MainView {
         this.mainFragmentInteractionListener = null;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        this.mainPresenter.destroy();
+    }
+
     private void setupMenuDrawer() {
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -116,7 +120,7 @@ public class MainFragment extends BaseFragment implements MainView {
 
     @Override
     public void showToast(int resourceId) {
-        showToast("app loaded");
+        showToast(getString(resourceId));
     }
 
     @Override

@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Date;
 import java.util.List;
 
-public class MovieEntity {
+public class MovieResultEntity {
 
     @SerializedName("id")
     private int movieId;
@@ -32,7 +32,7 @@ public class MovieEntity {
     private Date movieReleaseDate;
 
 
-    public MovieEntity(int movieId, String movieTitle, String posterPath, List<Integer> genreIds, boolean isAdult, String movieOverview, Date movieReleaseDate, double movieVoteAverage) {
+    public MovieResultEntity(int movieId, String movieTitle, String posterPath, List<Integer> genreIds, boolean isAdult, String movieOverview, Date movieReleaseDate, double movieVoteAverage) {
         this.movieId = movieId;
         this.movieTitle = movieTitle;
         this.posterPath = posterPath;
