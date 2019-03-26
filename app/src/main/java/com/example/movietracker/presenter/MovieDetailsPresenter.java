@@ -51,6 +51,7 @@ public class MovieDetailsPresenter extends BasePresenter {
         @Override
         public void onNext(MovieDetailsEntity movieDetailsEntity) {
             MovieDetailsPresenter.this.hideLoading();
+            MovieDetailsPresenter.this.view.renderMovieDetails(movieDetailsEntity);
         }
 
         @Override

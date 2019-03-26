@@ -1,6 +1,5 @@
-package com.example.movietracker.view.fragment;
+package com.example.movietracker.view.fragment.movie_details;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +10,7 @@ import com.example.movietracker.data.entity.MovieCastsEntity;
 import com.example.movietracker.presenter.MovieDetailsTabLayoutPresenter;
 import com.example.movietracker.view.adapter.CastListAdapter;
 import com.example.movietracker.view.contract.TabLayoutView;
+import com.example.movietracker.view.fragment.BaseFragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +21,13 @@ import butterknife.ButterKnife;
 
 public class MovieCastTabFragment extends BaseFragment implements TabLayoutView<MovieCastsEntity> {
 
+    public static MovieCastTabFragment newInstance(int movieId) {
+        MovieCastTabFragment movieCastTabFragment = new MovieCastTabFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt(MovieDetailsFragment.ARG_SELECTED_MOVIE_ID, movieId);
+        movieCastTabFragment.setArguments(bundle);
+        return movieCastTabFragment;
+    }
 
     public MovieCastTabFragment() {
         setRetainInstance(true);
@@ -55,29 +62,15 @@ public class MovieCastTabFragment extends BaseFragment implements TabLayoutView<
 
         this.movieDetailsTabLayoutPresenter = new MovieDetailsTabLayoutPresenter();
 
-       this.movieDetailsTabLayoutPresenter.setView(this);
-        this.movieDetailsTabLayoutPresenter.initialize(8954);
-
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-      /*  if (context instanceof MainFragmentInteractionListener) {
-            this.mainFragmentInteractionListener = (MainFragmentInteractionListener) context;
-        }*/
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-       // this.mainFragmentInteractionListener = null;
+        this.movieDetailsTabLayoutPresenter.setView(this);
+        this.movieDetailsTabLayoutPresenter.initialize();
+        this.movieDetailsTabLayoutPresenter.getMovieCasts(getMovieIdFromArguments());
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-       // this.mainPresenter.destroy();
+        this.movieDetailsTabLayoutPresenter.destroy();
     }
 
     @Override
@@ -92,5 +85,13 @@ public class MovieCastTabFragment extends BaseFragment implements TabLayoutView<
         recyclerViewCastList.setLayoutManager(rowLayoutManager);
         CastListAdapter castListAdapter = new CastListAdapter(getContext(), someMovieData);
         recyclerViewCastList.setAdapter(castListAdapter);
+    }
+
+    private int getMovieIdFromArguments() {
+        if(getArguments() != null) {
+            return   getArguments().getInt(MovieDetailsFragment.ARG_SELECTED_MOVIE_ID);
+        }
+
+        return -1;
     }
 }

@@ -10,72 +10,80 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/linearLayout_movieRating"
+        <RelativeLayout
+            android:id="@+id/container_for_youtube_player"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp">
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/textView_movieRating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp"
-                android:textColor="@color/colorTextGrey"
-                android:textSize="18sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                tools:layout_editor_absoluteX="150dp" />
-
-            <TextView
-                android:id="@+id/textView_MovieGenres"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:textColor="@color/colorTextGrey"
-                android:textSize="16sp"
-                app:layout_constraintStart_toEndOf="@+id/imageView_moviePoster"
-                app:layout_constraintTop_toBottomOf="@+id/textView_movieTitle" />
-
-            <ImageView
-                android:id="@+id/imageView_moviePoster"
-                android:layout_width="130dp"
-                android:layout_height="180dp"
-                android:background="@color/colorPrimaryDark"
-                android:padding="2dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                tools:srcCompat="@tools:sample/avatars" />
-
-            <TextView
-                android:id="@+id/textView_movieReleaseDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:textColor="@color/colorTextGrey"
-                app:layout_constraintStart_toEndOf="@+id/imageView_moviePoster"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/textView_movieTitle"
-                android:layout_width="0dp"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/linearLayout_movieRating"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:singleLine="false"
-                android:textColor="@color/colorTextWhite"
-                android:textSize="18sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.012"
-                app:layout_constraintStart_toEndOf="@+id/imageView_moviePoster"
-                app:layout_constraintTop_toBottomOf="@+id/textView_movieReleaseDate" />
+                android:layout_marginBottom="8dp">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/textView_movieDuration_details"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:textColor="@color/colorTextGrey"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toEndOf="@+id/textView_movieReleaseDate_details"
+                    tools:layout_editor_absoluteY="8dp" />
+
+                <TextView
+                    android:id="@+id/textView_MovieGenres_details"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:singleLine="false"
+                    android:textColor="@color/colorTextGrey"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView_moviePoster_details"
+                    app:layout_constraintTop_toBottomOf="@+id/textView_movieTitle_details" />
+
+                <ImageView
+                    android:id="@+id/imageView_moviePoster_details"
+                    android:layout_width="130dp"
+                    android:layout_height="180dp"
+                    android:background="@color/colorPrimaryDark"
+                    android:padding="2dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:srcCompat="@tools:sample/avatars" />
+
+                <TextView
+                    android:id="@+id/textView_movieReleaseDate_details"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/colorTextGrey"
+                    app:layout_constraintStart_toEndOf="@+id/imageView_moviePoster_details"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textView_movieTitle_details"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:singleLine="false"
+                    android:textColor="@color/colorTextWhite"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.012"
+                    app:layout_constraintStart_toEndOf="@+id/imageView_moviePoster_details"
+                    app:layout_constraintTop_toBottomOf="@+id/textView_movieReleaseDate_details" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabLayout_movieDetails"
@@ -86,12 +94,13 @@
                 app:tabTextColor="@color/tab_text_color">
 
             </com.google.android.material.tabs.TabLayout>
+        </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/tabLayout_movieDetails">
+            android:layout_below="@+id/container_for_youtube_player">
 
         </RelativeLayout>
 

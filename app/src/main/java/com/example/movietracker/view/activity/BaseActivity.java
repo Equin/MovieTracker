@@ -45,8 +45,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (this.getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
         }  else {
-           // super.onBackPressed();
-           finish();
+            super.onBackPressed();
         }
     }
 
@@ -75,7 +74,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 break;
             case ADD:
                 fragmentTransaction.add(containerViewId, fragment);
-                fragmentTransaction.addToBackStack(null);
+               // fragmentTransaction.addToBackStack(null);
                 break;
         }
 

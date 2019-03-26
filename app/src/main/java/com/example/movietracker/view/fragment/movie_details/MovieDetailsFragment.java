@@ -1,14 +1,22 @@
-package com.example.movietracker.view.fragment;
+package com.example.movietracker.view.fragment.movie_details;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.movietracker.R;
+import com.example.movietracker.data.entity.MovieDetailsEntity;
+import com.example.movietracker.data.net.constant.NetConstant;
 import com.example.movietracker.presenter.MovieDetailsPresenter;
 import com.example.movietracker.view.contract.MovieDetailsView;
+import com.example.movietracker.view.fragment.BaseFragment;
+import com.example.movietracker.view.fragment.MainFragment;
+import com.example.movietracker.view.helper.UtilityHelpers;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.annotation.NonNull;
@@ -22,7 +30,7 @@ import butterknife.ButterKnife;
 
 public class MovieDetailsFragment extends BaseFragment implements MovieDetailsView {
 
-    private static final String ARG_SELECTED_MOVIE_ID = "arg_selected_movie_id";
+    public static final String ARG_SELECTED_MOVIE_ID = "arg_selected_movie_id";
 
     public interface MovieDetailsFragmentInteractionListener {
 
@@ -38,12 +46,29 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
 
     private MovieDetailsPresenter movieDetailsPresenter;
     private MainFragment.MainFragmentInteractionListener mainFragmentInteractionListener;
+    private MovieDetailsEntity movieDetailsEntity;
+    private int movieId;
 
     @BindView(R.id.drawerLayout)
     DrawerLayout drawerLayout;
 
     @BindView(R.id.tabLayout_movieDetails)
     TabLayout tabLayoutMovieDetails;
+
+    @BindView(R.id.imageView_moviePoster_details)
+    ImageView imageViewMoviePoster;
+
+    @BindView(R.id.textView_movieReleaseDate_details)
+    TextView textViewMovieReleaseDate;
+
+    @BindView(R.id.textView_movieDuration_details)
+    TextView textViewMovieDuration;
+
+    @BindView(R.id.textView_movieTitle_details)
+    TextView textViewMovieTitle;
+
+    @BindView(R.id.textView_MovieGenres_details)
+    TextView textViewMovieGenres;
 
     public MovieDetailsFragment() {
         setRetainInstance(true);
@@ -71,11 +96,12 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        this.movieId = getMovieIdFromArguments();
+
         this.movieDetailsPresenter = new MovieDetailsPresenter();
 
         this.movieDetailsPresenter.setView(this);
-        this.movieDetailsPresenter.initialize(getMovieIdFromArguments());
-        setupTabLayout();
+        this.movieDetailsPresenter.initialize(this.movieId);
     }
 
     private static String[] tabTitles = new String[]{"Info", "Cast", "Review", "Video"};
@@ -84,19 +110,20 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
         for (int i = 0; i<tabTitles.length; i++) {
             tabLayoutMovieDetails.addTab(tabLayoutMovieDetails.newTab().setText(tabTitles[i]), i == 0);
         }
-        replaceFragment(new MovieInfoTabFragment());
+
+        replaceFragment(MovieInfoTabFragment.newInstance(movieDetailsEntity));
 
       tabLayoutMovieDetails.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
           @Override
           public void onTabSelected(TabLayout.Tab tab) {
               switch (tab.getPosition()) {
-                  case 0 : replaceFragment(new MovieInfoTabFragment());
+                  case 0 : replaceFragment(MovieInfoTabFragment.newInstance(movieDetailsEntity));
                       break;
-                  case 1 : replaceFragment(new MovieCastTabFragment());
+                  case 1 : replaceFragment(MovieCastTabFragment.newInstance(movieId));
                       break;
-                  case 2 : replaceFragment(new MovieCastTabFragment());
+                  case 2 : replaceFragment(MovieReviewTabFragment.newInstance(movieId));
                       break;
-                  case 3 : replaceFragment(new MovieCastTabFragment());
+                  case 3 : replaceFragment(MovieVideoTabFragment.newInstance(movieId));
                       break;
                   default: replaceFragment(new MovieCastTabFragment());
               }
@@ -154,4 +181,27 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
     public void showToast(int resourceId) {
         showToast(getString(resourceId));
     }
+
+    @Override
+    public void renderMovieDetails(MovieDetailsEntity movieDetailsEntity) {
+        this.movieDetailsEntity = movieDetailsEntity;
+        setupTabLayout();
+        renderMovieDetailView();
+    }
+
+    private void renderMovieDetailView() {
+
+        this.textViewMovieDuration.setText(UtilityHelpers.getAppropriateValue(this.movieDetailsEntity.getMovieRuntime()));
+        this.textViewMovieTitle.setText(this.movieDetailsEntity.getMovieTitle());
+        this.textViewMovieReleaseDate.setText(UtilityHelpers.getYear(this.movieDetailsEntity.getMovieReleaseDate()));
+        this.textViewMovieGenres.setText(UtilityHelpers.getPipeDividedGenres(this.movieDetailsEntity.getGenres()));
+
+        Glide
+                .with(this)
+                .load(NetConstant.IMAGE_BASE_URL +movieDetailsEntity.getMoviePosterPath())
+                .centerCrop()
+                .into(this.imageViewMoviePoster);
+
+    }
+
 }

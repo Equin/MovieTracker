@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment {
 
     private Toast toast;
 
@@ -86,6 +86,10 @@ public class BaseFragment extends Fragment {
 
         this.toast = Toast.makeText(getContext(), message, Toast.LENGTH_LONG);
         this.toast.show();
+    }
+
+    public void showToast(int resourceId) {
+        this.showToast(getString(resourceId));
     }
 
     public void showKeyboard() {

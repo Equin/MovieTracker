@@ -4,15 +4,15 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
 
-    <color name="colorTextWhite">#FFFFFF</color>
-    <color name="colorTextGrey">#B6B6B6</color>
+    <color name="colorTextWhite">#ffffff</color>
+    <color name="colorTextGrey">#b6b6b6</color>
 
 
 
     <color name="colorCardViewDark">#272727</color>
     <color name="fragment_movie_details_info_background">#4F8B8B8B</color>
     <color name="tab_text_color">#AD000000</color>
-
+    <color name="textColorWhiteDark">#f2f2f2</color>
 
 
 </resources>

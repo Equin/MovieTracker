@@ -2,7 +2,9 @@ package com.example.movietracker.data.entity;
 
 import com.google.gson.annotations.SerializedName;
 
-public class GenreEntity {
+import java.io.Serializable;
+
+public class GenreEntity implements Serializable {
 
     @SerializedName("id")
     private int genreId;

@@ -7,14 +7,17 @@ import android.os.Bundle;
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.GenresEntity;
 import com.example.movietracker.view.fragment.MainFragment;
-import com.example.movietracker.view.fragment.MovieDetailsFragment;
+import com.example.movietracker.view.fragment.movie_details.MovieDetailsFragment;
 import com.example.movietracker.view.fragment.MovieListFragment;
+import com.example.movietracker.view.fragment.movie_details.MovieVideoTabFragment;
+import com.example.movietracker.view.fragment.movie_details.YouTubePlayerFragment;
 
 import androidx.annotation.Nullable;
 
 public class MainActivity extends BaseActivity implements
         MainFragment.MainFragmentInteractionListener,
-        MovieListFragment.MovieListFragmentInteractionListener {
+        MovieListFragment.MovieListFragmentInteractionListener,
+        MovieVideoTabFragment.MovieVideoTabFragmentInteractionListener {
 
     public static Intent getCallingIntent(Context context) {
         return new Intent(context, MainActivity.class);
@@ -38,5 +41,10 @@ public class MainActivity extends BaseActivity implements
     @Override
     public void showMovieDetailScreen(int movieId) {
         replaceFragment(R.id.container_for_fragment, MovieDetailsFragment.newInstance(movieId));
+    }
+
+    @Override
+    public void showYouTubePlayer(String videoId) {
+        startActivity(YouTubeActivity.getCallingIntent(this, videoId));
     }
 }

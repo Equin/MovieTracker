@@ -44,9 +44,10 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="0dp"
-                android:layout_marginTop="8dp"
                 android:layout_marginEnd="0dp"
-                android:text="TextsssssssView" />
+                android:text="N/A"
+                android:textAlignment="center"
+                android:textColor="@color/colorTextWhite" />
 
             <TextView
                 android:id="@+id/textView_imdbVoteCount"
@@ -55,7 +56,11 @@
                 android:layout_below="@+id/textView_imdbRating"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="4dp"
+                android:text="IMDb"
+                android:textAlignment="center"
+                android:textColor="@color/colorTextWhite"
+                android:textSize="10sp" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -83,8 +88,11 @@
                 android:layout_below="@+id/textView_tmdbRating"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="8dp"
-                android:text="TextView" />
+                android:layout_marginTop="4dp"
+                android:text="TMDb"
+                android:textAlignment="center"
+                android:textColor="@color/colorTextWhite"
+                android:textSize="10sp" />
 
             <TextView
                 android:id="@+id/textView_tmdbRating"
@@ -93,8 +101,9 @@
                 android:layout_below="@+id/imageView_tmdb"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="8dp"
-                android:text="TextView" />
+                android:text="N/A"
+                android:textAlignment="center"
+                android:textColor="@color/colorTextWhite" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -119,8 +128,11 @@
                 android:layout_below="@+id/textView_metascoreRating"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="8dp"
-                android:text="TextView" />
+                android:layout_marginTop="4dp"
+                android:text="Metascore"
+                android:textAlignment="center"
+                android:textColor="@color/colorTextWhite"
+                android:textSize="10sp" />
 
             <TextView
                 android:id="@+id/textView_metascoreRating"
@@ -129,8 +141,9 @@
                 android:layout_below="@+id/imageView_metascore"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="8dp"
-                android:text="TextView" />
+                android:text="N/A"
+                android:textAlignment="center"
+                android:textColor="@color/colorTextWhite" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -158,8 +171,11 @@
                 android:layout_below="@+id/textView_someelseRating"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="8dp"
-                android:text="TextView" />
+                android:layout_marginTop="4dp"
+                android:text="Custom"
+                android:textAlignment="center"
+                android:textColor="@color/colorTextWhite"
+                android:textSize="10sp" />
 
             <TextView
                 android:id="@+id/textView_someelseRating"
@@ -168,8 +184,9 @@
                 android:layout_below="@+id/imageView_someasle"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="8dp"
-                android:text="TextView" />
+                android:text="N/A"
+                android:textAlignment="center"
+                android:textColor="@color/colorTextWhite" />
         </RelativeLayout>
 
     </LinearLayout>
@@ -188,13 +205,18 @@
             android:id="@+id/textView6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Storyline" />
+            android:text="Storyline"
+            android:textColor="@color/colorTextWhite"
+            android:textSize="18sp"
+            android:textStyle="bold|italic" />
 
         <TextView
             android:id="@+id/textView_movieStoryline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:text="TextView"
+            android:textColor="@color/textColorWhiteDark"
+            android:textSize="14sp" />
     </LinearLayout>
 
     <include

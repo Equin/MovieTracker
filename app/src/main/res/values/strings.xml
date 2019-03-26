@@ -1,7 +1,12 @@
 <resources>
     <string name="app_name">MovieTracker</string>
     <string name="tmdb_api">144fd08a3ef3ff0aef7a4ff25cbb980d</string>
+    <string name="youtube_api">AIzaSyDQ6YTOhJN3E4d1XXtCXAob7-SwP0RmEk4</string>
     <string name="main_fragment_toolbar_title"> </string>
     <string name="main_error">Error occurred</string>
     <string name="genres_title">Choose genres you want to WATCH!</string>
+
+    <string name="player_error">Error initializing YouTube player: %s</string>
+    <string name="seek_to">Jump To</string>
+    <string name="seek_to_hint">Seconds</string>
 </resources>

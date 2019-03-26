@@ -23,6 +23,9 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import static com.example.movietracker.view.helper.UtilityHelpers.getAppropriateValue;
+import static com.example.movietracker.view.helper.UtilityHelpers.getYear;
+
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.ViewHolder> {
 
     private MoviesEntity movieList;
@@ -49,16 +52,14 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
                         movie.getMovieTitle()));
 
         holder.movieReleaseDate.setText(
-                getAppropriateValue(
-                        getYear(movie.getMovieReleaseDate())));
+                        getYear(movie.getMovieReleaseDate()));
 
         holder.movieGenres.setText(
                 getAppropriateValue(
                         movie.getGenreIds().toString()));
 
-        holder.movieRating.setText(
-                getAppropriateValue(String.format(Locale.ENGLISH, "%.1f",
-                        movie.getMovieVoteAverage())));
+        holder.movieRating.setText(String.format(Locale.ENGLISH, "%.1f",
+                        movie.getMovieVoteAverage()));
 
         Glide
           .with(this.context)
@@ -68,16 +69,6 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
 
         holder.movieCardView.setTag(movie.getMovieId());
         holder.movieCardView.setOnClickListener(this.clickListener);
-    }
-
-    private int getYear(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        return calendar.get(Calendar.YEAR);
-    }
-
-    private String getAppropriateValue(Object value) {
-        return value == null ? "" : value.toString();
     }
 
     @Override

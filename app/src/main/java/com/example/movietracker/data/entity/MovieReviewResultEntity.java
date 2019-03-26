@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 public class MovieReviewResultEntity {
 
     @SerializedName("id")
-    private int reviewId;
+    private String reviewId;
 
     @SerializedName("author")
     private String reviewAuthor;
@@ -16,18 +16,18 @@ public class MovieReviewResultEntity {
     @SerializedName("url")
     private String reviewUrl;
 
-    public MovieReviewResultEntity(int reviewId, String reviewAuthor, String reviewContent, String reviewUrl) {
+    public MovieReviewResultEntity(String reviewId, String reviewAuthor, String reviewContent, String reviewUrl) {
         this.reviewId = reviewId;
         this.reviewAuthor = reviewAuthor;
         this.reviewContent = reviewContent;
         this.reviewUrl = reviewUrl;
     }
 
-    public int getReviewId() {
+    public String getReviewId() {
         return reviewId;
     }
 
-    public void setReviewId(int reviewId) {
+    public void setReviewId(String reviewId) {
         this.reviewId = reviewId;
     }
 
