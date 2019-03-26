@@ -1,16 +1,15 @@
 package com.example.movietracker.view.adapter;
 
-import android.content.pm.ActivityInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.movietracker.data.entity.MovieVideosEntity;
-import com.example.movietracker.view.helper.UtilityHelpers;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants;
+import com.example.movietracker.data.net.constant.NetConstant;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerFullScreenListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
@@ -18,8 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.movietracker.R;
-
-import org.jetbrains.annotations.NotNull;
 
 public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.ViewHolder> {
 
@@ -38,15 +35,16 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
     public VideoListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_video_item, parent, false);
 
-        lifecycle.addObserver(view.findViewById(R.id.youtube_player_view));
+      //  lifecycle.addObserver(view.findViewById(R.id.youtube_player_view));
 
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
-        viewHolder.cueVideo(
-                        movieVideosEntity.getMovieVideoResultEntities().get(position).getVideoKey());
+/*        viewHolder.cueVideo(
+                        movieVideosEntity.getMovieVideoResultEntities().get(position).getVideoKey());*/
+        viewHolder.loadThumbai( movieVideosEntity.getMovieVideoResultEntities().get(position).getVideoKey());
 
         viewHolder.videoName.setText(
                         movieVideosEntity.getMovieVideoResultEntities().get(position).getVideoName());
@@ -65,14 +63,14 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
         private String currentVideoId;
 
         private TextView videoName;
-
+        private ImageView videoImage;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
-            youTubePlayerView = itemView.findViewById(R.id.youtube_player_view);
+            videoImage = itemView.findViewById(R.id.imageView_videoThumbai);
             videoName = itemView.findViewById(R.id.textView_videoName);
 
-            youTubePlayerView.addFullScreenListener(listener);
+         /*   youTubePlayerView.addFullScreenListener(listener);
             youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
                 @Override
                 public void onStateChange(@NotNull YouTubePlayer youTubePlayer, @NotNull PlayerConstants.PlayerState state) {
@@ -91,16 +89,24 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
                     youTubePlayer = initializedYouTubePlayer;
                     youTubePlayer.cueVideo(currentVideoId, 0);
                 }
-            });
+            });*/
         }
 
-        void cueVideo(String videoId) {
+        public void loadThumbai(String videoKey) {
+            Glide
+                    .with(this.itemView)
+                    .load(NetConstant.YOUTUBE_THUMBAI_URL +videoKey + "/mqdefault.jpg")
+                    .centerCrop()
+                    .into(videoImage);
+        }
+
+     /*   void cueVideo(String videoId) {
             currentVideoId = videoId;
 
             if(youTubePlayer == null)
                 return;
 
             youTubePlayer.cueVideo(videoId, 0);
-        }
+        }*/
     }
 }

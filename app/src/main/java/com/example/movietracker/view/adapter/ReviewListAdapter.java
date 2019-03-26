@@ -4,18 +4,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.MovieCastResultEntity;
-import com.example.movietracker.data.entity.MovieCastsEntity;
 import com.example.movietracker.data.entity.MovieReviewResultEntity;
 import com.example.movietracker.data.entity.MovieReviewsEntity;
 import com.example.movietracker.data.entity.MoviesEntity;
-import com.example.movietracker.data.net.constant.NetConstant;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
