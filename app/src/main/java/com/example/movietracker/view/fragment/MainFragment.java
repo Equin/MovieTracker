@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.GenresEntity;
+import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.presenter.MainPresenter;
 import com.example.movietracker.view.contract.MainView;
 import com.example.movietracker.view.custom_view.GenreView;

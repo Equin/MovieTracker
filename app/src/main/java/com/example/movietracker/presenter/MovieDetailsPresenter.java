@@ -1,11 +1,9 @@
 package com.example.movietracker.presenter;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.GenresEntity;
-import com.example.movietracker.data.entity.MovieDetailsEntity;
+import com.example.movietracker.data.entity.movie_details.MovieDetailsEntity;
 import com.example.movietracker.interactor.DefaultObserver;
-import com.example.movietracker.interactor.use_cases.GetGenresUseCase;
-import com.example.movietracker.interactor.use_cases.GetMovieDetailsUseCase;
+import com.example.movietracker.interactor.use_cases.movie_detail.GetMovieDetailsUseCase;
 import com.example.movietracker.view.contract.MovieDetailsView;
 
 import io.reactivex.annotations.NonNull;

@@ -1,6 +1,5 @@
 package com.example.movietracker.view.fragment.movie_details;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,8 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.MovieDetailsEntity;
-import com.example.movietracker.view.contract.TabLayoutView;
+import com.example.movietracker.data.entity.movie_details.MovieDetailsEntity;
 import com.example.movietracker.view.fragment.BaseFragment;
 import com.example.movietracker.view.helper.UtilityHelpers;
 

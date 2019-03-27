@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.MovieReviewResultEntity;
-import com.example.movietracker.data.entity.MovieReviewsEntity;
+import com.example.movietracker.data.entity.movie_details.review.MovieReviewResultEntity;
+import com.example.movietracker.data.entity.movie_details.review.MovieReviewsEntity;
 import com.example.movietracker.data.entity.MoviesEntity;
 
 import androidx.annotation.NonNull;

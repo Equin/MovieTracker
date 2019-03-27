@@ -1,5 +1,6 @@
-package com.example.movietracker.data.entity;
+package com.example.movietracker.data.entity.movie_details;
 
+import com.example.movietracker.data.entity.genre.GenreEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;

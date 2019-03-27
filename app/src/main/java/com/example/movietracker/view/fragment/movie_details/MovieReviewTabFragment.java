@@ -4,15 +4,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.MovieCastsEntity;
-import com.example.movietracker.data.entity.MovieReviewsEntity;
+import com.example.movietracker.data.entity.movie_details.review.MovieReviewsEntity;
 import com.example.movietracker.presenter.MovieDetailsTabLayoutPresenter;
-import com.example.movietracker.view.adapter.CastListAdapter;
 import com.example.movietracker.view.adapter.ReviewListAdapter;
 import com.example.movietracker.view.contract.TabLayoutView;
 import com.example.movietracker.view.fragment.BaseFragment;
+import com.example.movietracker.listener.SnapScrollListener;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,9 +37,11 @@ public class MovieReviewTabFragment extends BaseFragment implements TabLayoutVie
 
     private MovieDetailsTabLayoutPresenter movieDetailsTabLayoutPresenter;
 
-
     @BindView(R.id.recyclerView_reviewList)
     RecyclerView recyclerViewReview;
+
+    @BindView(R.id.textView_nothingToShow)
+    TextView textViewNothingToShow;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,9 +86,16 @@ public class MovieReviewTabFragment extends BaseFragment implements TabLayoutVie
     public void renderInfoToTab(MovieReviewsEntity someMovieData) {
         RecyclerView.LayoutManager rowLayoutManager = new LinearLayoutManager(
                 getContext(), RecyclerView.VERTICAL, false);
-        recyclerViewReview.setLayoutManager(rowLayoutManager);
+        this.recyclerViewReview.setLayoutManager(rowLayoutManager);
         ReviewListAdapter reviewListAdapter = new ReviewListAdapter(getContext(), someMovieData);
-        recyclerViewReview.setAdapter(reviewListAdapter);
+        this.recyclerViewReview.setAdapter(reviewListAdapter);
+
+        this.recyclerViewReview.addOnScrollListener(new SnapScrollListener());
+    }
+
+    @Override
+    public void displayNothingToShowHint() {
+        this.textViewNothingToShow.setVisibility(View.VISIBLE);
     }
 
     private int getMovieIdFromArguments() {

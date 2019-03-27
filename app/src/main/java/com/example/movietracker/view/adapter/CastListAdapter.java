@@ -10,20 +10,12 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.MovieCastResultEntity;
-import com.example.movietracker.data.entity.MovieCastsEntity;
-import com.example.movietracker.data.entity.MovieResultEntity;
+import com.example.movietracker.data.entity.movie_details.cast.MovieCastResultEntity;
+import com.example.movietracker.data.entity.movie_details.cast.MovieCastsEntity;
 import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.data.net.constant.NetConstant;
-import com.example.movietracker.view.diff_utill.MovieDiffCallback;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class CastListAdapter extends RecyclerView.Adapter<CastListAdapter.ViewHolder> {

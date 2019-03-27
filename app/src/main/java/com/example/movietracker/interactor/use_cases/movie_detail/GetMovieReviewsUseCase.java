@@ -1,7 +1,6 @@
-package com.example.movietracker.interactor.use_cases;
+package com.example.movietracker.interactor.use_cases.movie_detail;
 
-import com.example.movietracker.data.entity.MovieDetailsEntity;
-import com.example.movietracker.data.entity.MovieReviewsEntity;
+import com.example.movietracker.data.entity.movie_details.review.MovieReviewsEntity;
 import com.example.movietracker.data.repository.MovieRepository;
 import com.example.movietracker.di.ClassProvider;
 import com.example.movietracker.interactor.UseCase;

@@ -3,15 +3,20 @@ package com.example.movietracker.view.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.GenresEntity;
+import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.presenter.MovieListPresenter;
 import com.example.movietracker.view.adapter.MovieListAdapter;
 import com.example.movietracker.view.contract.MovieListView;
+import com.example.movietracker.listener.SnapScrollListener;
+import com.example.movietracker.view.helper.UtilityHelpers;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -74,6 +79,8 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
         this.movieListPresenter.initialize(getGenres());
 
         setSupportActionBar();
+        setNotTransparentToolbar();
+        setToolbarTitle(UtilityHelpers.getPipeDividedGenres(getGenres().getGenres()));
         this.setupMenuDrawer();
     }
 
@@ -99,23 +106,42 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
 
     private void setupMenuDrawer() {
         ActionBar actionBar = getActionBar();
-        actionBar.setHomeButtonEnabled(true);
-    }
-
-    @Override
-    public void showToast(int resourceId) {
-        showToast("app loaded");
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
     }
 
     @Override
     public void renderMoviesList(MoviesEntity moviesEntity) {
         RecyclerView.LayoutManager rowLayoutManager = new LinearLayoutManager(
-               getContext(), RecyclerView.VERTICAL, false);
+                getContext(), RecyclerView.VERTICAL, false);
 
-        movieRecyclerView.setLayoutManager(rowLayoutManager);
+        this.movieRecyclerView.setLayoutManager(rowLayoutManager);
         MovieListAdapter movieListAdapter = new MovieListAdapter(getContext(), moviesEntity);
         movieListAdapter.setClickListener(new ClickListener());
-        movieRecyclerView.setAdapter(movieListAdapter);
+        this.movieRecyclerView.setAdapter(movieListAdapter);
+
+        this.movieRecyclerView.addOnScrollListener(new SnapScrollListener());
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.toolbar_actions, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getActivity().onBackPressed();
+                return true;
+
+            case R.id.action_filter:
+                getActivity().onBackPressed();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -134,9 +160,7 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
     private class ClickListener implements RecyclerView.OnClickListener {
         @Override
         public void onClick(View v) {
-                showToast(v.getTag().toString());
-
-                MovieListFragment.this.movieListPresenter.onMovieItemClicked((int)v.getTag());
-            }
+            MovieListFragment.this.movieListPresenter.onMovieItemClicked((int)v.getTag());
+        }
     }
 }

@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.MovieDetailsEntity;
+import com.example.movietracker.data.entity.movie_details.MovieDetailsEntity;
 import com.example.movietracker.data.net.constant.NetConstant;
 import com.example.movietracker.presenter.MovieDetailsPresenter;
 import com.example.movietracker.view.contract.MovieDetailsView;
@@ -190,8 +190,7 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
     }
 
     private void renderMovieDetailView() {
-
-        this.textViewMovieDuration.setText(UtilityHelpers.getAppropriateValue(this.movieDetailsEntity.getMovieRuntime()));
+        this.textViewMovieDuration.setText(UtilityHelpers.getAppropriateValue(this.movieDetailsEntity.getMovieRuntime())+ " min");
         this.textViewMovieTitle.setText(this.movieDetailsEntity.getMovieTitle());
         this.textViewMovieReleaseDate.setText(UtilityHelpers.getYear(this.movieDetailsEntity.getMovieReleaseDate()));
         this.textViewMovieGenres.setText(UtilityHelpers.getPipeDividedGenres(this.movieDetailsEntity.getGenres()));

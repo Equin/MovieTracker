@@ -1,6 +1,6 @@
 package com.example.movietracker.di;
 
-import com.example.movietracker.data.entity.GenresEntity;
+import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.data.entity.MoviesEntity;
 
 public class DataProvider {

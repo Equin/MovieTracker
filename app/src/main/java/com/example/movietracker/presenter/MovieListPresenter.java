@@ -1,8 +1,8 @@
 package com.example.movietracker.presenter;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.GenreEntity;
-import com.example.movietracker.data.entity.GenresEntity;
+import com.example.movietracker.data.entity.genre.GenreEntity;
+import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.interactor.DefaultObserver;
 import com.example.movietracker.interactor.use_cases.GetMoviesUseCase;
@@ -28,14 +28,14 @@ public class MovieListPresenter extends BasePresenter {
 
     public void initialize(GenresEntity genresEntity) {
         showLoading();
-        this.getGenres(genresEntity);
+        this.getMovies(genresEntity);
     }
 
     public void onMovieItemClicked(int clickedMovieId) {
         this.view.showMovieDetailScreen(clickedMovieId);
     }
 
-    private void getGenres(GenresEntity genresEntity) {
+    private void getMovies(GenresEntity genresEntity) {
         List<GenreEntity> genreEntity = genresEntity.getGenres();
         StringBuilder sb = new StringBuilder();
 

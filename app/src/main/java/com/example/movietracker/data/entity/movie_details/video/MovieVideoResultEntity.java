@@ -1,10 +1,11 @@
-package com.example.movietracker.data.entity;
+package com.example.movietracker.data.entity.movie_details.video;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class MovieVideoResultEntity {
+public class MovieVideoResultEntity implements Serializable {
 
     @SerializedName("id")
     private String videoId;

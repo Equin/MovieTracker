@@ -1,10 +1,11 @@
-package com.example.movietracker.data.entity;
+package com.example.movietracker.data.entity.movie_details.video;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class MovieVideosEntity {
+public class MovieVideosEntity implements Serializable {
 
     @SerializedName("id")
     private int movieId;
@@ -15,6 +16,10 @@ public class MovieVideosEntity {
     public MovieVideosEntity(int movieId, List<MovieVideoResultEntity> movieVideoResultEntities) {
         this.movieId = movieId;
         this.movieVideoResultEntities = movieVideoResultEntities;
+    }
+
+    public MovieVideosEntity() {
+
     }
 
     public int getMovieId() {

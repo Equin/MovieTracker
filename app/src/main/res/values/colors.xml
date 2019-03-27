@@ -14,5 +14,7 @@
     <color name="tab_text_color">#AD000000</color>
     <color name="textColorWhiteDark">#f2f2f2</color>
 
+    <color name="toolbarColor">#58ABB8</color>
+
 
 </resources>

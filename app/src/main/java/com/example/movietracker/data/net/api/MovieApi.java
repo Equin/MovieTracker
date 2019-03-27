@@ -1,10 +1,10 @@
 package com.example.movietracker.data.net.api;
 
-import com.example.movietracker.data.entity.GenresEntity;
-import com.example.movietracker.data.entity.MovieCastsEntity;
-import com.example.movietracker.data.entity.MovieDetailsEntity;
-import com.example.movietracker.data.entity.MovieReviewsEntity;
-import com.example.movietracker.data.entity.MovieVideosEntity;
+import com.example.movietracker.data.entity.genre.GenresEntity;
+import com.example.movietracker.data.entity.movie_details.cast.MovieCastsEntity;
+import com.example.movietracker.data.entity.movie_details.MovieDetailsEntity;
+import com.example.movietracker.data.entity.movie_details.review.MovieReviewsEntity;
+import com.example.movietracker.data.entity.movie_details.video.MovieVideosEntity;
 import com.example.movietracker.data.entity.MoviesEntity;
 
 import io.reactivex.Observable;

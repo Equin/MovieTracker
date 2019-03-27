@@ -3,12 +3,9 @@ package com.example.movietracker.view.custom_view;
 import android.content.Context;
 import android.view.View;
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.GenresEntity;
-import com.example.movietracker.di.ClassProvider;
+import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.view.adapter.GenreViewAdapter;
 
-
-import javax.inject.Inject;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;

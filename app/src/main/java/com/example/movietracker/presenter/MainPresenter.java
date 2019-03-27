@@ -1,8 +1,9 @@
 package com.example.movietracker.presenter;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.GenreEntity;
-import com.example.movietracker.data.entity.GenresEntity;
+import com.example.movietracker.data.entity.genre.GenreEntity;
+import com.example.movietracker.data.entity.genre.GenresEntity;
+import com.example.movietracker.di.DataProvider;
 import com.example.movietracker.interactor.DefaultObserver;
 import com.example.movietracker.interactor.use_cases.GetGenresUseCase;
 import com.example.movietracker.view.contract.MainView;
@@ -71,6 +72,7 @@ public class MainPresenter extends BasePresenter {
         @Override
         public void onNext(GenresEntity genreList) {
             MainPresenter.this.mainView.renderGenreView(genreList);
+            DataProvider.genresEntity = genreList;
             MainPresenter.this.hideLoading();
         }
 

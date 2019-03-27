@@ -5,7 +5,8 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.example.movietracker.AndroidApplication;
-import com.example.movietracker.di.ClassProvider;
+import com.example.movietracker.R;
+import com.example.movietracker.listener.OnBackPressListener;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -23,8 +24,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         getAndroidApplication().setRunningActivity(this);
-
-        ClassProvider.initialize();
     }
 
     @Override
@@ -36,12 +35,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (this.equals(getAndroidApplication().getRunningActivity())) {
             getAndroidApplication().setRunningActivity(null);
         }
-
-        ClassProvider.onDestroy();
     }
 
     @Override
     public void onBackPressed() {
+
+        Fragment fragment = this.getSupportFragmentManager().findFragmentById(R.id.container_for_fragment);
+        if ((fragment instanceof OnBackPressListener) && !((OnBackPressListener)fragment).canGoBackOnBackPressed()) {
+            return;
+        }
+
         if (this.getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
         }  else {

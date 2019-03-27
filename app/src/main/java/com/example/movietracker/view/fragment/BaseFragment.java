@@ -54,6 +54,12 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
+    public void setNotTransparentToolbar() {
+        if (this.toolbar != null) {
+            this.toolbar.setBackgroundColor(getResources().getColor(R.color.toolbarColor));
+        }
+    }
+
     public void setToolbarTitle(String title) {
         if (this.toolbar != null) {
             this.toolbar.setTitle(title);

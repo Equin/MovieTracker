@@ -1,4 +1,4 @@
-package com.example.movietracker.data.entity;
+package com.example.movietracker.data.entity.movie_details.review;
 
 import com.google.gson.annotations.SerializedName;
 

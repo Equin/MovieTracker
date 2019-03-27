@@ -4,13 +4,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.MovieCastsEntity;
+import com.example.movietracker.data.entity.movie_details.cast.MovieCastsEntity;
 import com.example.movietracker.presenter.MovieDetailsTabLayoutPresenter;
 import com.example.movietracker.view.adapter.CastListAdapter;
 import com.example.movietracker.view.contract.TabLayoutView;
 import com.example.movietracker.view.fragment.BaseFragment;
+import com.example.movietracker.listener.SnapScrollListener;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,9 +37,11 @@ public class MovieCastTabFragment extends BaseFragment implements TabLayoutView<
 
     private MovieDetailsTabLayoutPresenter movieDetailsTabLayoutPresenter;
 
-
     @BindView(R.id.recyclerView_castList)
     RecyclerView recyclerViewCastList;
+
+    @BindView(R.id.textView_nothingToShow)
+    TextView textViewNothingToShow;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,9 +86,16 @@ public class MovieCastTabFragment extends BaseFragment implements TabLayoutView<
     public void renderInfoToTab(MovieCastsEntity someMovieData) {
         RecyclerView.LayoutManager rowLayoutManager = new LinearLayoutManager(
                 getContext(), RecyclerView.VERTICAL, false);
-        recyclerViewCastList.setLayoutManager(rowLayoutManager);
+        this.recyclerViewCastList.setLayoutManager(rowLayoutManager);
         CastListAdapter castListAdapter = new CastListAdapter(getContext(), someMovieData);
-        recyclerViewCastList.setAdapter(castListAdapter);
+        this.recyclerViewCastList.setAdapter(castListAdapter);
+
+        this.recyclerViewCastList.addOnScrollListener(new SnapScrollListener());
+    }
+
+    @Override
+    public void displayNothingToShowHint() {
+        this.textViewNothingToShow.setVisibility(View.VISIBLE);
     }
 
     private int getMovieIdFromArguments() {

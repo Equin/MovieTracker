@@ -8,8 +8,8 @@ import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.GenreEntity;
-import com.example.movietracker.data.entity.GenresEntity;
+import com.example.movietracker.data.entity.genre.GenreEntity;
+import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.view.custom_view.ToggleButtonsView;
 import com.google.common.collect.Lists;
 
@@ -38,10 +38,9 @@ public class GenreViewAdapter extends RecyclerView.Adapter<GenreViewAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        List<List<GenreEntity>> f = Lists.partition(list.getGenres(), COUNT_TABLE_RECYCLER_VIEWS);
-        holder.toggleButtonsView.createButtons(f.get(position), new onCheckedListener());
+        List<List<GenreEntity>> genres = Lists.partition(list.getGenres(), COUNT_TABLE_RECYCLER_VIEWS);
+        holder.toggleButtonsView.createButtons(genres.get(position), new onCheckedListener());
     }
-
 
     @Override
     public int getItemCount() {
@@ -65,9 +64,4 @@ public class GenreViewAdapter extends RecyclerView.Adapter<GenreViewAdapter.View
             ((GenreEntity)buttonView.getTag()).setSelected(isChecked);
         }
     }
-
-   /* public void setListeners(RecyclerView.OnScrollListener scrollListener, RecyclerView.OnItemTouchListener touchListener) {
-        this.touchListener = touchListener;
-        this.scrollListener = scrollListener;
-    }*/
 }

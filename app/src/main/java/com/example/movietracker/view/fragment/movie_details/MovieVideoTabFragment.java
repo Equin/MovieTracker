@@ -1,22 +1,19 @@
 package com.example.movietracker.view.fragment.movie_details;
 
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.MovieReviewsEntity;
-import com.example.movietracker.data.entity.MovieVideosEntity;
+import com.example.movietracker.data.entity.movie_details.video.MovieVideosEntity;
 import com.example.movietracker.presenter.MovieDetailsTabLayoutPresenter;
-import com.example.movietracker.view.adapter.ReviewListAdapter;
 import com.example.movietracker.view.adapter.VideoListAdapter;
 import com.example.movietracker.view.contract.TabLayoutView;
 import com.example.movietracker.view.fragment.BaseFragment;
-import com.example.movietracker.view.helper.FullScreenHelper;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerFullScreenListener;
+import com.example.movietracker.listener.SnapScrollListener;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,9 +25,8 @@ import butterknife.ButterKnife;
 public class MovieVideoTabFragment extends BaseFragment implements TabLayoutView<MovieVideosEntity> {
 
     public interface MovieVideoTabFragmentInteractionListener {
-        void showYouTubePlayer(String videoId);
+        void showYouTubePlayer(String videoId, MovieVideosEntity movieVideosEntity);
     }
-
 
     public static MovieVideoTabFragment newInstance(int movieId) {
         MovieVideoTabFragment movieVideoTabFragment = new MovieVideoTabFragment();
@@ -46,10 +42,12 @@ public class MovieVideoTabFragment extends BaseFragment implements TabLayoutView
 
     private MovieVideoTabFragmentInteractionListener movieVideoTabFragmentInteractionListener;
     private MovieDetailsTabLayoutPresenter movieDetailsTabLayoutPresenter;
-    private FullScreenHelper fullScreenHelper;
 
     @BindView(R.id.recyclerView_videoList)
     RecyclerView recyclerViewVideo;
+
+    @BindView(R.id.textView_nothingToShow)
+    TextView textViewNothingToShow;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,8 +75,6 @@ public class MovieVideoTabFragment extends BaseFragment implements TabLayoutView
         this.movieDetailsTabLayoutPresenter.setView(this);
         this.movieDetailsTabLayoutPresenter.initialize();
         this.movieDetailsTabLayoutPresenter.getMovieVideos(getMovieIdFromArguments());
-
-        this.fullScreenHelper = new FullScreenHelper(getActivity());
     }
 
     @Override
@@ -93,6 +89,12 @@ public class MovieVideoTabFragment extends BaseFragment implements TabLayoutView
     public void onDetach() {
         super.onDetach();
         this.movieVideoTabFragmentInteractionListener = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        hideLoading();
     }
 
     @Override
@@ -113,9 +115,18 @@ public class MovieVideoTabFragment extends BaseFragment implements TabLayoutView
         this.someMovieData = someMovieData;
         RecyclerView.LayoutManager rowLayoutManager = new LinearLayoutManager(
                 getContext(), RecyclerView.VERTICAL, false);
-        recyclerViewVideo.setLayoutManager(rowLayoutManager);
-        VideoListAdapter reviewListAdapter = new VideoListAdapter(someMovieData, getLifecycle(), new YouTubePlayerFullScListener());
-        recyclerViewVideo.setAdapter(reviewListAdapter);
+
+        this.recyclerViewVideo.setLayoutManager(rowLayoutManager);
+        VideoListAdapter reviewListAdapter = new VideoListAdapter(someMovieData);
+        reviewListAdapter.setClickListener(new ClickListener());
+        this.recyclerViewVideo.setAdapter(reviewListAdapter);
+
+        this.recyclerViewVideo.addOnScrollListener(new SnapScrollListener());
+    }
+
+    @Override
+    public void displayNothingToShowHint() {
+        this.textViewNothingToShow.setVisibility(View.VISIBLE);
     }
 
     private int getMovieIdFromArguments() {
@@ -126,21 +137,11 @@ public class MovieVideoTabFragment extends BaseFragment implements TabLayoutView
         return -1;
     }
 
-   private class YouTubePlayerFullScListener implements YouTubePlayerFullScreenListener {
+    private class ClickListener implements RecyclerView.OnClickListener {
         @Override
-        public void onYouTubePlayerEnterFullScreen() {
-            movieVideoTabFragmentInteractionListener.showYouTubePlayer(someMovieData.getMovieVideoResultEntities().get(0).getVideoKey());
-            //fullScreenHelper.enterFullScreen();
-
-
-        }
-
-        @Override
-        public void onYouTubePlayerExitFullScreen() {
-           /// getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            getActivity().getSupportFragmentManager().popBackStack();
-           // fullScreenHelper.exitFullScreen();
-
+        public void onClick(View v) {
+            showLoading();
+            movieVideoTabFragmentInteractionListener.showYouTubePlayer( (String)v.getTag(), someMovieData);
         }
     }
 }

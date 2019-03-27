@@ -11,11 +11,12 @@ import com.bumptech.glide.Glide;
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.MovieResultEntity;
 import com.example.movietracker.data.entity.MoviesEntity;
+import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.data.net.constant.NetConstant;
+import com.example.movietracker.di.DataProvider;
 import com.example.movietracker.view.diff_utill.MovieDiffCallback;
+import com.example.movietracker.view.helper.UtilityHelpers;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
@@ -29,18 +30,20 @@ import static com.example.movietracker.view.helper.UtilityHelpers.getYear;
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.ViewHolder> {
 
     private MoviesEntity movieList;
+    private GenresEntity genresEntity;
     private Context context;
-    View.OnClickListener clickListener;
+    private View.OnClickListener clickListener;
 
     public MovieListAdapter(Context context, MoviesEntity movieList) {
         this.context = context;
         this.movieList = movieList;
+        this.genresEntity = DataProvider.genresEntity;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.movie_list_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_list_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -55,14 +58,14 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
                         getYear(movie.getMovieReleaseDate()));
 
         holder.movieGenres.setText(
-                getAppropriateValue(
-                        movie.getGenreIds().toString()));
+                UtilityHelpers.getPipeDividedGenresFromId(
+                        movie.getGenreIds(), genresEntity.getGenres()));
 
         holder.movieRating.setText(String.format(Locale.ENGLISH, "%.1f",
                         movie.getMovieVoteAverage()));
 
         Glide
-          .with(this.context)
+          .with(holder.itemView)
           .load(NetConstant.IMAGE_BASE_URL +movie.getPosterPath())
           .centerCrop()
           .into(holder.moviePoster);
@@ -76,7 +79,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
         return this.movieList.getMovies().size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView moviePoster;
         private TextView movieReleaseDate;
@@ -85,7 +88,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
         private TextView movieRating;
         private CardView movieCardView;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             this.moviePoster = itemView.findViewById(R.id.imageView_moviePoster);
             this.movieReleaseDate = itemView.findViewById(R.id.textView_movieReleaseDate);

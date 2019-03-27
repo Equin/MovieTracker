@@ -7,8 +7,8 @@ import android.widget.LinearLayout;
 import android.widget.ToggleButton;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.GenreEntity;
-import com.example.movietracker.data.entity.GenresEntity;
+import com.example.movietracker.data.entity.genre.GenreEntity;
+import com.example.movietracker.data.entity.genre.GenresEntity;
 
 import java.util.List;
 
@@ -18,8 +18,6 @@ public class ToggleButtonsView  {
 
     private final Context context;
     private final View view;
-
-    private GenresEntity genres;
 
     public ToggleButtonsView(Context context, View view) {
         this.context = context;

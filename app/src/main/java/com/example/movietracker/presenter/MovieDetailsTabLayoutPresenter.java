@@ -1,14 +1,13 @@
 package com.example.movietracker.presenter;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.MovieCastsEntity;
-import com.example.movietracker.data.entity.MovieReviewsEntity;
-import com.example.movietracker.data.entity.MovieVideosEntity;
-import com.example.movietracker.data.entity.TabEntities;
+import com.example.movietracker.data.entity.movie_details.cast.MovieCastsEntity;
+import com.example.movietracker.data.entity.movie_details.review.MovieReviewsEntity;
+import com.example.movietracker.data.entity.movie_details.video.MovieVideosEntity;
 import com.example.movietracker.interactor.DefaultObserver;
-import com.example.movietracker.interactor.use_cases.GetMovieCastsUseCase;
-import com.example.movietracker.interactor.use_cases.GetMovieReviewsUseCase;
-import com.example.movietracker.interactor.use_cases.GetMovieVideosUseCase;
+import com.example.movietracker.interactor.use_cases.movie_detail.GetMovieCastsUseCase;
+import com.example.movietracker.interactor.use_cases.movie_detail.GetMovieReviewsUseCase;
+import com.example.movietracker.interactor.use_cases.movie_detail.GetMovieVideosUseCase;
 import com.example.movietracker.view.contract.TabLayoutView;
 
 import io.reactivex.annotations.NonNull;
@@ -55,6 +54,10 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
         this.view.hideLoading();
     }
 
+    private void displayNothingToShow() {
+        this.view.displayNothingToShowHint();
+    }
+
     @Override
     public void destroy() {
         this.view = null;
@@ -65,13 +68,19 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
         @Override
         public void onNext(MovieCastsEntity movieCastsEntity) {
             MovieDetailsTabLayoutPresenter.this.hideLoading();
-            MovieDetailsTabLayoutPresenter.this.view.renderInfoToTab(movieCastsEntity);
+
+            if (movieCastsEntity.getMovieCasts().isEmpty()) {
+                MovieDetailsTabLayoutPresenter.this.displayNothingToShow();
+            } else {
+                MovieDetailsTabLayoutPresenter.this.view.renderInfoToTab(movieCastsEntity);
+            }
         }
 
         @Override
         public void onError(@NonNull Throwable e) {
             MovieDetailsTabLayoutPresenter.this.view.showToast(R.string.main_error);
             MovieDetailsTabLayoutPresenter.this.hideLoading();
+            MovieDetailsTabLayoutPresenter.this.displayNothingToShow();
         }
     }
 
@@ -79,13 +88,19 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
         @Override
         public void onNext(MovieReviewsEntity movieReviewsEntity) {
             MovieDetailsTabLayoutPresenter.this.hideLoading();
-            MovieDetailsTabLayoutPresenter.this.view.renderInfoToTab(movieReviewsEntity);
+
+            if (movieReviewsEntity.getReviews().isEmpty()) {
+                MovieDetailsTabLayoutPresenter.this.displayNothingToShow();
+            } else {
+                MovieDetailsTabLayoutPresenter.this.view.renderInfoToTab(movieReviewsEntity);
+            }
         }
 
         @Override
         public void onError(@NonNull Throwable e) {
             MovieDetailsTabLayoutPresenter.this.view.showToast(R.string.main_error);
             MovieDetailsTabLayoutPresenter.this.hideLoading();
+            MovieDetailsTabLayoutPresenter.this.displayNothingToShow();
         }
     }
 
@@ -93,13 +108,19 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
         @Override
         public void onNext(MovieVideosEntity movieVideosEntity) {
             MovieDetailsTabLayoutPresenter.this.hideLoading();
-            MovieDetailsTabLayoutPresenter.this.view.renderInfoToTab(movieVideosEntity);
+
+            if (movieVideosEntity.getMovieVideoResultEntities().isEmpty()) {
+                MovieDetailsTabLayoutPresenter.this.displayNothingToShow();
+            } else {
+                MovieDetailsTabLayoutPresenter.this.view.renderInfoToTab(movieVideosEntity);
+            }
         }
 
         @Override
         public void onError(@NonNull Throwable e) {
             MovieDetailsTabLayoutPresenter.this.view.showToast(R.string.main_error);
             MovieDetailsTabLayoutPresenter.this.hideLoading();
+            MovieDetailsTabLayoutPresenter.this.displayNothingToShow();
         }
     }
 }
