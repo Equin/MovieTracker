@@ -85,7 +85,7 @@ public class MovieCastTabFragment extends BaseFragment implements TabLayoutView<
         CastListAdapter castListAdapter = new CastListAdapter(getContext(), someMovieData);
         this.recyclerViewCastList.setAdapter(castListAdapter);
 
-        this.recyclerViewCastList.addOnScrollListener(new SnapScrollListener());
+        this.recyclerViewCastList.addOnScrollListener(new SnapScrollListener(this));
     }
 
     @Override

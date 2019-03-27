@@ -1,9 +1,18 @@
 package com.example.movietracker.listener;
 
+import com.example.movietracker.view.adapter.MovieListAdapter;
+
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public  class SnapScrollListener extends RecyclerView.OnScrollListener {
+
+    private Fragment fragment;
+
+    public SnapScrollListener(Fragment fragment) {
+        this.fragment = fragment;
+    }
 
     @Override
     public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -12,7 +21,19 @@ public  class SnapScrollListener extends RecyclerView.OnScrollListener {
             if (scrollDistance != 0) {
                 recyclerView.smoothScrollBy( 0, scrollDistance);
             }
+
+            if(isLastElement(recyclerView)
+                    && (recyclerView.getAdapter() instanceof MovieListAdapter)
+                    && (fragment instanceof OnLastElementReachedListener)) {
+
+                ((OnLastElementReachedListener)fragment).lastElementReached();
+            }
         }
+    }
+
+    private boolean isLastElement(RecyclerView recyclerView) {
+        final LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        return (recyclerView.getAdapter().getItemCount()-1) == manager.findLastVisibleItemPosition();
     }
 
     private int getScrollDistanceOfColumnClosestToTop(final RecyclerView recyclerView) {

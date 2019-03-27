@@ -1,5 +1,6 @@
 package com.example.movietracker.data.repository;
 
+import com.example.movietracker.data.entity.MovieRequestEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.data.entity.movie_details.cast.MovieCastsEntity;
 import com.example.movietracker.data.entity.movie_details.MovieDetailsEntity;
@@ -11,7 +12,7 @@ import io.reactivex.Observable;
 
 public interface MovieRepository {
     Observable<GenresEntity> getGenres();
-    Observable<MoviesEntity> getMovies(String genresId);
+    Observable<MoviesEntity> getMovies(MovieRequestEntity requestParams);
     Observable<MovieDetailsEntity> getMovieDetails(int movieId);
     Observable<MovieCastsEntity> getMovieCasts(int movieId);
     Observable<MovieVideosEntity> getMovieVideos(int movieId);

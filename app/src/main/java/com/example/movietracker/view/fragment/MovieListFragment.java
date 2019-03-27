@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.data.entity.MoviesEntity;
+import com.example.movietracker.listener.OnLastElementReachedListener;
 import com.example.movietracker.presenter.MovieListPresenter;
 import com.example.movietracker.view.adapter.MovieListAdapter;
 import com.example.movietracker.view.contract.MovieListView;
@@ -26,7 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MovieListFragment extends BaseFragment implements MovieListView {
+public class MovieListFragment extends BaseFragment implements MovieListView, OnLastElementReachedListener {
 
     private static final String ARG_SELECTED_GENRES = "args_selected_genres";
 
@@ -76,7 +77,8 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
 
         this.movieListPresenter = new MovieListPresenter();
         this.movieListPresenter.setView(this);
-        this.movieListPresenter.initialize(getGenres());
+        this.movieListPresenter.initialize();
+        this.movieListPresenter.getMovies(getGenres());
 
         setSupportActionBar();
         setNotTransparentToolbar();
@@ -120,7 +122,7 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
         movieListAdapter.setClickListener(new ClickListener());
         this.movieRecyclerView.setAdapter(movieListAdapter);
 
-        this.movieRecyclerView.addOnScrollListener(new SnapScrollListener());
+        this.movieRecyclerView.addOnScrollListener(new SnapScrollListener(this));
     }
 
     @Override
@@ -147,6 +149,13 @@ public class MovieListFragment extends BaseFragment implements MovieListView {
     @Override
     public void showMovieDetailScreen(int movieId) {
         this.movieListFragmentInteractionListener.showMovieDetailScreen(movieId);
+    }
+
+    @Override
+    public void lastElementReached() {
+
+        this.movieListPresenter.
+        showToast("Last Elemetn");
     }
 
     private GenresEntity getGenres() {

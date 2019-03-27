@@ -92,7 +92,7 @@ public class YouTubePlayerFragment extends BaseFragment implements OnBackPressLi
         VideoListAdapter reviewListAdapter = new VideoListAdapter(this.movieVideosEntity);
         reviewListAdapter.setClickListener(new ClickListener());
         this.recyclerViewYoutubeVideo.setAdapter(reviewListAdapter);
-        this.recyclerViewYoutubeVideo.addOnScrollListener(new SnapScrollListener());
+        this.recyclerViewYoutubeVideo.addOnScrollListener(new SnapScrollListener(this));
     }
 
     private void initYouTubePlayerView() {

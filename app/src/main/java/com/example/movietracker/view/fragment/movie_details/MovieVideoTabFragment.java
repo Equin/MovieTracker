@@ -116,7 +116,7 @@ public class MovieVideoTabFragment extends BaseFragment implements TabLayoutView
         reviewListAdapter.setClickListener(new ClickListener());
         this.recyclerViewVideo.setAdapter(reviewListAdapter);
 
-        this.recyclerViewVideo.addOnScrollListener(new SnapScrollListener());
+        this.recyclerViewVideo.addOnScrollListener(new SnapScrollListener(this));
     }
 
     @Override
