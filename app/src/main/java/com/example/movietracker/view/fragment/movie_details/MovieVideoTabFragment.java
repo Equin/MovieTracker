@@ -103,11 +103,6 @@ public class MovieVideoTabFragment extends BaseFragment implements TabLayoutView
         this.movieDetailsTabLayoutPresenter.destroy();
     }
 
-    @Override
-    public void showToast(int resourceId) {
-
-    }
-
     private MovieVideosEntity someMovieData;
 
     @Override

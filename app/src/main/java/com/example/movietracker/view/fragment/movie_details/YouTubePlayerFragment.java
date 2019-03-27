@@ -74,8 +74,6 @@ public class YouTubePlayerFragment extends BaseFragment implements OnBackPressLi
         return rootView;
     }
 
-
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);

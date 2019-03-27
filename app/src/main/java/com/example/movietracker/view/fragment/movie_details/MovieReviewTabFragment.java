@@ -78,11 +78,6 @@ public class MovieReviewTabFragment extends BaseFragment implements TabLayoutVie
     }
 
     @Override
-    public void showToast(int resourceId) {
-
-    }
-
-    @Override
     public void renderInfoToTab(MovieReviewsEntity someMovieData) {
         RecyclerView.LayoutManager rowLayoutManager = new LinearLayoutManager(
                 getContext(), RecyclerView.VERTICAL, false);
