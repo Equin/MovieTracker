@@ -1,11 +1,10 @@
 package com.example.movietracker.data.entity.movie_details.cast;
 
-import com.example.movietracker.data.entity.TabEntities;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class MovieCastsEntity implements TabEntities {
+public class MovieCastsEntity {
 
     @SerializedName("id")
     private int movieId;

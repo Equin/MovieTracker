@@ -82,15 +82,14 @@ public class YouTubePlayerFragment extends BaseFragment implements OnBackPressLi
         this.fullScreenHelper = new FullScreenHelper(getActivity());
         this.movieVideosEntity = getVideosFromArguments();
         initYouTubePlayerView();
-        initVideoList();
+        initVideoListRecyclerView();
     }
 
-    private void initVideoList() {
+    private void initVideoListRecyclerView() {
         RecyclerView.LayoutManager rowLayoutManager = new LinearLayoutManager(
                 getContext(), RecyclerView.VERTICAL, false);
         this.recyclerViewYoutubeVideo.setLayoutManager(rowLayoutManager);
-        VideoListAdapter reviewListAdapter = new VideoListAdapter(this.movieVideosEntity);
-        reviewListAdapter.setClickListener(new ClickListener());
+        VideoListAdapter reviewListAdapter = new VideoListAdapter(this.movieVideosEntity, new ClickListener());
         this.recyclerViewYoutubeVideo.setAdapter(reviewListAdapter);
         this.recyclerViewYoutubeVideo.addOnScrollListener(new SnapScrollListener(this));
     }

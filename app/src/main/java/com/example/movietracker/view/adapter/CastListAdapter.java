@@ -1,6 +1,5 @@
 package com.example.movietracker.view.adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,63 +8,59 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.movietracker.AndroidApplication;
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.movie_details.cast.MovieCastResultEntity;
 import com.example.movietracker.data.entity.movie_details.cast.MovieCastsEntity;
 import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.data.net.constant.NetConstant;
 
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class CastListAdapter extends RecyclerView.Adapter<CastListAdapter.ViewHolder> {
+public class CastListAdapter extends RecyclerView.Adapter<CastListAdapter.CastListViewHolder> {
 
-    private MovieCastsEntity castsEntity;
-    private Context context;
+    private List<MovieCastResultEntity> castResultEntity;
 
-    public CastListAdapter(Context context, MovieCastsEntity castsEntity) {
-        this.context = context;
-        this.castsEntity = castsEntity;
+    public CastListAdapter(MovieCastsEntity castsEntity) {
+        this.castResultEntity = castsEntity.getMovieCasts();
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.movie_cast_item, parent, false);
-        return new ViewHolder(view);
+    public CastListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_cast_item, parent, false);
+        return new CastListViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        MovieCastResultEntity cast =  this.castsEntity.getMovieCasts().get(position);
+    public void onBindViewHolder(@NonNull CastListViewHolder holder, int position) {
+        MovieCastResultEntity cast =  this.castResultEntity.get(position);
 
         holder.castName.setText(cast.getCastName());
 
         Glide
-          .with(this.context)
+          .with(AndroidApplication.getRunningActivity().getApplicationContext())
           .load(NetConstant.IMAGE_BASE_URL +cast.getCastImagePath())
           .circleCrop()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
           .into(holder.castPhoto);
     }
 
-
-    private String getAppropriateValue(Object value) {
-        return value == null ? "" : value.toString();
-    }
-
     @Override
     public int getItemCount() {
-        return this.castsEntity.getMovieCasts().size();
+        return this.castResultEntity.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class CastListViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView castPhoto;
         private TextView castName;
 
 
-        public ViewHolder(@NonNull View itemView) {
+        CastListViewHolder(@NonNull View itemView) {
             super(itemView);
             this.castPhoto = itemView.findViewById(R.id.imageView_castPhoto);
             this.castName = itemView.findViewById(R.id.textView_castName);

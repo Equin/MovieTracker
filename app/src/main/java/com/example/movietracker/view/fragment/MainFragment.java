@@ -6,12 +6,18 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.ToggleButton;
 
 import com.example.movietracker.R;
+import com.example.movietracker.data.entity.genre.GenreEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.presenter.MainPresenter;
 import com.example.movietracker.view.contract.MainView;
+import com.example.movietracker.view.custom_view.CustomGenreView;
 import com.example.movietracker.view.custom_view.GenreView;
+
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,6 +48,9 @@ public class MainFragment extends BaseFragment implements MainView {
     @BindView(R.id.drawerLayout)
     DrawerLayout drawerLayout;
 
+    @BindView(R.id.custom_genreView)
+    CustomGenreView customGenreView;
+
     public MainFragment() {
         setRetainInstance(true);
     }
@@ -68,18 +77,14 @@ public class MainFragment extends BaseFragment implements MainView {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        this.mainPresenter = new MainPresenter();
+        this.mainPresenter = new MainPresenter(this);
 
-        this.mainPresenter.setView(this);
-        this.mainPresenter.initialize();
-
-        this.genreView = new GenreView(getContext());
+        this.mainPresenter.getGenres();
 
         setSupportActionBar();
         setTransparentToolbar();
         setToolbarTitle(getString(R.string.main_fragment_toolbar_title));
         this.setupMenuDrawer();
-        this.genreView.setView(view);
     }
 
     @Override
@@ -126,17 +131,30 @@ public class MainFragment extends BaseFragment implements MainView {
     @Override
     public void renderGenreView(GenresEntity genreList) {
         this.genresEntity = genreList;
-        this.genreView.renderGenreView(this.genresEntity);
+        this.customGenreView.renderGenreView(this.genresEntity, new onCheckedListener(), 3);
     }
 
     @Optional
     @OnClick(R.id.main_button_search)
     public void onSearchButtonClicked(){
-        this.mainPresenter.onSearchButtonClicked(this.genresEntity);
+         this.mainPresenter.onSearchButtonClicked(this.genresEntity);
     }
 
     @Override
     public void openMovieListView(GenresEntity genreList) {
         this.mainFragmentInteractionListener.showMovieListScreen(genreList);
+    }
+
+    public class onCheckedListener implements ToggleButton.OnCheckedChangeListener {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            List<GenreEntity> genreEntity = genresEntity.getGenres();
+            for(int i = 0; i<genreEntity.size(); i++) {
+                if (genreEntity.get(i).getGenreName().equals(buttonView.getText())) {
+                    genreEntity.get(i).setSelected(isChecked);
+                }
+            }
+           // genresEntity.setGenres(genreEntity);
+        }
     }
 }

@@ -19,20 +19,13 @@ public class MainPresenter extends BasePresenter {
 
     private MainView mainView;
 
-    public MainPresenter() {
+    public MainPresenter(MainView mainView) {
+        this.mainView = mainView;
         this.getGenresUseCase = new GetGenresUseCase();
     }
 
-    public void setView(MainView mainView) {
-        this.mainView = mainView;
-    }
-
-    public void initialize() {
+    public void getGenres() {
         showLoading();
-        this.getGenres();
-    }
-
-    private void getGenres() {
         this.getGenresUseCase.execute(new GetGenresObserver(), null);
     }
 

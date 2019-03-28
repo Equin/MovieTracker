@@ -18,7 +18,7 @@ public interface MovieApi {
     Observable<GenresEntity> getGenres();
 
     @GET("discover/movie/")
-    Observable<MoviesEntity> getMoviesByGenres(@Query("with_genres") String genresIds);
+    Observable<MoviesEntity> getMovies(@Query("with_genres") String genresIds, @Query("sort_by") String sortBy, @Query("page") int page, @Query("include_adult") boolean isIncludeAdult);
 
     @GET("movie/{movie_id}")
     Observable<MovieDetailsEntity> getMovieDetailsById(@Path("movie_id") int movieId);

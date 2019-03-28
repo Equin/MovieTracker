@@ -20,29 +20,25 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
 
     private TabLayoutView view;
 
-    public MovieDetailsTabLayoutPresenter() {
+    public MovieDetailsTabLayoutPresenter(TabLayoutView view) {
         this.getMovieCastsUseCase = new GetMovieCastsUseCase();
         this.getMovieReviewsUseCase = new GetMovieReviewsUseCase();
         this.getMovieVideosUseCase = new GetMovieVideosUseCase();
-    }
-
-    public void setView(TabLayoutView view) {
         this.view = view;
     }
 
-    public void initialize() {
-        showLoading();
-    }
-
     public void getMovieCasts(int movieId) {
+        showLoading();
         this.getMovieCastsUseCase.execute(new GetMovieCastObserver(), movieId);
     }
 
     public void getMovieReviews(int movieId) {
+        showLoading();
         this.getMovieReviewsUseCase.execute(new GetMovieReviewObserver(), movieId);
     }
 
     public void getMovieVideos(int movieId) {
+        showLoading();
         this.getMovieVideosUseCase.execute(new GetMovieVideosObserver(), movieId);
     }
 

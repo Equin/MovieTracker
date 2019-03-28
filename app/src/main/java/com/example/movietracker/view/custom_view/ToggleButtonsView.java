@@ -1,7 +1,9 @@
 package com.example.movietracker.view.custom_view;
 
 import android.content.Context;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ToggleButton;
@@ -15,21 +17,20 @@ import java.util.List;
 public class ToggleButtonsView  {
 
     private static final int TOGGLE_BUTTON_ID_PREFIX = 300;
-
-    private final Context context;
     private final View view;
 
-    public ToggleButtonsView(Context context, View view) {
-        this.context = context;
+    public ToggleButtonsView(View view) {
         this.view = view;
     }
 
     public void createButtons(List<GenreEntity> genres, CompoundButton.OnCheckedChangeListener onCheckedChangeListener) {
 
-        LinearLayout linearLayout = this.view.findViewById(R.id.linearLayout_containerForButtons);
+        LinearLayout linearLayout = new LinearLayout(view.getContext());
+
         LinearLayout.LayoutParams linearLayoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
+
 
         linearLayoutParams.setMargins(5,5,5,5);
 
@@ -37,7 +38,7 @@ public class ToggleButtonsView  {
 
              String title = genres.get(i).getGenreName();
 
-             ToggleButton toggleButton = new ToggleButton(this.context);
+             ToggleButton toggleButton = new ToggleButton(this.view.getContext());
              toggleButton.setId(i+TOGGLE_BUTTON_ID_PREFIX);
              toggleButton.setTag(genres.get(i));
 
@@ -48,7 +49,7 @@ public class ToggleButtonsView  {
              toggleButton.setSelected(genres.get(i).isSelected());
 
              toggleButton.setPadding(25,0,25,0);
-             toggleButton.setBackgroundDrawable(this.context.getDrawable(R.drawable.main_button_background));
+             toggleButton.setBackgroundDrawable(this.view.getContext().getDrawable(R.drawable.main_button_background));
              toggleButton.setLayoutParams(linearLayoutParams);
 
              toggleButton.setOnCheckedChangeListener(onCheckedChangeListener);

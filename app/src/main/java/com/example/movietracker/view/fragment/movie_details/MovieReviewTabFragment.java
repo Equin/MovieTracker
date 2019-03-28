@@ -64,10 +64,7 @@ public class MovieReviewTabFragment extends BaseFragment implements TabLayoutVie
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        this.movieDetailsTabLayoutPresenter = new MovieDetailsTabLayoutPresenter();
-
-        this.movieDetailsTabLayoutPresenter.setView(this);
-        this.movieDetailsTabLayoutPresenter.initialize();
+        this.movieDetailsTabLayoutPresenter = new MovieDetailsTabLayoutPresenter(this);
         this.movieDetailsTabLayoutPresenter.getMovieReviews(getMovieIdFromArguments());
     }
 
@@ -82,7 +79,7 @@ public class MovieReviewTabFragment extends BaseFragment implements TabLayoutVie
         RecyclerView.LayoutManager rowLayoutManager = new LinearLayoutManager(
                 getContext(), RecyclerView.VERTICAL, false);
         this.recyclerViewReview.setLayoutManager(rowLayoutManager);
-        ReviewListAdapter reviewListAdapter = new ReviewListAdapter(getContext(), someMovieData);
+        ReviewListAdapter reviewListAdapter = new ReviewListAdapter(someMovieData);
         this.recyclerViewReview.setAdapter(reviewListAdapter);
 
         this.recyclerViewReview.addOnScrollListener(new SnapScrollListener(this));

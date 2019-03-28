@@ -23,7 +23,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getAndroidApplication().setRunningActivity(this);
+        AndroidApplication.setRunningActivity(this);
     }
 
     @Override
@@ -32,8 +32,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         Log.d("onDestroy", "destroyed");
 
-        if (this.equals(getAndroidApplication().getRunningActivity())) {
-            getAndroidApplication().setRunningActivity(null);
+        if (this.equals(AndroidApplication.getRunningActivity())) {
+            AndroidApplication.setRunningActivity(null);
         }
     }
 
@@ -74,17 +74,14 @@ public abstract class BaseActivity extends AppCompatActivity {
             case REPLACE:
                 fragmentTransaction.replace(containerViewId, fragment);
                 fragmentTransaction.addToBackStack("replacedFragment");
+                fragmentTransaction.commitAllowingStateLoss();
                 break;
             case ADD:
                 fragmentTransaction.add(containerViewId, fragment);
-               // fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commitAllowingStateLoss();
                 break;
+            default:
+                Log.d("TAG", "There is no such action for transaction : " + fragmentAction.toString());
         }
-
-        fragmentTransaction.commitAllowingStateLoss();
-    }
-
-    private AndroidApplication getAndroidApplication() {
-        return ((AndroidApplication) getApplication());
     }
 }

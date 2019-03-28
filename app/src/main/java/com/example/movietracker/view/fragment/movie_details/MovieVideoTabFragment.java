@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MovieVideoTabFragment extends BaseFragment implements TabLayoutView<MovieVideosEntity> {
+public class MovieVideoTabFragment<V extends MovieVideosEntity> extends BaseFragment implements TabLayoutView<MovieVideosEntity> {
 
     public interface MovieVideoTabFragmentInteractionListener {
         void showYouTubePlayer(String videoId, MovieVideosEntity movieVideosEntity);
@@ -70,10 +70,7 @@ public class MovieVideoTabFragment extends BaseFragment implements TabLayoutView
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        this.movieDetailsTabLayoutPresenter = new MovieDetailsTabLayoutPresenter();
-
-        this.movieDetailsTabLayoutPresenter.setView(this);
-        this.movieDetailsTabLayoutPresenter.initialize();
+        this.movieDetailsTabLayoutPresenter = new MovieDetailsTabLayoutPresenter(this);
         this.movieDetailsTabLayoutPresenter.getMovieVideos(getMovieIdFromArguments());
     }
 
@@ -112,8 +109,7 @@ public class MovieVideoTabFragment extends BaseFragment implements TabLayoutView
                 getContext(), RecyclerView.VERTICAL, false);
 
         this.recyclerViewVideo.setLayoutManager(rowLayoutManager);
-        VideoListAdapter reviewListAdapter = new VideoListAdapter(someMovieData);
-        reviewListAdapter.setClickListener(new ClickListener());
+        VideoListAdapter reviewListAdapter = new VideoListAdapter(someMovieData, new ClickListener());
         this.recyclerViewVideo.setAdapter(reviewListAdapter);
 
         this.recyclerViewVideo.addOnScrollListener(new SnapScrollListener(this));

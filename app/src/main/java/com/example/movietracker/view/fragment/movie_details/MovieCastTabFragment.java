@@ -64,10 +64,7 @@ public class MovieCastTabFragment extends BaseFragment implements TabLayoutView<
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        this.movieDetailsTabLayoutPresenter = new MovieDetailsTabLayoutPresenter();
-
-        this.movieDetailsTabLayoutPresenter.setView(this);
-        this.movieDetailsTabLayoutPresenter.initialize();
+        this.movieDetailsTabLayoutPresenter = new MovieDetailsTabLayoutPresenter(this);
         this.movieDetailsTabLayoutPresenter.getMovieCasts(getMovieIdFromArguments());
     }
 
@@ -82,7 +79,7 @@ public class MovieCastTabFragment extends BaseFragment implements TabLayoutView<
         RecyclerView.LayoutManager rowLayoutManager = new LinearLayoutManager(
                 getContext(), RecyclerView.VERTICAL, false);
         this.recyclerViewCastList.setLayoutManager(rowLayoutManager);
-        CastListAdapter castListAdapter = new CastListAdapter(getContext(), someMovieData);
+        CastListAdapter castListAdapter = new CastListAdapter(someMovieData);
         this.recyclerViewCastList.setAdapter(castListAdapter);
 
         this.recyclerViewCastList.addOnScrollListener(new SnapScrollListener(this));

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.data.entity.MoviesEntity;
+import com.example.movietracker.di.DataProvider;
 import com.example.movietracker.listener.OnLastElementReachedListener;
 import com.example.movietracker.presenter.MovieListPresenter;
 import com.example.movietracker.view.adapter.MovieListAdapter;
@@ -75,10 +76,8 @@ public class MovieListFragment extends BaseFragment implements MovieListView, On
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        this.movieListPresenter = new MovieListPresenter();
-        this.movieListPresenter.setView(this);
-        this.movieListPresenter.initialize();
-        this.movieListPresenter.getMovies(getGenres());
+        this.movieListPresenter = new MovieListPresenter(this);
+        this.movieListPresenter.getMoviesByGenres(getGenres());
 
         setSupportActionBar();
         setNotTransparentToolbar();
@@ -118,8 +117,7 @@ public class MovieListFragment extends BaseFragment implements MovieListView, On
                 getContext(), RecyclerView.VERTICAL, false);
 
         this.movieRecyclerView.setLayoutManager(rowLayoutManager);
-        MovieListAdapter movieListAdapter = new MovieListAdapter(getContext(), moviesEntity);
-        movieListAdapter.setClickListener(new ClickListener());
+        MovieListAdapter movieListAdapter = new MovieListAdapter(moviesEntity, new ClickListener(), DataProvider.genresEntity);
         this.movieRecyclerView.setAdapter(movieListAdapter);
 
         this.movieRecyclerView.addOnScrollListener(new SnapScrollListener(this));
@@ -154,7 +152,7 @@ public class MovieListFragment extends BaseFragment implements MovieListView, On
     @Override
     public void lastElementReached() {
 
-        this.movieListPresenter.
+       // this.movieListPresenter.
         showToast("Last Elemetn");
     }
 
@@ -169,6 +167,11 @@ public class MovieListFragment extends BaseFragment implements MovieListView, On
     private class ClickListener implements RecyclerView.OnClickListener {
         @Override
         public void onClick(View v) {
+/*            RecyclerView recyclerView =(RecyclerView) v.getRootView();
+           RecyclerView.LayoutManager manager =  recyclerView.getLayoutManager();
+           manager.getPosition(v);
+           recyclerView.getChildViewHolder(v).*/
+
             MovieListFragment.this.movieListPresenter.onMovieItemClicked((int)v.getTag());
         }
     }

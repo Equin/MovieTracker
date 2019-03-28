@@ -13,14 +13,12 @@ import androidx.recyclerview.widget.RecyclerView;
 public class GenreView {
 
     private final Context context;
+    private final RecyclerView recyclerView;
     private View view;
 
-    public GenreView(Context context) {
+    public GenreView(Context context, RecyclerView recyclerView) {
         this.context = context;
-    }
-
-    public void setView(View view) {
-        this.view = view;
+        this.recyclerView = recyclerView;
     }
 
     public void renderGenreView(GenresEntity genreList) {
@@ -28,12 +26,9 @@ public class GenreView {
         RecyclerView.LayoutManager rowLayoutManager = new LinearLayoutManager(
                 this.context, RecyclerView.VERTICAL, false);
 
-        RecyclerView rowRecyclerView = this.view.findViewById(R.id.recyclerView_content);
-        rowRecyclerView.setLayoutManager(rowLayoutManager);
+        this.recyclerView.setLayoutManager(rowLayoutManager);
 
-        GenreViewAdapter genreViewAdapter = new GenreViewAdapter(this.context, genreList);
-        rowRecyclerView.setAdapter(genreViewAdapter);
-
-
+        GenreViewAdapter genreViewAdapter = new GenreViewAdapter(genreList);
+        this.recyclerView.setAdapter(genreViewAdapter);
     }
 }

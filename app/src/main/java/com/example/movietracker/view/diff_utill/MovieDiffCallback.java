@@ -1,38 +1,40 @@
 package com.example.movietracker.view.diff_utill;
 
-import com.example.movietracker.data.entity.MoviesEntity;
+import com.example.movietracker.data.entity.MovieResultEntity;
+
+import java.util.List;
 
 import androidx.recyclerview.widget.DiffUtil;
 
 public class MovieDiffCallback extends DiffUtil.Callback {
 
-    private MoviesEntity oldMovies;
-    private MoviesEntity newMovies;
+    private List<MovieResultEntity> oldMovies;
+    private List<MovieResultEntity> newMovies;
 
-    public MovieDiffCallback(MoviesEntity oldMovies, MoviesEntity newMovies) {
+    public MovieDiffCallback(List<MovieResultEntity> oldMovies, List<MovieResultEntity> newMovies) {
         this.oldMovies = oldMovies;
         this.newMovies = newMovies;
     }
 
     @Override
     public int getOldListSize() {
-        return this.oldMovies.getMovies().size();
+        return this.oldMovies.size();
     }
 
     @Override
     public int getNewListSize() {
-        return this.newMovies.getMovies().size();
+        return this.newMovies.size();
     }
 
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-        return this.oldMovies.getMovies().get(oldItemPosition)
-                .getMovieId() == this.newMovies.getMovies().get(newItemPosition).getMovieId();
+        return this.oldMovies.get(oldItemPosition)
+                .getMovieId() == this.newMovies.get(newItemPosition).getMovieId();
     }
 
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        return this.oldMovies.getMovies().get(oldItemPosition)
-                .equals(this.newMovies.getMovies().get(newItemPosition));
+        return this.oldMovies.get(oldItemPosition)
+                .equals(this.newMovies.get(newItemPosition));
     }
 }

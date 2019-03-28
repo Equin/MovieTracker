@@ -33,7 +33,7 @@ public  class SnapScrollListener extends RecyclerView.OnScrollListener {
 
     private boolean isLastElement(RecyclerView recyclerView) {
         final LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
-        return (recyclerView.getAdapter().getItemCount()-1) == manager.findLastVisibleItemPosition();
+        return (recyclerView.getAdapter().getItemCount() - 1) == manager.findLastVisibleItemPosition();
     }
 
     private int getScrollDistanceOfColumnClosestToTop(final RecyclerView recyclerView) {
@@ -44,13 +44,18 @@ public  class SnapScrollListener extends RecyclerView.OnScrollListener {
             return 0;
         }
 
-        if(manager.findLastCompletelyVisibleItemPosition() == recyclerView.getAdapter().getItemCount()-1) {
+        if(manager.findLastCompletelyVisibleItemPosition() == recyclerView.getAdapter().getItemCount() - 1) {
             return 0;
         }
 
         final int rowHeight = firstVisibleRowViewHolder.itemView.getMeasuredHeight() - 100;
         final int top = firstVisibleRowViewHolder.itemView.getTop() -50;
         final int absoluteTop = Math.abs(top);
+
+        if (rowHeight > manager.getHeight()) {
+            return 0;
+        }
+
         return (absoluteTop <= (rowHeight / 2)) ? top : (rowHeight - absoluteTop) + 100;
     }
 }

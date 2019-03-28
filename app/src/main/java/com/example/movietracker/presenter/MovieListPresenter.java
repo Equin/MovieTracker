@@ -25,15 +25,13 @@ public class MovieListPresenter extends BasePresenter {
     private List<MovieResultEntity> movieResultEntities;
     private MovieRequestEntity movieRequestEntity;
 
-    public MovieListPresenter() {
-        this.getMoviesUseCase = new GetMoviesUseCase();
-    }
-
-    public void setView(MovieListView view) {
+    public MovieListPresenter(MovieListView view) {
         this.view = view;
+        this.getMoviesUseCase = new GetMoviesUseCase();
+        initialize();
     }
 
-    public void initialize() {
+    private void initialize() {
         this.moviesEntity = new MoviesEntity();
         this.movieResultEntities = new ArrayList<>();
         this.movieRequestEntity = new MovieRequestEntity();
@@ -44,7 +42,7 @@ public class MovieListPresenter extends BasePresenter {
         this.view.showMovieDetailScreen(clickedMovieId);
     }
 
-    public void getMovies(GenresEntity genresEntity) {
+    public void getMoviesByGenres(GenresEntity genresEntity) {
         List<GenreEntity> genreEntity = genresEntity.getGenres();
         StringBuilder sb = new StringBuilder();
 
@@ -56,10 +54,19 @@ public class MovieListPresenter extends BasePresenter {
         this.movieRequestEntity.setPage(1);
         this.movieRequestEntity.setGenresId(this.genresIdToLoadMoviesBy);
 
-        this.getMoviesUseCase.execute(new GetMoviesObserver(),this.movieRequestEntity);
+        getMovies(this.movieRequestEntity);
     }
 
-    private void getMoviesBy
+
+
+    public void getMoviesByFilters(MovieRequestEntity movieRequestEntity) {
+
+
+    }
+
+    private void getMovies(MovieRequestEntity movieRequestEntity) {
+        this.getMoviesUseCase.execute(new GetMoviesObserver(), movieRequestEntity);
+    }
 
     private void showLoading() {
         this.view.showLoading();

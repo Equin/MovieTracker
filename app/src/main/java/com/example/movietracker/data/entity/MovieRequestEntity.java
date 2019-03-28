@@ -6,14 +6,18 @@ public class MovieRequestEntity {
 
     private int page;
     private String genresId;
+    private boolean includeAdult;
+    private String sortBy;
 
     public MovieRequestEntity() {
 
     }
 
-    public MovieRequestEntity(int page, String genresId) {
+    public MovieRequestEntity(int page, String genresId, boolean includeAdult, String sortBy) {
         this.page = page;
         this.genresId = genresId;
+        this.includeAdult = includeAdult;
+        this.sortBy = sortBy;
     }
 
     public int getPage() {
@@ -30,5 +34,21 @@ public class MovieRequestEntity {
 
     public void setGenresId(String genresId) {
         this.genresId = genresId;
+    }
+
+    public boolean isIncludeAdult() {
+        return includeAdult;
+    }
+
+    public void setIncludeAdult(boolean includeAdult) {
+        this.includeAdult = includeAdult;
+    }
+
+    public String getSortBy() {
+        return sortBy;
+    }
+
+    public void setSortBy(String sortBy) {
+        this.sortBy = sortBy;
     }
 }

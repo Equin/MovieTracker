@@ -1,5 +1,6 @@
 package com.example.movietracker.data.repository;
 
+import com.example.movietracker.data.entity.MovieRequestEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.data.entity.movie_details.cast.MovieCastsEntity;
 import com.example.movietracker.data.entity.movie_details.MovieDetailsEntity;
@@ -35,8 +36,12 @@ public class MovieDataRepository implements MovieRepository {
     }
 
     @Override
-    public Observable<MoviesEntity> getMovies(String genresIds) {
-        return this.movieApi.getMoviesByGenres(genresIds);
+    public Observable<MoviesEntity> getMovies(MovieRequestEntity movieRequestEntity) {
+        return this.movieApi.getMovies(
+                movieRequestEntity.getGenresId(),
+                movieRequestEntity.getSortBy(),
+                movieRequestEntity.getPage(),
+                movieRequestEntity.isIncludeAdult());
     }
 
     @Override

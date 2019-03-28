@@ -2,32 +2,29 @@ package com.example.movietracker;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
+
 import com.example.movietracker.di.ClassProvider;
 import com.example.movietracker.di.DataProvider;
 import com.squareup.leakcanary.LeakCanary;
 
 public class AndroidApplication extends Application {
 
-    private Activity runningActivity;
+    private static Activity runningActivity;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        this.initializeInjector();
+
         this.initializeLeakDetection();
     }
 
-    private void initializeInjector() {
-       // ClassProvider.initialize();
-     //   DataProvider.initialize();
+    public static Activity getRunningActivity() {
+        return AndroidApplication.runningActivity;
     }
 
-    public Activity getRunningActivity() {
-        return this.runningActivity;
-    }
-
-    public void setRunningActivity(Activity runningActivity) {
-        this.runningActivity = runningActivity;
+    public static void setRunningActivity(Activity runningActivity) {
+        AndroidApplication.runningActivity = runningActivity;
     }
 
     private void initializeLeakDetection() {
