@@ -117,9 +117,15 @@ public class MovieListFragment extends BaseFragment implements MovieListView, On
                 getContext(), RecyclerView.VERTICAL, false);
 
         this.movieRecyclerView.setLayoutManager(rowLayoutManager);
-        MovieListAdapter movieListAdapter = new MovieListAdapter(moviesEntity, new ClickListener(), DataProvider.genresEntity);
-        this.movieRecyclerView.setAdapter(movieListAdapter);
+        MovieListAdapter movieListAdapter = new MovieListAdapter(
+                moviesEntity,
+                new ClickListener(
+                        moviesEntity,
+                        movieRecyclerView,
+                        movieListPresenter),
+                DataProvider.genresEntity);
 
+        this.movieRecyclerView.setAdapter(movieListAdapter);
         this.movieRecyclerView.addOnScrollListener(new SnapScrollListener(this));
     }
 
@@ -165,14 +171,22 @@ public class MovieListFragment extends BaseFragment implements MovieListView, On
     }
 
     private class ClickListener implements RecyclerView.OnClickListener {
+        MoviesEntity moviesEntity;
+        RecyclerView recyclerView;
+        MovieListPresenter movieListPresenter;
+
+        public ClickListener(MoviesEntity moviesEntity, RecyclerView recyclerView, MovieListPresenter movieListPresenter) {
+            this.moviesEntity = moviesEntity;
+            this.recyclerView = recyclerView;
+            this.movieListPresenter = movieListPresenter;
+        }
+
         @Override
         public void onClick(View v) {
-/*            RecyclerView recyclerView =(RecyclerView) v.getRootView();
-           RecyclerView.LayoutManager manager =  recyclerView.getLayoutManager();
-           manager.getPosition(v);
-           recyclerView.getChildViewHolder(v).*/
+            int itemPosition = this.recyclerView.getChildAdapterPosition(v);
 
-            MovieListFragment.this.movieListPresenter.onMovieItemClicked((int)v.getTag());
+            this.movieListPresenter.onMovieItemClicked(
+                    this.moviesEntity.getMovies().get(itemPosition).getMovieId());
         }
     }
 }

@@ -130,9 +130,12 @@ public class MovieVideoTabFragment<V extends MovieVideosEntity> extends BaseFrag
 
     private class ClickListener implements RecyclerView.OnClickListener {
         @Override
-        public void onClick(View v) {
+        public void onClick(View clickedView) {
             showLoading();
-            movieVideoTabFragmentInteractionListener.showYouTubePlayer( (String)v.getTag(), someMovieData);
+            int position = recyclerViewVideo.getChildAdapterPosition(clickedView);
+            movieVideoTabFragmentInteractionListener.showYouTubePlayer(
+                    someMovieData.getMovieVideoResultEntities().get(position).getVideoKey(),
+                    someMovieData);
         }
     }
 }

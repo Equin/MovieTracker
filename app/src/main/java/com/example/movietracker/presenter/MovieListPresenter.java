@@ -2,38 +2,36 @@ package com.example.movietracker.presenter;
 
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.MovieRequestEntity;
-import com.example.movietracker.data.entity.MovieResultEntity;
 import com.example.movietracker.data.entity.genre.GenreEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.interactor.DefaultObserver;
-import com.example.movietracker.interactor.use_cases.GetMoviesUseCase;
+import com.example.movietracker.model.ModelContract;
+import com.example.movietracker.model.model_impl.MovieModelImpl;
 import com.example.movietracker.view.contract.MovieListView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.annotations.NonNull;
 
 public class MovieListPresenter extends BasePresenter {
 
-    private GetMoviesUseCase getMoviesUseCase;
-
     private MovieListView view;
     private String genresIdToLoadMoviesBy;
-    private MoviesEntity moviesEntity;
-    private List<MovieResultEntity> movieResultEntities;
+    //private MoviesEntity moviesEntity;
+  //  private List<MovieResultEntity> movieResultEntities;
     private MovieRequestEntity movieRequestEntity;
+    private ModelContract.MovieModel movieModel;
 
     public MovieListPresenter(MovieListView view) {
         this.view = view;
-        this.getMoviesUseCase = new GetMoviesUseCase();
+        this.movieModel = new MovieModelImpl();
         initialize();
     }
 
     private void initialize() {
-        this.moviesEntity = new MoviesEntity();
-        this.movieResultEntities = new ArrayList<>();
+        //this.moviesEntity = new MoviesEntity();
+      //  this.movieResultEntities = new ArrayList<>();
         this.movieRequestEntity = new MovieRequestEntity();
         showLoading();
     }
@@ -65,7 +63,7 @@ public class MovieListPresenter extends BasePresenter {
     }
 
     private void getMovies(MovieRequestEntity movieRequestEntity) {
-        this.getMoviesUseCase.execute(new GetMoviesObserver(), movieRequestEntity);
+        this.movieModel.getMovies(new GetMoviesObserver(), movieRequestEntity);
     }
 
     private void showLoading() {
@@ -79,7 +77,7 @@ public class MovieListPresenter extends BasePresenter {
 
     @Override
     public void destroy() {
-        this.getMoviesUseCase.dispose();
+        this.movieModel.stop();
         this.view = null;
     }
 

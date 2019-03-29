@@ -15,7 +15,6 @@ import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.presenter.MainPresenter;
 import com.example.movietracker.view.contract.MainView;
 import com.example.movietracker.view.custom_view.CustomGenreView;
-import com.example.movietracker.view.custom_view.GenreView;
 
 import java.util.List;
 
@@ -40,7 +39,6 @@ public class MainFragment extends BaseFragment implements MainView {
     }
 
     private MainPresenter mainPresenter;
-    private GenreView genreView;
     private GenresEntity genresEntity;
 
     private MainFragmentInteractionListener mainFragmentInteractionListener;

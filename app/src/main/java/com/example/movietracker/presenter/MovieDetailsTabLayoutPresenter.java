@@ -5,41 +5,36 @@ import com.example.movietracker.data.entity.movie_details.cast.MovieCastsEntity;
 import com.example.movietracker.data.entity.movie_details.review.MovieReviewsEntity;
 import com.example.movietracker.data.entity.movie_details.video.MovieVideosEntity;
 import com.example.movietracker.interactor.DefaultObserver;
-import com.example.movietracker.interactor.use_cases.movie_detail.GetMovieCastsUseCase;
-import com.example.movietracker.interactor.use_cases.movie_detail.GetMovieReviewsUseCase;
-import com.example.movietracker.interactor.use_cases.movie_detail.GetMovieVideosUseCase;
+import com.example.movietracker.model.ModelContract;
+import com.example.movietracker.model.model_impl.MovieDetailTabsModelImpl;
 import com.example.movietracker.view.contract.TabLayoutView;
 
 import io.reactivex.annotations.NonNull;
 
 public class MovieDetailsTabLayoutPresenter extends BasePresenter {
 
-    private GetMovieCastsUseCase getMovieCastsUseCase;
-    private GetMovieReviewsUseCase getMovieReviewsUseCase;
-    private GetMovieVideosUseCase getMovieVideosUseCase;
+    private final ModelContract.MovieDetailTabsModel movieDetailTabsModel;
 
     private TabLayoutView view;
 
     public MovieDetailsTabLayoutPresenter(TabLayoutView view) {
-        this.getMovieCastsUseCase = new GetMovieCastsUseCase();
-        this.getMovieReviewsUseCase = new GetMovieReviewsUseCase();
-        this.getMovieVideosUseCase = new GetMovieVideosUseCase();
+        this.movieDetailTabsModel = new MovieDetailTabsModelImpl();
         this.view = view;
     }
 
     public void getMovieCasts(int movieId) {
         showLoading();
-        this.getMovieCastsUseCase.execute(new GetMovieCastObserver(), movieId);
+        this.movieDetailTabsModel.getMovieCasts(new GetMovieCastObserver(), movieId);
     }
 
     public void getMovieReviews(int movieId) {
         showLoading();
-        this.getMovieReviewsUseCase.execute(new GetMovieReviewObserver(), movieId);
+        this.movieDetailTabsModel.getMovieReviews(new GetMovieReviewObserver(), movieId);
     }
 
     public void getMovieVideos(int movieId) {
         showLoading();
-        this.getMovieVideosUseCase.execute(new GetMovieVideosObserver(), movieId);
+        this.movieDetailTabsModel.getMovieVideos(new GetMovieVideosObserver(), movieId);
     }
 
     private void showLoading() {
@@ -57,7 +52,7 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
     @Override
     public void destroy() {
         this.view = null;
-        this.getMovieCastsUseCase.dispose();
+        this.movieDetailTabsModel.stop();
     }
 
     private class GetMovieCastObserver extends DefaultObserver<MovieCastsEntity> {

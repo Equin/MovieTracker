@@ -10,12 +10,8 @@ import com.bumptech.glide.Glide;
 import com.example.movietracker.data.entity.movie_details.video.MovieVideoResultEntity;
 import com.example.movietracker.data.entity.movie_details.video.MovieVideosEntity;
 import com.example.movietracker.data.net.constant.NetConstant;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerFullScreenListener;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.movietracker.R;
 
@@ -35,6 +31,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
     @Override
     public VideoListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_video_item, parent, false);
+        view.setOnClickListener(this.clickListener);
         return new VideoListViewHolder(view);
     }
 
@@ -45,9 +42,6 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         viewHolder.loadThumbai(videoId);
         viewHolder.videoName.setText(
                 movieVideoResultEntity.get(position).getVideoName());
-
-        viewHolder.itemView.setOnClickListener(this.clickListener);
-        viewHolder.itemView.setTag(videoId);
     }
 
     @Override

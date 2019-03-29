@@ -89,8 +89,8 @@ public class YouTubePlayerFragment extends BaseFragment implements OnBackPressLi
         RecyclerView.LayoutManager rowLayoutManager = new LinearLayoutManager(
                 getContext(), RecyclerView.VERTICAL, false);
         this.recyclerViewYoutubeVideo.setLayoutManager(rowLayoutManager);
-        VideoListAdapter reviewListAdapter = new VideoListAdapter(this.movieVideosEntity, new ClickListener());
-        this.recyclerViewYoutubeVideo.setAdapter(reviewListAdapter);
+        VideoListAdapter videoListAdapter = new VideoListAdapter(this.movieVideosEntity, new ClickListener());
+        this.recyclerViewYoutubeVideo.setAdapter(videoListAdapter);
         this.recyclerViewYoutubeVideo.addOnScrollListener(new SnapScrollListener(this));
     }
 
@@ -114,7 +114,9 @@ public class YouTubePlayerFragment extends BaseFragment implements OnBackPressLi
     }
 
     private void playVideo(String videoId) {
-        youTubePlayer.loadVideo(videoId, 0f);
+        if(youTubePlayer!=null) {
+            youTubePlayer.loadVideo(videoId, 0f);
+        }
     }
 
     private void initPictureInPicture(YouTubePlayerView youTubePlayerView) {
@@ -208,25 +210,29 @@ public class YouTubePlayerFragment extends BaseFragment implements OnBackPressLi
 
 
     private class ClickListener implements RecyclerView.OnClickListener {
+
+        private int previousClick = -1;
+        private View previousView;
+
         @Override
         public void onClick(View v) {
-            playVideo((String) v.getTag());
 
-      /*    int positionClick = recyclerViewYoutubeVideo.getChildAdapterPosition(v);
-          MovieVideosEntity tempVideo =  new MovieVideosEntity();
-          List<MovieVideoResultEntity> tempRes = new ArrayList<>(movieVideosEntity.getMovieVideoResultEntities());
+            int position = recyclerViewYoutubeVideo.getChildAdapterPosition(v);
 
+            if(previousClick != position && previousClick != -1) {
+                v.setAlpha(0.5f);
+                previousView.setAlpha(1f);;
+                previousClick = position;
+                previousView = v;
+            } else {
+                v.setAlpha(0.5f);
+                previousView = v;
+                previousClick = position;
+            }
 
-            Collections.copy(tempRes, movieVideosEntity.getMovieVideoResultEntities());
-            tempVideo.setMovieVideoResultEntities(tempRes);
-
-            List<MovieVideoResultEntity> copy = tempRes.stream()
-                    .skip(1)
-                    .collect(Collectors.toList());
-
-          tempVideo.getMovieVideoResultEntities().remove(positionClick);
-          recyclerViewYoutubeVideo.getAdapter().notifyItemRemoved(positionClick);
-          recyclerViewYoutubeVideo.getAdapter().notifyItemRangeChanged(positionClick, tempVideo.getMovieVideoResultEntities().size());*/
+            if(position != previousClick) {
+                playVideo(movieVideosEntity.getMovieVideoResultEntities().get(position).getVideoKey());
+            }
         }
 
     }

@@ -53,9 +53,11 @@ public class CustomGenreView extends ViewGroup {
                 toggleButton.setTextOff(title);
                 toggleButton.setTextOn(title);
 
+                toggleButton.setAllCaps(false);
                 toggleButton.setSelected(genres.get(j).get(i).isSelected());
 
                 toggleButton.setPadding(25, 0, 25, 0);
+
                 toggleButton.setBackgroundDrawable(getContext().getDrawable(R.drawable.main_button_background));
                 toggleButton.setLayoutParams(linearLayoutParams);
 
@@ -105,7 +107,7 @@ public class CustomGenreView extends ViewGroup {
             //   child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight);
             child.layout(curLeft, curTop, childWidth, curTop + curHeight);
 
-            child.setPadding(((childRight - curWidth)/10), 0, 0, 0);
+            child.setPadding(((childRight - curWidth)/10), 0, (childRight - curWidth)/10, 0);
             //store the max height
             if (maxHeight < curHeight)
                 maxHeight = curHeight;

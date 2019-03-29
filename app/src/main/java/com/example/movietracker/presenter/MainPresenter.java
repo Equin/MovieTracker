@@ -5,7 +5,8 @@ import com.example.movietracker.data.entity.genre.GenreEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.di.DataProvider;
 import com.example.movietracker.interactor.DefaultObserver;
-import com.example.movietracker.interactor.use_cases.GetGenresUseCase;
+import com.example.movietracker.model.model_impl.GenreModelImpl;
+import com.example.movietracker.model.ModelContract;
 import com.example.movietracker.view.contract.MainView;
 
 import java.util.ArrayList;
@@ -15,18 +16,18 @@ import io.reactivex.annotations.NonNull;
 
 public class MainPresenter extends BasePresenter {
 
-    private  GetGenresUseCase getGenresUseCase;
+    private ModelContract.GenreModel genreModel;
 
     private MainView mainView;
 
     public MainPresenter(MainView mainView) {
         this.mainView = mainView;
-        this.getGenresUseCase = new GetGenresUseCase();
+        this.genreModel = new GenreModelImpl();
     }
 
     public void getGenres() {
         showLoading();
-        this.getGenresUseCase.execute(new GetGenresObserver(), null);
+        this.genreModel.getGenres(new GetGenresObserver());
     }
 
     private void showLoading() {
@@ -40,7 +41,7 @@ public class MainPresenter extends BasePresenter {
     @Override
     public void destroy() {
         this.mainView = null;
-        this.getGenresUseCase.dispose();
+        this.genreModel.stop();
     }
 
     public void onSearchButtonClicked(GenresEntity genresEntity) {

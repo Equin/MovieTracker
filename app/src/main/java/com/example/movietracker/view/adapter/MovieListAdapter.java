@@ -42,6 +42,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     @Override
     public MovieListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_list_item, parent, false);
+        view.setOnClickListener(this.clickListener);
         return new MovieListViewHolder(view);
     }
 
@@ -67,9 +68,6 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
           .load(NetConstant.IMAGE_BASE_URL +movie.getPosterPath())
           .centerCrop()
           .into(holder.moviePoster);
-
-        holder.movieCardView.setTag(movie.getMovieId());
-        holder.movieCardView.setOnClickListener(this.clickListener);
     }
 
     @Override
@@ -84,7 +82,6 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
         private TextView movieTitle;
         private TextView movieGenres;
         private TextView movieRating;
-        private CardView movieCardView;
 
         MovieListViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -93,7 +90,6 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
             this.movieTitle = itemView.findViewById(R.id.textView_movieTitle);
             this.movieGenres = itemView.findViewById(R.id.textView_MovieGenres);
             this.movieRating = itemView.findViewById(R.id.textView_movieRating);
-            this.movieCardView = itemView.findViewById(R.id.cardView_movieCard);
         }
     }
 
