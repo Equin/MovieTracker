@@ -22,7 +22,6 @@ public class YouTubeActivity extends BaseActivity {
         return intent;
     }
 
-
     public static Intent getCallingIntent(Context context) {
         return new Intent(context, YouTubeActivity.class);
     }

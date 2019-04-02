@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.example.movietracker.AndroidApplication;
 import com.example.movietracker.R;
+import com.example.movietracker.di.ClassProvider;
 import com.example.movietracker.listener.OnBackPressListener;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,28 +15,32 @@ import androidx.fragment.app.FragmentTransaction;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
+    private static final String TAG = BaseActivity.class.getCanonicalName();
+
     private enum FragmentAction {
         ADD,
         REPLACE
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    public void onResume() {
+        super.onResume();
         AndroidApplication.setRunningActivity(this);
+        ClassProvider.initialize();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        Log.d("onDestroy", "destroyed");
+        Log.d(TAG, "destroyed");
 
         if (this.equals(AndroidApplication.getRunningActivity())) {
             AndroidApplication.setRunningActivity(null);
+            ClassProvider.onDestroy();
         }
     }
+
 
     @Override
     public void onBackPressed() {
@@ -81,7 +86,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 fragmentTransaction.commitAllowingStateLoss();
                 break;
             default:
-                Log.d("TAG", "There is no such action for transaction : " + fragmentAction.toString());
+                Log.d(TAG, "There is no such action for transaction : " + fragmentAction.toString());
         }
     }
 }

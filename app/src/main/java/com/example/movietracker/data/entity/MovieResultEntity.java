@@ -5,8 +5,14 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Date;
 import java.util.List;
 
+import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity
 public class MovieResultEntity {
 
+    @PrimaryKey
     @SerializedName("id")
     private int movieId;
 
@@ -31,16 +37,15 @@ public class MovieResultEntity {
     @SerializedName("release_date")
     private Date movieReleaseDate;
 
-
-    public MovieResultEntity(int movieId, String movieTitle, String posterPath, List<Integer> genreIds, boolean isAdult, String movieOverview, Date movieReleaseDate, double movieVoteAverage) {
+    public MovieResultEntity(int movieId, String movieTitle, String posterPath, List<Integer> genreIds, boolean isAdult, String movieOverview, double movieVoteAverage, Date movieReleaseDate) {
         this.movieId = movieId;
         this.movieTitle = movieTitle;
         this.posterPath = posterPath;
         this.genreIds = genreIds;
         this.isAdult = isAdult;
         this.movieOverview = movieOverview;
-        this.movieReleaseDate = movieReleaseDate;
         this.movieVoteAverage = movieVoteAverage;
+        this.movieReleaseDate = movieReleaseDate;
     }
 
     public int getMovieId() {

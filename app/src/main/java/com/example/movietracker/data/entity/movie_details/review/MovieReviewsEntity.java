@@ -7,58 +7,22 @@ import java.util.List;
 public class MovieReviewsEntity {
 
     @SerializedName("id")
-    private int reviewsId;
-
-    @SerializedName("page")
-    private int reviewsPage;
-
-    @SerializedName("total_pages")
-    private int totalPages;
-
-    @SerializedName("total_results")
-    private int totalResults;
+    private int movieId;
 
     @SerializedName("results")
     private List<MovieReviewResultEntity> reviews;
 
-    public MovieReviewsEntity(int reviewsId, int reviewsPage, int totalPages, int totalResults, List<MovieReviewResultEntity> reviews) {
-        this.reviewsId = reviewsId;
-        this.reviewsPage = reviewsPage;
-        this.totalPages = totalPages;
-        this.totalResults = totalResults;
+    public MovieReviewsEntity(int movieId, List<MovieReviewResultEntity> reviews) {
+        this.movieId = movieId;
         this.reviews = reviews;
     }
 
-    public int getReviewsId() {
-        return reviewsId;
+    public int getMovieId() {
+        return movieId;
     }
 
-    public void setReviewsId(int reviewsId) {
-        this.reviewsId = reviewsId;
-    }
-
-    public int getReviewsPage() {
-        return reviewsPage;
-    }
-
-    public void setReviewsPage(int reviewsPage) {
-        this.reviewsPage = reviewsPage;
-    }
-
-    public int getTotalPages() {
-        return totalPages;
-    }
-
-    public void setTotalPages(int totalPages) {
-        this.totalPages = totalPages;
-    }
-
-    public int getTotalResults() {
-        return totalResults;
-    }
-
-    public void setTotalResults(int totalResults) {
-        this.totalResults = totalResults;
+    public void setMovieId(int movieId) {
+        this.movieId = movieId;
     }
 
     public List<MovieReviewResultEntity> getReviews() {

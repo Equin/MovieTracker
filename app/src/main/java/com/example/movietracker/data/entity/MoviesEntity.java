@@ -3,6 +3,12 @@ package com.example.movietracker.data.entity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
+import java.util.UUID;
+
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+import androidx.room.Relation;
 
 public class MoviesEntity {
 
@@ -19,10 +25,10 @@ public class MoviesEntity {
 
     }
 
-    public MoviesEntity(int page, int totalPages, List<MovieResultEntity> movies) {
+    public MoviesEntity(int page, int totalPages, List<MovieResultEntity> movieResultEntities) {
         this.page = page;
         this.totalPages = totalPages;
-        this.movies = movies;
+        this.movies = movieResultEntities;
     }
 
     public int getPage() {

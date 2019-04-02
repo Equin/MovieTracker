@@ -52,11 +52,14 @@ public class MainPresenter extends BasePresenter {
         GenresEntity genres = new GenresEntity();
         List<GenreEntity> genreList = new ArrayList<>();
 
-        for ( GenreEntity genre : genresEntity.getGenres()) {
-            if (genre.isSelected()) {
-                genreList.add(genre);
+        if (genresEntity != null) {
+            for (GenreEntity genre : genresEntity.getGenres()) {
+                if (genre.isSelected()) {
+                    genreList.add(genre);
+                }
             }
         }
+
         genres.setGenres(genreList);
 
         return genres;

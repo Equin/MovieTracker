@@ -4,8 +4,13 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity
 public class GenreEntity implements Serializable {
 
+    @PrimaryKey
     @SerializedName("id")
     private int genreId;
 

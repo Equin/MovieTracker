@@ -5,6 +5,8 @@ import com.example.movietracker.data.repository.MovieRepository;
 import com.example.movietracker.di.ClassProvider;
 import com.example.movietracker.interactor.UseCase;
 
+import javax.inject.Singleton;
+
 import io.reactivex.Observable;
 
 public class GetMovieCastsUseCase extends UseCase<MovieCastsEntity, Integer> {
@@ -18,6 +20,5 @@ public class GetMovieCastsUseCase extends UseCase<MovieCastsEntity, Integer> {
     @Override
     protected Observable<MovieCastsEntity> buildUseCaseObservable(Integer movieDetails) {
         return this.movieRepository.getMovieCasts(movieDetails);
-
     }
 }

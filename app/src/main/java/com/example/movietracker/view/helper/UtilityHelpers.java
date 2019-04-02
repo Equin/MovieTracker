@@ -29,6 +29,8 @@ public class UtilityHelpers {
     public static String getPipeDividedGenres(List<GenreEntity> genres) {
         StringBuilder stringBuilder = new StringBuilder();
 
+        if (genres == null) return "";
+
         for(int i = 0; i<genres.size(); i++) {
             stringBuilder.append(genres.get(i).getGenreName());
             if(i != genres.size()-1) {

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.example.movietracker.AndroidApplication;
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.data.entity.movie_details.video.MovieVideosEntity;
@@ -29,18 +30,9 @@ public class MainActivity extends BaseActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_for_fragment);
 
-        ClassProvider.initialize();
-
         if (savedInstanceState == null) {
             addFragment(R.id.container_for_fragment, MainFragment.newInstance());
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        ClassProvider.onDestroy();
     }
 
     @Override

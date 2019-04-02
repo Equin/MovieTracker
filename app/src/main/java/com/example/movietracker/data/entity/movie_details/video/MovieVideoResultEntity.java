@@ -5,8 +5,17 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+
+@Entity
 public class MovieVideoResultEntity implements Serializable {
 
+    @NonNull
+    @PrimaryKey
     @SerializedName("id")
     private String videoId;
 
@@ -31,6 +40,9 @@ public class MovieVideoResultEntity implements Serializable {
     @SerializedName("type")
     private String videoType;
 
+    private int movieId;
+
+    @Ignore
     public MovieVideoResultEntity(String videoId, String iso639, String iso3166, String videoKey, String videoName, String videoSite, int videoSize, String videoType) {
         this.videoId = videoId;
         this.iso639 = iso639;
@@ -40,6 +52,18 @@ public class MovieVideoResultEntity implements Serializable {
         this.videoSite = videoSite;
         this.videoSize = videoSize;
         this.videoType = videoType;
+    }
+
+    public MovieVideoResultEntity(String videoId, String iso639, String iso3166, String videoKey, String videoName, String videoSite, int videoSize, String videoType, int movieId) {
+        this.videoId = videoId;
+        this.iso639 = iso639;
+        this.iso3166 = iso3166;
+        this.videoKey = videoKey;
+        this.videoName = videoName;
+        this.videoSite = videoSite;
+        this.videoSize = videoSize;
+        this.videoType = videoType;
+        this.movieId = movieId;
     }
 
     public String getVideoId() {
@@ -104,5 +128,13 @@ public class MovieVideoResultEntity implements Serializable {
 
     public void setVideoType(String videoType) {
         this.videoType = videoType;
+    }
+
+    public int getMovieId() {
+        return movieId;
+    }
+
+    public void setMovieId(int movieId) {
+        this.movieId = movieId;
     }
 }

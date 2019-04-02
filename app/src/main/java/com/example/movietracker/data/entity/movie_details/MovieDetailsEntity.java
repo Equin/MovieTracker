@@ -7,12 +7,19 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+@Entity
 public class MovieDetailsEntity implements Serializable {
 
     @SerializedName("id")
+    @PrimaryKey
     private int movieId;
 
     @SerializedName("genres")
+    @Ignore
     private List<GenreEntity> genres;
 
     @SerializedName("imdb_id")
