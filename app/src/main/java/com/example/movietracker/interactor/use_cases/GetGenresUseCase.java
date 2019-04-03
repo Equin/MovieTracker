@@ -17,6 +17,6 @@ public class GetGenresUseCase extends UseCase<GenresEntity, Void> {
 
     @Override
     protected Observable<GenresEntity> buildUseCaseObservable(Void aVoid) {
-        return this.movieRepository.getGenres().firstOrError().toObservable();
+        return this.movieRepository.getGenres();
     }
 }

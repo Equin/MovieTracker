@@ -33,6 +33,7 @@ public class CustomGenreView extends ViewGroup {
     }
 
     public void renderGenreView(GenresEntity genresEntity, CompoundButton.OnCheckedChangeListener onCheckedChangeListener, int countOfButtons) {
+        removeAllViews();
         this.genresEntity = genresEntity;
         List<List<GenreEntity>> genres = Lists.partition( this.genresEntity.getGenres(), countOfButtons);
 

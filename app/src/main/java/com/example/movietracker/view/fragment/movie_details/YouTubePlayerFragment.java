@@ -219,6 +219,10 @@ public class YouTubePlayerFragment extends BaseFragment implements OnBackPressLi
 
             int position = recyclerViewYoutubeVideo.getChildAdapterPosition(v);
 
+            if(position != previousClick) {
+                playVideo(movieVideosEntity.getMovieVideoResultEntities().get(position).getVideoKey());
+            }
+
             if(previousClick != position && previousClick != -1) {
                 v.setAlpha(0.5f);
                 previousView.setAlpha(1f);;
@@ -228,10 +232,6 @@ public class YouTubePlayerFragment extends BaseFragment implements OnBackPressLi
                 v.setAlpha(0.5f);
                 previousView = v;
                 previousClick = position;
-            }
-
-            if(position != previousClick) {
-                playVideo(movieVideosEntity.getMovieVideoResultEntities().get(position).getVideoKey());
             }
         }
 

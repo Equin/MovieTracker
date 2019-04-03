@@ -17,9 +17,13 @@ import com.example.movietracker.data.entity.movie_details.video.MovieVideosEntit
 import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.data.net.RestClient;
 import com.example.movietracker.data.net.api.MovieApi;
+import com.example.movietracker.exception.BadRequestExceptionMaker;
+import com.example.movietracker.exception.NoNetworkException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 
@@ -56,10 +60,33 @@ public class MovieDataRepository implements MovieRepository {
 
     @Override
     public Observable<GenresEntity> getGenres() {
-        return this.movieApi.getGenres()
-                .doOnNext(genresEntity -> this.genresDao.saveGenres(genresEntity.getGenres()))
-                .onExceptionResumeNext(genresDao.getAllGenres().map(GenresEntity::new));
+        return Observable.mergeDelayError(
+                /*this.movieApi.getGenres()
+                        .doOnNext(genresEntity -> this.genresDao.saveGenres(genresEntity.getGenres()))
+                        .onErrorResumeNext((error) -> { return
+                            Observable.error(new IOException(error.getMessage()));
+                        })*/Observable.error(new RuntimeException()),
+                this.genresDao.getAllGenres().map(GenresEntity::new));
     }
+
+    /*  return  this.movieApi.getGenres().doOnNext(genresEntity -> this.genresDao.saveGenres(genresEntity.getGenres()))
+                .flatMap(genresEntity -> Observable.create( emitter -> emitter.onNext(genresDao.getAllGenres().map(GenresEntity::new).blockingFirst())))
+                .onErrorResumeNext((error) -> { return Observable.error(BadRequestExceptionMaker.makeCustomExceptionIfBadRequestOrReturnOriginal(error, NoNetworkException.class));})
+                .flatMap(genresEntity -> Observable.create( emitter -> emitter.onNext(genresDao.getAllGenres().map(GenresEntity::new).blockingFirst())));*/
+
+    /* return  this.genresDao.getAllGenres().map(GenresEntity::new).flatMap(
+                genreEntities -> this.movieApi.getGenres())
+                 .doOnNext(genres -> this.genresDao.saveGenres(genres.getGenres()));*/
+
+    /* return  this.movieApi.getGenres().doOnNext(genresEntity -> this.genresDao.saveGenres(genresEntity.getGenres()))
+                .onErrorResumeNext((error) -> { return Observable.error(BadRequestExceptionMaker.makeCustomExceptionIfBadRequestOrReturnOriginal(error, NoNetworkException.class));})
+            .flatMap( (genresEntity) -> { return Observable.just(genresDao.getAllGenres().map(GenresEntity::new)).blockingFirst();});*/
+
+        /* return  this.movieApi.getGenres().doOnNext(genresEntity -> this.genresDao.saveGenres(genresEntity.getGenres()))
+                .onExceptionResumeNext(Observable.concat(genresDao.getAllGenres().map(GenresEntity::new), Observable.error(new IOException())).share());*/
+
+    /* return  this.movieApi.getGenres().doOnNext(genresEntity -> this.genresDao.saveGenres(genresEntity.getGenres()))
+                .onExceptionResumeNext(genresDao.getAllGenres().map(GenresEntity::new));*/
 
     @Override
     public Observable<MoviesEntity> getMovies(MovieRequestEntity movieRequestEntity) {

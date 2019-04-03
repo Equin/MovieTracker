@@ -1,5 +1,7 @@
 package com.example.movietracker.interactor;
 
+import com.example.movietracker.exception.DropBreadcrumb;
+
 import dagger.internal.Preconditions;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -31,8 +33,9 @@ public abstract class UseCase<T, Params> {
     public void execute(DisposableObserver<T> observer, Params params) {
         Preconditions.checkNotNull(observer);
         final Observable<T> observable = this.buildUseCaseObservable(params)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                 .subscribeOn(Schedulers.io())
+                .compose(new DropBreadcrumb<>())
+                .observeOn(AndroidSchedulers.mainThread(), false);
         addDisposable(observable.subscribeWith(observer));
     }
 
