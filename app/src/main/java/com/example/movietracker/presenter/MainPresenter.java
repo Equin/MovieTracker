@@ -48,6 +48,10 @@ public class MainPresenter extends BasePresenter {
        this.mainView.openMovieListView(getSelectedGenres(genresEntity));
     }
 
+    public void onFilterButtonClicked() {
+        this.mainView.openAlertDialog();
+    }
+
     private GenresEntity getSelectedGenres(GenresEntity genresEntity) {
         GenresEntity genres = new GenresEntity();
         List<GenreEntity> genreList = new ArrayList<>();

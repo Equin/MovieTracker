@@ -55,7 +55,7 @@ public class CustomGenreView extends ViewGroup {
                 toggleButton.setTextOn(title);
 
                 toggleButton.setAllCaps(false);
-                toggleButton.setSelected(genres.get(j).get(i).isSelected());
+                toggleButton.setChecked(genres.get(j).get(i).isSelected());
 
                 toggleButton.setPadding(25, 0, 25, 0);
 
@@ -68,6 +68,16 @@ public class CustomGenreView extends ViewGroup {
             }
 
             addView(linearLayout, j);
+        }
+    }
+
+    public void dismisSelections() {
+        for(int i = 0; i < getChildCount(); i++) {
+            LinearLayout linearLayout = (LinearLayout) getChildAt(i);
+            for(int j = 0; j < linearLayout.getChildCount(); j++) {
+                ToggleButton toggleButton = (ToggleButton) linearLayout.getChildAt(j);
+                toggleButton.setChecked(false);
+            }
         }
     }
 

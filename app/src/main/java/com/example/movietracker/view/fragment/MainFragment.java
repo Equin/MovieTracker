@@ -12,9 +12,11 @@ import android.widget.ToggleButton;
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.genre.GenreEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
+import com.example.movietracker.di.ClassProvider;
 import com.example.movietracker.presenter.MainPresenter;
 import com.example.movietracker.view.contract.MainView;
 import com.example.movietracker.view.custom_view.CustomGenreView;
+import com.example.movietracker.view.custom_view.FilterAlertDialog;
 
 import java.util.List;
 
@@ -138,9 +140,28 @@ public class MainFragment extends BaseFragment implements MainView {
          this.mainPresenter.onSearchButtonClicked(this.genresEntity);
     }
 
+    @Optional
+    @OnClick(R.id.main_button_filter)
+    public void onFilterButtonClicked(){
+        this.mainPresenter.onFilterButtonClicked();
+    }
+
+    @Optional
+    @OnClick(R.id.main_button_cancel)
+    public void onCancelButtonClicked(){
+       this.customGenreView.dismisSelections();
+       ClassProvider.filterAlertDialog.dismissSelection();
+    }
+
+
     @Override
     public void openMovieListView(GenresEntity genreList) {
         this.mainFragmentInteractionListener.showMovieListScreen(genreList);
+    }
+
+    @Override
+    public void openAlertDialog() {
+        ClassProvider.filterAlertDialog.showFilterAlertDialog(this.getContext());
     }
 
     public class onCheckedListener implements ToggleButton.OnCheckedChangeListener {

@@ -10,6 +10,7 @@ import com.example.movietracker.data.net.RestClientImpl;
 import com.example.movietracker.data.net.constant.NetConstant;
 import com.example.movietracker.data.repository.MovieDataRepository;
 import com.example.movietracker.data.repository.MovieRepository;
+import com.example.movietracker.view.custom_view.FilterAlertDialog;
 
 public class ClassProvider {
 
@@ -21,6 +22,8 @@ public class ClassProvider {
     public static RestClient restClient;
     public static MoviesDatabase moviesDatabase;
     public static MovieRepository movieRepository;
+    public static FilterAlertDialog filterAlertDialog;
+
 
     public static void initialize() {
 
@@ -32,6 +35,9 @@ public class ClassProvider {
         movieRepository = MovieDataRepository.getInstance();
         ((MovieDataRepository) movieRepository).init(restClient, moviesDatabase);
 
+        filterAlertDialog = FilterAlertDialog.getInstance();
+        filterAlertDialog.init();
+
         Log.d(TAG, "initialized");
     }
 
@@ -39,6 +45,7 @@ public class ClassProvider {
         restClient = null;
         movieRepository = null;
         moviesDatabase = null;
+        filterAlertDialog = null;
 
         Log.d(TAG, "destroyed");
     }
