@@ -1,11 +1,11 @@
 package com.example.movietracker.data.entity;
 
-import com.google.gson.annotations.SerializedName;
+import java.util.List;
 
 public class MovieRequestEntity {
 
     private int page;
-    private String genresId;
+    private List<Integer> genresId;
     private boolean includeAdult;
     private String sortBy;
 
@@ -13,7 +13,7 @@ public class MovieRequestEntity {
 
     }
 
-    public MovieRequestEntity(int page, String genresId, boolean includeAdult, String sortBy) {
+    public MovieRequestEntity(int page, List<Integer> genresId, boolean includeAdult, String sortBy) {
         this.page = page;
         this.genresId = genresId;
         this.includeAdult = includeAdult;
@@ -28,11 +28,11 @@ public class MovieRequestEntity {
         this.page = page;
     }
 
-    public String getGenresId() {
+    public List<Integer> getGenresId() {
         return genresId;
     }
 
-    public void setGenresId(String genresId) {
+    public void setGenresId(List<Integer> genresId) {
         this.genresId = genresId;
     }
 

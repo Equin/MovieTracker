@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "9f8c34b5702c2736153f71cb34926fcb",
+    "identityHash": "70936b8bbb500bf5302b559e29d0b493",
     "entities": [
       {
         "tableName": "GenreEntity",
@@ -38,7 +38,7 @@
       },
       {
         "tableName": "MovieResultEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`movieId` INTEGER NOT NULL, `movieTitle` TEXT, `posterPath` TEXT, `genreIds` TEXT, `isAdult` INTEGER NOT NULL, `movieOverview` TEXT, `movieVoteAverage` REAL NOT NULL, `movieReleaseDate` INTEGER, PRIMARY KEY(`movieId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`movieId` INTEGER NOT NULL, `movieTitle` TEXT, `posterPath` TEXT, `genreIds` TEXT, `isAdult` INTEGER NOT NULL, `movieOverview` TEXT, `movieVoteAverage` REAL NOT NULL, `movieReleaseDate` INTEGER, `moviePopularity` REAL NOT NULL, PRIMARY KEY(`movieId`))",
         "fields": [
           {
             "fieldPath": "movieId",
@@ -87,6 +87,12 @@
             "columnName": "movieReleaseDate",
             "affinity": "INTEGER",
             "notNull": false
+          },
+          {
+            "fieldPath": "moviePopularity",
+            "columnName": "moviePopularity",
+            "affinity": "REAL",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -327,11 +333,78 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "MovieWithGenres",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`movie_id` INTEGER NOT NULL, `genre_id` INTEGER NOT NULL, PRIMARY KEY(`movie_id`, `genre_id`), FOREIGN KEY(`movie_id`) REFERENCES `MovieResultEntity`(`movieId`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`genre_id`) REFERENCES `GenreEntity`(`genreId`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "movieId",
+            "columnName": "movie_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "genreId",
+            "columnName": "genre_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "movie_id",
+            "genre_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_MovieWithGenres_movie_id",
+            "unique": false,
+            "columnNames": [
+              "movie_id"
+            ],
+            "createSql": "CREATE  INDEX `index_MovieWithGenres_movie_id` ON `${TABLE_NAME}` (`movie_id`)"
+          },
+          {
+            "name": "index_MovieWithGenres_genre_id",
+            "unique": false,
+            "columnNames": [
+              "genre_id"
+            ],
+            "createSql": "CREATE  INDEX `index_MovieWithGenres_genre_id` ON `${TABLE_NAME}` (`genre_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "MovieResultEntity",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "movie_id"
+            ],
+            "referencedColumns": [
+              "movieId"
+            ]
+          },
+          {
+            "table": "GenreEntity",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "genre_id"
+            ],
+            "referencedColumns": [
+              "genreId"
+            ]
+          }
+        ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"9f8c34b5702c2736153f71cb34926fcb\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"70936b8bbb500bf5302b559e29d0b493\")"
     ]
   }
 }

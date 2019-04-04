@@ -8,6 +8,7 @@ import com.example.movietracker.data.database.dao.MovieDetailDao;
 import com.example.movietracker.data.entity.MovieResultEntity;
 import com.example.movietracker.data.entity.genre.GenreEntity;
 import com.example.movietracker.data.entity.movie_details.MovieDetailsEntity;
+import com.example.movietracker.data.entity.movie_details.MovieWithGenres;
 import com.example.movietracker.data.entity.movie_details.cast.MovieCastResultEntity;
 import com.example.movietracker.data.entity.movie_details.review.MovieReviewResultEntity;
 import com.example.movietracker.data.entity.movie_details.video.MovieVideoResultEntity;
@@ -23,7 +24,8 @@ import androidx.room.TypeConverters;
         MovieCastResultEntity.class,
         MovieReviewResultEntity.class,
         MovieVideoResultEntity.class,
-        MovieDetailsEntity.class}, version = 1)
+        MovieDetailsEntity.class,
+        MovieWithGenres.class}, version = 1)
 @TypeConverters(MyConverters.class)
 public abstract class MoviesDatabase extends RoomDatabase {
 

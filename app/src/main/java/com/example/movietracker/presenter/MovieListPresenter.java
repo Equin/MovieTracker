@@ -10,6 +10,7 @@ import com.example.movietracker.model.ModelContract;
 import com.example.movietracker.model.model_impl.MovieModelImpl;
 import com.example.movietracker.view.contract.MovieListView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.annotations.NonNull;
@@ -41,16 +42,22 @@ public class MovieListPresenter extends BasePresenter {
     }
 
     public void getMoviesByGenres(GenresEntity genresEntity) {
+        //TODO getMovieByGenre
+
         List<GenreEntity> genreEntity = genresEntity.getGenres();
         StringBuilder sb = new StringBuilder();
 
         for(GenreEntity genre : genreEntity) {
             sb.append(genre.getGenreId()).append(",");
         }
+List<Integer> genreId = new ArrayList<>();
 
+        for(GenreEntity genre : genreEntity) {
+            genreId.add(genre.getGenreId());
+        }
         this.genresIdToLoadMoviesBy = sb.toString();
         this.movieRequestEntity.setPage(1);
-        this.movieRequestEntity.setGenresId(this.genresIdToLoadMoviesBy);
+        this.movieRequestEntity.setGenresId(genreId);
 
         getMovies(this.movieRequestEntity);
     }
