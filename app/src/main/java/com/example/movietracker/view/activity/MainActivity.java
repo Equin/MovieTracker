@@ -3,12 +3,15 @@ package com.example.movietracker.view.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 
 import com.example.movietracker.AndroidApplication;
 import com.example.movietracker.R;
+import com.example.movietracker.data.entity.MovieRequestEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.data.entity.movie_details.video.MovieVideosEntity;
 import com.example.movietracker.di.ClassProvider;
+import com.example.movietracker.di.DataProvider;
 import com.example.movietracker.view.fragment.MainFragment;
 import com.example.movietracker.view.fragment.movie_details.MovieDetailsFragment;
 import com.example.movietracker.view.fragment.MovieListFragment;
@@ -33,11 +36,19 @@ public class MainActivity extends BaseActivity implements
         if (savedInstanceState == null) {
             addFragment(R.id.container_for_fragment, MainFragment.newInstance());
         }
+
+        DataProvider.initialize();
     }
 
     @Override
-    public void showMovieListScreen(GenresEntity genresEntity) {
-        replaceFragment(R.id.container_for_fragment, MovieListFragment.newInstance(genresEntity));
+    protected void onDestroy() {
+        super.onDestroy();
+        DataProvider.onDestroy();
+    }
+
+    @Override
+    public void showMovieListScreen(MovieRequestEntity movieRequestEntity) {
+        replaceFragment(R.id.container_for_fragment, MovieListFragment.newInstance(movieRequestEntity));
     }
 
     @Override

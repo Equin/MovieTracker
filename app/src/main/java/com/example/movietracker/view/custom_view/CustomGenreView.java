@@ -18,6 +18,8 @@ import java.util.List;
 
 public class CustomGenreView extends ViewGroup {
 
+    private static final int COUNT_OF_BUTTONS_PER_ROW = 3;
+
     private GenresEntity genresEntity;
 
     public CustomGenreView(Context context) {
@@ -32,10 +34,10 @@ public class CustomGenreView extends ViewGroup {
         super(context, attrs, defStyleAttr);
     }
 
-    public void renderGenreView(GenresEntity genresEntity, CompoundButton.OnCheckedChangeListener onCheckedChangeListener, int countOfButtons) {
+    public void renderGenreView(GenresEntity genresEntity, CompoundButton.OnCheckedChangeListener onCheckedChangeListener) {
         removeAllViews();
         this.genresEntity = genresEntity;
-        List<List<GenreEntity>> genres = Lists.partition( this.genresEntity.getGenres(), countOfButtons);
+        List<List<GenreEntity>> genres = Lists.partition( this.genresEntity.getGenres(), COUNT_OF_BUTTONS_PER_ROW);
 
         LinearLayout.LayoutParams linearLayoutParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -60,9 +62,10 @@ public class CustomGenreView extends ViewGroup {
                 toggleButton.setPadding(25, 0, 25, 0);
 
                 toggleButton.setBackgroundDrawable(getContext().getDrawable(R.drawable.main_button_background));
-                toggleButton.setLayoutParams(linearLayoutParams);
 
                 toggleButton.setOnCheckedChangeListener(onCheckedChangeListener);
+                toggleButton.setLayoutParams(linearLayoutParams);
+
                 linearLayout.setGravity(Gravity.CENTER);
                 linearLayout.addView(toggleButton, i);
             }
@@ -79,10 +82,6 @@ public class CustomGenreView extends ViewGroup {
                 toggleButton.setChecked(false);
             }
         }
-    }
-
-    public GenresEntity getGenres() {
-        return this.genresEntity;
     }
 
     @Override

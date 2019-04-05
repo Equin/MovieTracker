@@ -5,16 +5,15 @@ import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 
 import androidx.appcompat.app.AlertDialog;
-
-import com.example.movietracker.AndroidApplication;
 import com.example.movietracker.R;
-import com.example.movietracker.data.net.RestClientImpl;
+import com.example.movietracker.view.model.Option;
+import com.example.movietracker.view.model.Order;
+import com.example.movietracker.view.model.SortBy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,25 +22,10 @@ import java.util.List;
 //TODO Q. Или сделать так же как с GenreView типа кастомной View ???
 public class FilterAlertDialog {
 
-    enum Order{
-        ASC(true),
-        DESC(false);
-
-        private boolean val;
-
-        Order(boolean val) {
-            this.val = val;
-        }
-
-        public boolean getBoolValue() {
-            return val;
-        }
-    }
-
     private  List<Option> optionList;
     private  AlertDialog alertDialog;
     private  Context context;
-
+    private OnDoneButtonClickedListener onClickListener;
 
     private static class SingletonHelper {
         private static final FilterAlertDialog INSTANCE = new FilterAlertDialog();
@@ -58,22 +42,24 @@ public class FilterAlertDialog {
         pupulateModel();
     }
 
-    public void showFilterAlertDialog(Context context) {
+    public void showFilterAlertDialog(Context context, OnDoneButtonClickedListener clickListener) {
         this.context = context;
+        this.onClickListener = clickListener;
         createFilterDialog();
     }
 
     private void pupulateModel() {
-        String[] buttonsName = {"Popularity", "Rating", "Release Date", "Title"};
+
         optionList = new ArrayList<>();
-        for(int i = 0; i< buttonsName.length; i++) {
-            optionList.add(new Option(i == 0,buttonsName[i], Order.DESC));
+        for(int i = 0; i< SortBy.values().length; i++) {
+            optionList.add(new Option(i == 0,SortBy.values()[i], Order.DESC));
         }
     }
 
     private void createDialog(View dialogCustomVIew) {
 
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(new ContextThemeWrapper(context, R.style.AppTheme));
+        AlertDialog.Builder alertDialogBuilder
+                = new AlertDialog.Builder(new ContextThemeWrapper(context, R.style.AppTheme));
         alertDialogBuilder.setView(dialogCustomVIew);
         alertDialogBuilder.setTitle("Sort Movies By");
 
@@ -99,7 +85,7 @@ public class FilterAlertDialog {
 
         for (int i=0; i< optionList.size(); i++) {
             RadioButton radioButton = new RadioButton(context);
-            radioButton.setText(optionList.get(i).getName());
+            radioButton.setText(optionList.get(i).getSortBy().getDisplayName());
             radioButton.setId(i);
 
             radioGroup.addView(radioButton);
@@ -109,7 +95,7 @@ public class FilterAlertDialog {
             }
         }
 
-        saveScoreButton.setOnClickListener(v -> alertDialog.dismiss());
+        saveScoreButton.setOnClickListener(v -> onClickListener.OnDoneButtonClicked(alertDialog));
 
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             for(int i =0; i<optionList.size(); i++) {
@@ -121,14 +107,11 @@ public class FilterAlertDialog {
             }
         });
 
-        switcher.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Order order = isChecked? Order.ASC : Order.DESC;
-               for(Option option : optionList) {
-                   option.setSortOrder(order);
-               }
-            }
+        switcher.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            Order order = isChecked? Order.ASC : Order.DESC;
+           for(Option option : optionList) {
+               option.setSortOrder(order);
+           }
         });
     }
 
@@ -151,5 +134,9 @@ public class FilterAlertDialog {
             }
         }
         return option;
+    }
+
+    public interface OnDoneButtonClickedListener {
+            void OnDoneButtonClicked(AlertDialog alertDialog);
     }
 }

@@ -10,42 +10,53 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.genre.GenresEntity;
+import com.example.movietracker.data.entity.MovieRequestEntity;
 import com.example.movietracker.data.entity.MoviesEntity;
+import com.example.movietracker.di.ClassProvider;
 import com.example.movietracker.di.DataProvider;
 import com.example.movietracker.listener.OnLastElementReachedListener;
 import com.example.movietracker.presenter.MovieListPresenter;
 import com.example.movietracker.view.adapter.MovieListAdapter;
 import com.example.movietracker.view.contract.MovieListView;
 import com.example.movietracker.listener.SnapScrollListener;
+import com.example.movietracker.view.custom_view.FilterAlertDialog;
+import com.example.movietracker.view.model.Option;
 import com.example.movietracker.view.helper.UtilityHelpers;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MovieListFragment extends BaseFragment implements MovieListView, OnLastElementReachedListener {
+public class MovieListFragment extends BaseFragment
+        implements MovieListView,
+                   OnLastElementReachedListener,
+                   FilterAlertDialog.OnDoneButtonClickedListener {
 
-    private static final String ARG_SELECTED_GENRES = "args_selected_genres";
+    private static final String ARG_MOVIE_REQUEST_ENTITY = "args_movie_request_entity";
 
     public interface MovieListFragmentInteractionListener {
         void showMovieDetailScreen(int movieId);
     }
 
-    public static MovieListFragment newInstance(GenresEntity genresEntity) {
+    public static MovieListFragment newInstance(MovieRequestEntity movieRequestEntity) {
         MovieListFragment movieListFragment = new MovieListFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ARG_SELECTED_GENRES, genresEntity);
+        bundle.putSerializable(ARG_MOVIE_REQUEST_ENTITY, movieRequestEntity);
         movieListFragment.setArguments(bundle);
         return movieListFragment;
     }
 
     private MovieListPresenter movieListPresenter;
     private MovieListFragmentInteractionListener movieListFragmentInteractionListener;
+    private MovieListAdapter movieListAdapter;
+
+    private boolean isActionAllowed = true;
+    private int totalPages;
 
     @BindView(R.id.recyclerView_movies)
     RecyclerView movieRecyclerView;
@@ -76,12 +87,13 @@ public class MovieListFragment extends BaseFragment implements MovieListView, On
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        this.movieListPresenter = new MovieListPresenter(this);
-        this.movieListPresenter.getMoviesByGenres(getGenres());
+
 
         setSupportActionBar();
         setNotTransparentToolbar();
-        setToolbarTitle(UtilityHelpers.getPipeDividedGenres(getGenres().getGenres()));
+        setToolbarTitle(
+                UtilityHelpers.getPipeDividedGenres(
+                        DataProvider.movieRequestEntity.getSelectedGenres().getGenres()));
         this.setupMenuDrawer();
     }
 
@@ -91,6 +103,9 @@ public class MovieListFragment extends BaseFragment implements MovieListView, On
         if (context instanceof MovieListFragmentInteractionListener) {
             this.movieListFragmentInteractionListener = (MovieListFragmentInteractionListener) context;
         }
+
+        this.movieListPresenter = new MovieListPresenter(this);
+        this.movieListPresenter.getMoviesByFilters(DataProvider.movieRequestEntity);
     }
 
     @Override
@@ -113,20 +128,29 @@ public class MovieListFragment extends BaseFragment implements MovieListView, On
 
     @Override
     public void renderMoviesList(MoviesEntity moviesEntity) {
+        this.totalPages = moviesEntity.getTotalPages();
+
         RecyclerView.LayoutManager rowLayoutManager = new LinearLayoutManager(
                 getContext(), RecyclerView.VERTICAL, false);
 
         this.movieRecyclerView.setLayoutManager(rowLayoutManager);
-        MovieListAdapter movieListAdapter = new MovieListAdapter(
+        this.movieListAdapter = new MovieListAdapter(
                 moviesEntity,
                 new ClickListener(
                         moviesEntity,
                         movieRecyclerView,
                         movieListPresenter),
-                DataProvider.genresEntity);
+                DataProvider.movieRequestEntity.getGenresEntity());
 
         this.movieRecyclerView.setAdapter(movieListAdapter);
         this.movieRecyclerView.addOnScrollListener(new SnapScrollListener(this));
+        this.isActionAllowed = true;
+    }
+
+    @Override
+    public void renderAdditionalMovieListPage(MoviesEntity moviesEntity) {
+        this.movieListAdapter.updateMovieList(moviesEntity);
+        this.isActionAllowed = true;
     }
 
     @Override
@@ -143,7 +167,7 @@ public class MovieListFragment extends BaseFragment implements MovieListView, On
                 return true;
 
             case R.id.action_filter:
-                getActivity().onBackPressed();
+                ClassProvider.filterAlertDialog.showFilterAlertDialog(this.getContext(), this);
                 return true;
         }
 
@@ -158,13 +182,33 @@ public class MovieListFragment extends BaseFragment implements MovieListView, On
     @Override
     public void lastElementReached() {
 
-       // this.movieListPresenter.
-        showToast("Last Elemetn");
+        if(this.isActionAllowed) {
+            this.isActionAllowed = false;
+            if (this.totalPages > DataProvider.movieRequestEntity.getPage()) {
+                DataProvider.movieRequestEntity.incrementPage();
+                showToast(DataProvider.movieRequestEntity.getPage() + "page");
+                this.movieListPresenter.getMoviesWithPagination(DataProvider.movieRequestEntity);
+            } else {
+                showToast("There are no more pages");
+                this.isActionAllowed = true;
+            }
+        }
     }
 
-    private GenresEntity getGenres() {
+    @Override
+    public void OnDoneButtonClicked(AlertDialog alertDialog) {
+            alertDialog.dismiss();
+
+            Option option = ClassProvider.filterAlertDialog.getFilterOptions();
+            DataProvider.movieRequestEntity.setOrder(option.getSortOrder());
+            DataProvider.movieRequestEntity.setSortBy(option.getSortBy().getSearchName());
+
+        this.movieListPresenter.getMoviesByFilters(DataProvider.movieRequestEntity);
+    }
+
+    private MovieRequestEntity getMovieRequestEntity() {
         if(getArguments() != null) {
-            return  (GenresEntity) getArguments().getSerializable(ARG_SELECTED_GENRES);
+            return  (MovieRequestEntity) getArguments().getSerializable(ARG_MOVIE_REQUEST_ENTITY);
         }
 
         return null;

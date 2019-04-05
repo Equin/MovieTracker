@@ -2,6 +2,7 @@ package com.example.movietracker.data.entity;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,7 +23,7 @@ public class MoviesEntity {
     private List<MovieResultEntity> movies;
 
     public MoviesEntity() {
-
+        movies = new ArrayList<>();
     }
 
     public MoviesEntity(int page, int totalPages, List<MovieResultEntity> movieResultEntities) {
@@ -53,5 +54,9 @@ public class MoviesEntity {
 
     public void setMovies(List<MovieResultEntity> movies) {
         this.movies = movies;
+    }
+
+    public void addMovies(List<MovieResultEntity> movies) {
+        this.movies.addAll(movies);
     }
 }

@@ -15,11 +15,11 @@ import com.example.movietracker.data.net.constant.NetConstant;
 import com.example.movietracker.view.diff_utill.MovieDiffCallback;
 import com.example.movietracker.view.helper.UtilityHelpers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,7 +33,8 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     private View.OnClickListener clickListener;
 
     public MovieListAdapter(MoviesEntity movieList, View.OnClickListener clickListener, GenresEntity genresEntity ) {
-        this.movieList = movieList.getMovies();
+        this.movieList = new ArrayList<>();
+        this.movieList.addAll(movieList.getMovies());
         this.genresEntity = genresEntity;
         this.clickListener = clickListener;
     }
@@ -95,6 +96,8 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
     public void updateMovieList(MoviesEntity newMovieList) {
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new MovieDiffCallback(this.movieList, newMovieList.getMovies()));
+        this.movieList.clear();
+        this.movieList.addAll(newMovieList.getMovies());
         diffResult.dispatchUpdatesTo(this);
     }
 }

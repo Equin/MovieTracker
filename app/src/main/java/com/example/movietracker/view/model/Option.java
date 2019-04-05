@@ -1,19 +1,19 @@
-package com.example.movietracker.view.custom_view;
+package com.example.movietracker.view.model;
 
 public class Option {
 
     private boolean isSelected;
-    private String name;
-    private FilterAlertDialog.Order sortOrder;
+    private SortBy sortBy;
+    private Order sortOrder;
     private int radioButtonCheckId;
 
     public Option() {
 
     }
 
-    public Option(boolean isSelected, String name, FilterAlertDialog.Order sortOrder) {
+    public Option(boolean isSelected, SortBy sortBy, Order sortOrder) {
         this.isSelected = isSelected;
-        this.name = name;
+        this.sortBy = sortBy;
         this.sortOrder = sortOrder;
     }
 
@@ -25,19 +25,19 @@ public class Option {
         isSelected = selected;
     }
 
-    public String getName() {
-        return name;
+    public SortBy getSortBy() {
+        return sortBy;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setSortBy(SortBy sortBy) {
+        this.sortBy = sortBy;
     }
 
-    public FilterAlertDialog.Order getSortOrder() {
+    public Order getSortOrder() {
         return sortOrder;
     }
 
-    public void setSortOrder(FilterAlertDialog.Order sortOrder) {
+    public void setSortOrder(Order sortOrder) {
         this.sortOrder = sortOrder;
     }
 

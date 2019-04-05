@@ -4,6 +4,7 @@ import com.example.movietracker.data.entity.MovieResultEntity;
 
 import java.util.List;
 
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 
 public class MovieDiffCallback extends DiffUtil.Callback {
@@ -34,7 +35,7 @@ public class MovieDiffCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        return this.oldMovies.get(oldItemPosition)
-                .equals(this.newMovies.get(newItemPosition));
+        return this.oldMovies.get(oldItemPosition).getMovieTitle()
+                .equals(this.newMovies.get(newItemPosition).getMovieTitle());
     }
 }

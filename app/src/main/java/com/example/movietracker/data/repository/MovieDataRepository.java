@@ -59,13 +59,9 @@ public class MovieDataRepository implements MovieRepository {
 
     @Override
     public Observable<GenresEntity> getGenres() {
-        return Observable.mergeDelayError(
-                this.movieApi.getGenres()
+        return this.movieApi.getGenres()
                         .doOnNext(genresEntity -> this.genresDao.saveGenres(genresEntity.getGenres()))
-                        .onErrorResumeNext((error) -> { return
-                                Observable.error(new IOException(error.getMessage()));
-                        })/*Observable.error(new RuntimeException())*/,
-                this.genresDao.getAllGenres().map(GenresEntity::new));
+                        .onErrorResumeNext(this.genresDao.getAllGenres().map(GenresEntity::new));
     }
 
     /*  return  this.movieApi.getGenres().doOnNext(genresEntity -> this.genresDao.saveGenres(genresEntity.getGenres()))
@@ -90,8 +86,10 @@ public class MovieDataRepository implements MovieRepository {
     @Override
     public Observable<MoviesEntity> getMovies(MovieRequestEntity movieRequestEntity) {
         return this.movieApi.getMovies(
-                toCommaSeparate(movieRequestEntity.getGenresId()),
-                movieRequestEntity.getSortBy(),
+                movieRequestEntity.getCommaSeparatedGenres(),
+                movieRequestEntity.getSortBy()
+                        .concat(".").concat(
+                                movieRequestEntity.getOrder().name().toLowerCase()),
                 movieRequestEntity.getPage(),
                 movieRequestEntity.isIncludeAdult())
                 .doOnNext(moviesEntity -> {
@@ -103,16 +101,6 @@ public class MovieDataRepository implements MovieRepository {
                                 .map(movieResultEntities ->
                                         new MoviesEntity(0,0,movieResultEntities))
                 );
-    }
-
-    public String toCommaSeparate(List<Integer> ids) {
-        StringBuilder sb = new StringBuilder(",");
-
-        for(int id : ids) {
-            sb.append(id);
-        }
-
-        return sb.toString();
     }
 
     @Override

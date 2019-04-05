@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.example.movietracker.AndroidApplication;
 import com.example.movietracker.R;
 
 import androidx.annotation.Nullable;
@@ -90,7 +91,7 @@ public abstract class BaseFragment extends Fragment {
             this.toast.cancel();
         }
 
-        this.toast = Toast.makeText(getContext(), message, Toast.LENGTH_LONG);
+        this.toast = Toast.makeText(AndroidApplication.getRunningActivity().getApplicationContext(), message, Toast.LENGTH_LONG);
         this.toast.show();
     }
 

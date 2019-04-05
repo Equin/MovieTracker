@@ -1,7 +1,5 @@
 package com.example.movietracker.interactor;
 
-import com.example.movietracker.exception.DropBreadcrumb;
-
 import dagger.internal.Preconditions;
 import io.reactivex.Completable;
 import io.reactivex.Observable;

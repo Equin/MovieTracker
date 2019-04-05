@@ -1,8 +1,22 @@
 package com.example.movietracker.data.net;
 
+import com.example.movietracker.data.date.DateTypeDeserializer;
 import com.example.movietracker.data.net.api.MovieApi;
 import com.example.movietracker.data.net.interceptor.QueryParameterInterceptor;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+
+import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Locale;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -32,10 +46,15 @@ public class RestClientImpl implements RestClient {
                 .addInterceptor(new QueryParameterInterceptor())
                 .build();
 
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(Date.class, new DateTypeDeserializer());
+        Gson gson = gsonBuilder.create();
+
+
         this.retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addCallAdapterFactory(RxErrorHandlingCallAdapterFactory.create())
                 .client(okHttpClient)
                 .build();
     }

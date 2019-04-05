@@ -10,19 +10,19 @@ import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.genre.GenreEntity;
+import com.example.movietracker.data.entity.MovieRequestEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.di.ClassProvider;
+import com.example.movietracker.di.DataProvider;
 import com.example.movietracker.presenter.MainPresenter;
 import com.example.movietracker.view.contract.MainView;
 import com.example.movietracker.view.custom_view.CustomGenreView;
 import com.example.movietracker.view.custom_view.FilterAlertDialog;
 
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import butterknife.BindView;
@@ -30,10 +30,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Optional;
 
-public class MainFragment extends BaseFragment implements MainView {
+public class MainFragment extends BaseFragment implements MainView, FilterAlertDialog.OnDoneButtonClickedListener {
 
     public interface MainFragmentInteractionListener {
-        void showMovieListScreen(GenresEntity genreList);
+        void showMovieListScreen(MovieRequestEntity movieRequestEntity);
     }
 
     public static MainFragment newInstance() {
@@ -41,8 +41,6 @@ public class MainFragment extends BaseFragment implements MainView {
     }
 
     private MainPresenter mainPresenter;
-    private GenresEntity genresEntity;
-
     private MainFragmentInteractionListener mainFragmentInteractionListener;
 
     @BindView(R.id.drawerLayout)
@@ -130,14 +128,16 @@ public class MainFragment extends BaseFragment implements MainView {
 
     @Override
     public void renderGenreView(GenresEntity genreList) {
-        this.genresEntity = genreList;
-        this.customGenreView.renderGenreView(this.genresEntity, new onCheckedListener(), 3);
+        DataProvider.genresEntity = genreList;
+        this.customGenreView.renderGenreView(DataProvider.genresEntity,
+                new onCheckedListener(DataProvider.genresEntity));
     }
 
     @Optional
     @OnClick(R.id.main_button_search)
     public void onSearchButtonClicked(){
-         this.mainPresenter.onSearchButtonClicked(this.genresEntity);
+         this.mainPresenter.onSearchButtonClicked(DataProvider.genresEntity,
+                 ClassProvider.filterAlertDialog.getFilterOptions());
     }
 
     @Optional
@@ -149,31 +149,45 @@ public class MainFragment extends BaseFragment implements MainView {
     @Optional
     @OnClick(R.id.main_button_cancel)
     public void onCancelButtonClicked(){
-       this.customGenreView.dismisSelections();
-       ClassProvider.filterAlertDialog.dismissSelection();
+        this.mainPresenter.onCancelButtonClicked();
     }
 
-
     @Override
-    public void openMovieListView(GenresEntity genreList) {
-        this.mainFragmentInteractionListener.showMovieListScreen(genreList);
+    public void openMovieListView(MovieRequestEntity movieRequestEntity) {
+        this.mainFragmentInteractionListener.showMovieListScreen(movieRequestEntity);
     }
 
     @Override
     public void openAlertDialog() {
-        ClassProvider.filterAlertDialog.showFilterAlertDialog(this.getContext());
+        ClassProvider.filterAlertDialog.showFilterAlertDialog(this.getContext(), this);
+    }
+
+    @Override
+    public void dismissAllSelections() {
+        this.customGenreView.dismisSelections();
+        ClassProvider.filterAlertDialog.dismissSelection();
+    }
+
+    @Override
+    public void OnDoneButtonClicked(AlertDialog alertDialog) {
+            alertDialog.dismiss();
     }
 
     public class onCheckedListener implements ToggleButton.OnCheckedChangeListener {
+        private GenresEntity genresEntity;
+
+        public onCheckedListener(GenresEntity genresEntity) {
+            this.genresEntity = genresEntity;
+        }
+
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            List<GenreEntity> genreEntity = genresEntity.getGenres();
-            for(int i = 0; i<genreEntity.size(); i++) {
-                if (genreEntity.get(i).getGenreName().equals(buttonView.getText())) {
-                    genreEntity.get(i).setSelected(isChecked);
+            for(int i = 0; i<this.genresEntity.getGenres().size(); i++) {
+                if (this.genresEntity.getGenres().get(i).getGenreName()
+                        .equals(buttonView.getText())) {
+                    this.genresEntity.getGenres().get(i).setSelected(isChecked);
                 }
             }
-           // genresEntity.setGenres(genreEntity);
         }
     }
 }

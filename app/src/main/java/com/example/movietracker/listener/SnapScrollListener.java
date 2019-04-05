@@ -1,5 +1,7 @@
 package com.example.movietracker.listener;
 
+import android.os.Handler;
+
 import com.example.movietracker.view.adapter.MovieListAdapter;
 
 import androidx.fragment.app.Fragment;
@@ -9,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public  class SnapScrollListener extends RecyclerView.OnScrollListener {
 
     private Fragment fragment;
+    private boolean isActionAllowed = true;
 
     public SnapScrollListener(Fragment fragment) {
         this.fragment = fragment;
@@ -24,11 +27,23 @@ public  class SnapScrollListener extends RecyclerView.OnScrollListener {
 
             if(isLastElement(recyclerView)
                     && (recyclerView.getAdapter() instanceof MovieListAdapter)
-                    && (fragment instanceof OnLastElementReachedListener)) {
+                    && (fragment instanceof OnLastElementReachedListener) && isActionAllowed) {
 
                 ((OnLastElementReachedListener)fragment).lastElementReached();
             }
         }
+    }
+
+    private void triggerListenerWithDelay() {
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                isActionAllowed = false;
+                ((OnLastElementReachedListener)fragment).lastElementReached();
+                isActionAllowed = true;
+            }
+        }, 2000);
     }
 
     private boolean isLastElement(RecyclerView recyclerView) {

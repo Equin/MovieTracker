@@ -18,22 +18,17 @@ import io.reactivex.annotations.NonNull;
 public class MovieListPresenter extends BasePresenter {
 
     private MovieListView view;
-    private String genresIdToLoadMoviesBy;
-    //private MoviesEntity moviesEntity;
-  //  private List<MovieResultEntity> movieResultEntities;
-    private MovieRequestEntity movieRequestEntity;
     private ModelContract.MovieModel movieModel;
+    private MoviesEntity moviesEntity;
 
     public MovieListPresenter(MovieListView view) {
         this.view = view;
         this.movieModel = new MovieModelImpl();
+        this.moviesEntity = new MoviesEntity();
         initialize();
     }
 
     private void initialize() {
-        //this.moviesEntity = new MoviesEntity();
-      //  this.movieResultEntities = new ArrayList<>();
-        this.movieRequestEntity = new MovieRequestEntity();
         showLoading();
     }
 
@@ -41,36 +36,22 @@ public class MovieListPresenter extends BasePresenter {
         this.view.showMovieDetailScreen(clickedMovieId);
     }
 
-    public void getMoviesByGenres(GenresEntity genresEntity) {
-        //TODO getMovieByGenre
-
-        List<GenreEntity> genreEntity = genresEntity.getGenres();
-        StringBuilder sb = new StringBuilder();
-
-        for(GenreEntity genre : genreEntity) {
-            sb.append(genre.getGenreId()).append(",");
-        }
-List<Integer> genreId = new ArrayList<>();
-
-        for(GenreEntity genre : genreEntity) {
-            genreId.add(genre.getGenreId());
-        }
-        this.genresIdToLoadMoviesBy = sb.toString();
-        this.movieRequestEntity.setPage(1);
-        this.movieRequestEntity.setGenresId(genreId);
-
-        getMovies(this.movieRequestEntity);
+    public void getMoviesByFilters(MovieRequestEntity movieRequestEntity) {
+        showLoading();
+        getMovies(movieRequestEntity);
     }
 
-
-
-    public void getMoviesByFilters(MovieRequestEntity movieRequestEntity) {
-
-
+    public void getMoviesWithPagination(MovieRequestEntity movieRequestEntity) {
+        showLoading();
+        getMoviesByPage(movieRequestEntity);
     }
 
     private void getMovies(MovieRequestEntity movieRequestEntity) {
         this.movieModel.getMovies(new GetMoviesObserver(), movieRequestEntity);
+    }
+
+    private void getMoviesByPage(MovieRequestEntity movieRequestEntity) {
+        this.movieModel.getMovies(new GetMoviesPageObserver(), movieRequestEntity);
     }
 
     private void showLoading() {
@@ -80,7 +61,6 @@ List<Integer> genreId = new ArrayList<>();
     private void hideLoading() {
         this.view.hideLoading();
     }
-
 
     @Override
     public void destroy() {
@@ -92,7 +72,25 @@ List<Integer> genreId = new ArrayList<>();
     private class GetMoviesObserver extends DefaultObserver<MoviesEntity> {
         @Override
         public void onNext(MoviesEntity moviesEntity) {
+            MovieListPresenter.this.moviesEntity = moviesEntity;
             MovieListPresenter.this.view.renderMoviesList(moviesEntity);
+            MovieListPresenter.this.hideLoading();
+        }
+
+        @Override
+        public void onError(@NonNull Throwable e) {
+            MovieListPresenter.this.view.showToast(R.string.main_error);
+            MovieListPresenter.this.hideLoading();
+        }
+    }
+
+    private class GetMoviesPageObserver extends DefaultObserver<MoviesEntity> {
+        @Override
+        public void onNext(MoviesEntity moviesEntity) {
+            MovieListPresenter.this.moviesEntity.setPage(moviesEntity.getPage());
+            MovieListPresenter.this.moviesEntity.setTotalPages(moviesEntity.getTotalPages());
+            MovieListPresenter.this.moviesEntity.addMovies(moviesEntity.getMovies());
+            MovieListPresenter.this.view.renderAdditionalMovieListPage(MovieListPresenter.this.moviesEntity);
             MovieListPresenter.this.hideLoading();
         }
 
