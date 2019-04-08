@@ -2,6 +2,7 @@ package com.example.movietracker.view.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,15 +30,17 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MovieListFragment extends BaseFragment
         implements MovieListView,
-                   OnLastElementReachedListener,
-                   FilterAlertDialog.OnDoneButtonClickedListener {
+        OnLastElementReachedListener,
+        FilterAlertDialog.OnDoneButtonClickedListener {
 
     private static final String ARG_MOVIE_REQUEST_ENTITY = "args_movie_request_entity";
+    private static final String TAG = MovieListFragment.class.getCanonicalName();
 
     public interface MovieListFragmentInteractionListener {
         void showMovieDetailScreen(int movieId);
@@ -60,6 +63,9 @@ public class MovieListFragment extends BaseFragment
 
     @BindView(R.id.recyclerView_movies)
     RecyclerView movieRecyclerView;
+
+    @BindView(R.id.swipeRefreshLayout)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     public MovieListFragment() {
         setRetainInstance(true);
@@ -95,6 +101,7 @@ public class MovieListFragment extends BaseFragment
         this.setupMenuDrawer();
 
         getMovies();
+        this.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshListener());
     }
 
     @Override
@@ -141,6 +148,7 @@ public class MovieListFragment extends BaseFragment
 
         this.movieRecyclerView.setAdapter(movieListAdapter);
         this.movieRecyclerView.addOnScrollListener(new SnapScrollListener(this));
+        this.swipeRefreshLayout.setRefreshing(false);
         this.isActionAllowed = true;
     }
 
@@ -193,11 +201,11 @@ public class MovieListFragment extends BaseFragment
 
     @Override
     public void OnAlertDialogDoneButtonClicked(AlertDialog alertDialog) {
-            alertDialog.dismiss();
+        alertDialog.dismiss();
 
-            Option option = ClassProvider.filterAlertDialog.getFilterOptions();
-            DataProvider.movieRequestEntity.setOrder(option.getSortOrder());
-            DataProvider.movieRequestEntity.setSortBy(option.getSortBy().getSearchName());
+        Option option = ClassProvider.filterAlertDialog.getFilterOptions();
+        DataProvider.movieRequestEntity.setOrder(option.getSortOrder());
+        DataProvider.movieRequestEntity.setSortBy(option.getSortBy().getSearchName());
 
         this.movieListPresenter.getMoviesByFilters(DataProvider.movieRequestEntity);
     }
@@ -236,6 +244,16 @@ public class MovieListFragment extends BaseFragment
 
             this.movieListPresenter.onMovieItemClicked(
                     this.moviesEntity.getMovies().get(itemPosition).getMovieId());
+        }
+    }
+
+    private class SwipeRefreshListener implements SwipeRefreshLayout.OnRefreshListener {
+
+        @Override
+        public void onRefresh() {
+            Log.d(TAG, "onRefresh called from SwipeRefreshLayout");
+            DataProvider.movieRequestEntity.setPage(1);
+            MovieListFragment.this.movieListPresenter.getMoviesByFilters(DataProvider.movieRequestEntity);
         }
     }
 }
