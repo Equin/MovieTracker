@@ -30,6 +30,6 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="Author"
-        android:textColor="@color/textColorWhiteDark"
+        android:textColor="@color/text_color_white_dark"
         android:textSize="18sp" />
 </RelativeLayout>

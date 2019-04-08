@@ -23,6 +23,14 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+
+        AndroidApplication.setRunningActivity(this);
+        ClassProvider.initialize();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         AndroidApplication.setRunningActivity(this);

@@ -7,14 +7,18 @@
     <color name="colorTextWhite">#ffffff</color>
     <color name="colorTextGrey">#b6b6b6</color>
 
-
-
-    <color name="colorCardViewDark">#272727</color>
+    <color name="color_card_view_dark">#272727</color>
     <color name="fragment_movie_details_info_background">#4F8B8B8B</color>
     <color name="tab_text_color">#AD000000</color>
-    <color name="textColorWhiteDark">#f2f2f2</color>
+    <color name="text_color_white_dark">#f2f2f2</color>
 
-    <color name="toolbarColor">#58ABB8</color>
+    <color name="toolbar_color">#58ABB8</color>
+
+    <color name="filter_alert_dialog_color">#658B8B8B</color>
+    <color name="filter_alert_dialog_header_color">#DF8B8B8B</color>
+    <color name="filter_alert_dialog_done_button_color">#DF8B8B8B</color>
+    <color name="switch_thumb">#F5F5F5</color>
+    <color name="switch_track">#DF8B8B8B</color>
 
 
 </resources>

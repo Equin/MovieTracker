@@ -46,6 +46,10 @@ public class MovieListPresenter extends BasePresenter {
         getMoviesByPage(movieRequestEntity);
     }
 
+    public MoviesEntity getMoviesEntity() {
+        return this.moviesEntity;
+    }
+
     private void getMovies(MovieRequestEntity movieRequestEntity) {
         this.movieModel.getMovies(new GetMoviesObserver(), movieRequestEntity);
     }

@@ -215,7 +215,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="TextView"
-            android:textColor="@color/textColorWhiteDark"
+            android:textColor="@color/text_color_white_dark"
             android:textSize="14sp" />
     </LinearLayout>
 

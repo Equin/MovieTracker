@@ -20,8 +20,8 @@ public class ModelContract {
         void getMovies(DefaultObserver<MoviesEntity> defaultObserver, MovieRequestEntity movieRequestEntity);
         void stop();
     }
-    public interface MovieDetailsModel {
-        void getMovieDetails(DefaultObserver<MovieDetailsEntity> defaultObserver, int movieId);
+    public interface MovieInfoModel {
+        void getMovieInfo(DefaultObserver<MovieDetailsEntity> defaultObserver, int movieId);
         void stop();
     }
 

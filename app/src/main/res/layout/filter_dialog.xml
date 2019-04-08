@@ -4,7 +4,8 @@
     android:id="@+id/relativeLayout_add_score"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/filter_alert_dialog_color">
 
     <RelativeLayout
         android:id="@+id/rl_container"
@@ -12,27 +13,29 @@
         android:layout_height="150dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true">
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_above="@+id/textView5"
-    android:layout_below="@+id/textView4"
-    android:layout_toEndOf="@+id/radioButtonsGroup"
-    android:layout_alignParentEnd="true"
-    android:layout_centerInParent="false">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/textView5"
+            android:layout_below="@+id/textView4"
+            android:layout_toEndOf="@+id/radioButtonsGroup"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="false">
 
 
-    <Switch
-        android:id="@+id/switch1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+            <Switch
+                android:id="@+id/switch1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:track="@drawable/switch_track_drawable"
+                android:thumb="@drawable/switch_thumb_drawable"
+                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:rotation="90"/>
+        </RelativeLayout>
 
-        android:layout_centerInParent="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp"
-        android:rotation="90" />
-</RelativeLayout>
         <RadioGroup
             android:id="@+id/radioButtonsGroup"
             android:layout_width="180dp"
@@ -43,6 +46,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="0dp"
             android:paddingLeft="18dp"
+            android:paddingTop="18dp"
             android:paddingRight="18dp" />
 
         <TextView
@@ -53,7 +57,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="8dp"
             android:layout_toEndOf="@+id/radioButtonsGroup"
-            android:text="Desc"
+            android:text="@string/alert_dialog_desc"
             android:textAlignment="center" />
 
         <TextView
@@ -64,7 +68,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="8dp"
             android:layout_toEndOf="@+id/radioButtonsGroup"
-            android:text="Asc"
+            android:text="@string/alert_dialog_asc"
             android:textAlignment="center" />
 
     </RelativeLayout>
@@ -80,6 +84,6 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="32dp"
-        android:accessibilityHeading="false"
-        android:text="DONE" />
+        android:text="@string/alert_dialog_done_button_text"
+        android:background="@color/filter_alert_dialog_done_button_color"/>
 </RelativeLayout>

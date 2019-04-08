@@ -4,19 +4,19 @@ import com.example.movietracker.R;
 import com.example.movietracker.data.entity.movie_details.MovieDetailsEntity;
 import com.example.movietracker.interactor.DefaultObserver;
 import com.example.movietracker.model.ModelContract;
-import com.example.movietracker.model.model_impl.MovieDetailsModelImpl;
+import com.example.movietracker.model.model_impl.MovieInfoModelImpl;
 import com.example.movietracker.view.contract.MovieDetailsView;
 
 import io.reactivex.annotations.NonNull;
 
 public class MovieDetailsPresenter extends BasePresenter {
 
-    private final ModelContract.MovieDetailsModel movieDetailsModel;
+    private final ModelContract.MovieInfoModel movieInfoModel;
 
     private MovieDetailsView view;
 
     public MovieDetailsPresenter() {
-        this.movieDetailsModel = new MovieDetailsModelImpl();
+        this.movieInfoModel = new MovieInfoModelImpl();
     }
 
     public void setView(MovieDetailsView movieDetailsView) {
@@ -29,7 +29,7 @@ public class MovieDetailsPresenter extends BasePresenter {
     }
 
     private void getMovieDetails(int movieId) {
-        this.movieDetailsModel.getMovieDetails(new GetMovieDetailsObserver(), movieId);
+        this.movieInfoModel.getMovieInfo(new GetMovieDetailsObserver(), movieId);
     }
 
     private void showLoading() {
@@ -43,7 +43,7 @@ public class MovieDetailsPresenter extends BasePresenter {
     @Override
     public void destroy() {
         this.view = null;
-        this.movieDetailsModel.stop();
+        this.movieInfoModel.stop();
     }
 
     private class GetMovieDetailsObserver extends DefaultObserver<MovieDetailsEntity> {

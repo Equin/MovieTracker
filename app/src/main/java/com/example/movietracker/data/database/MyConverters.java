@@ -19,7 +19,7 @@ public class MyConverters {
 
     @TypeConverter
     public static Date longToDate(Long time) {
-        return time == null? null : new Date(time);
+        return time == null ? null : new Date(time);
     }
 
     @TypeConverter

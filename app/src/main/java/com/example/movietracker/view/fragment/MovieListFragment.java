@@ -19,7 +19,7 @@ import com.example.movietracker.presenter.MovieListPresenter;
 import com.example.movietracker.view.adapter.MovieListAdapter;
 import com.example.movietracker.view.contract.MovieListView;
 import com.example.movietracker.listener.SnapScrollListener;
-import com.example.movietracker.view.custom_view.FilterAlertDialog;
+import com.example.movietracker.view.FilterAlertDialog;
 import com.example.movietracker.view.model.Option;
 import com.example.movietracker.view.helper.UtilityHelpers;
 
@@ -87,14 +87,14 @@ public class MovieListFragment extends BaseFragment
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
-
         setSupportActionBar();
         setNotTransparentToolbar();
         setToolbarTitle(
                 UtilityHelpers.getPipeDividedGenres(
                         DataProvider.movieRequestEntity.getSelectedGenres().getGenres()));
         this.setupMenuDrawer();
+
+        getMovies();
     }
 
     @Override
@@ -103,9 +103,6 @@ public class MovieListFragment extends BaseFragment
         if (context instanceof MovieListFragmentInteractionListener) {
             this.movieListFragmentInteractionListener = (MovieListFragmentInteractionListener) context;
         }
-
-        this.movieListPresenter = new MovieListPresenter(this);
-        this.movieListPresenter.getMoviesByFilters(DataProvider.movieRequestEntity);
     }
 
     @Override
@@ -181,7 +178,6 @@ public class MovieListFragment extends BaseFragment
 
     @Override
     public void lastElementReached() {
-
         if(this.isActionAllowed) {
             this.isActionAllowed = false;
             if (this.totalPages > DataProvider.movieRequestEntity.getPage()) {
@@ -196,7 +192,7 @@ public class MovieListFragment extends BaseFragment
     }
 
     @Override
-    public void OnDoneButtonClicked(AlertDialog alertDialog) {
+    public void OnAlertDialogDoneButtonClicked(AlertDialog alertDialog) {
             alertDialog.dismiss();
 
             Option option = ClassProvider.filterAlertDialog.getFilterOptions();
@@ -204,6 +200,15 @@ public class MovieListFragment extends BaseFragment
             DataProvider.movieRequestEntity.setSortBy(option.getSortBy().getSearchName());
 
         this.movieListPresenter.getMoviesByFilters(DataProvider.movieRequestEntity);
+    }
+
+    private void getMovies() {
+        if(this.movieListPresenter != null) {
+            renderMoviesList(this.movieListPresenter.getMoviesEntity());
+        } else {
+            this.movieListPresenter = new MovieListPresenter(this);
+            this.movieListPresenter.getMoviesByFilters(DataProvider.movieRequestEntity);
+        }
     }
 
     private MovieRequestEntity getMovieRequestEntity() {

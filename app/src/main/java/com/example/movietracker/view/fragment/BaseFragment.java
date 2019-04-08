@@ -57,7 +57,7 @@ public abstract class BaseFragment extends Fragment {
 
     public void setNotTransparentToolbar() {
         if (this.toolbar != null) {
-            this.toolbar.setBackgroundColor(getResources().getColor(R.color.toolbarColor));
+            this.toolbar.setBackgroundColor(getResources().getColor(R.color.toolbar_color));
         }
     }
 

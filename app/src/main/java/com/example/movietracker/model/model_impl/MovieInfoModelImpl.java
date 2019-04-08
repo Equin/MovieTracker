@@ -5,16 +5,16 @@ import com.example.movietracker.interactor.DefaultObserver;
 import com.example.movietracker.interactor.use_cases.movie_detail.GetMovieDetailsUseCase;
 import com.example.movietracker.model.ModelContract;
 
-public class MovieDetailsModelImpl implements ModelContract.MovieDetailsModel {
+public class MovieInfoModelImpl implements ModelContract.MovieInfoModel {
 
     private final GetMovieDetailsUseCase getMovieDetailsUseCase;
 
-    public MovieDetailsModelImpl() {
+    public MovieInfoModelImpl() {
         this.getMovieDetailsUseCase = new GetMovieDetailsUseCase();
     }
 
     @Override
-    public void getMovieDetails(DefaultObserver<MovieDetailsEntity> defaultObserver, int movieId) {
+    public void getMovieInfo(DefaultObserver<MovieDetailsEntity> defaultObserver, int movieId) {
         this.getMovieDetailsUseCase.execute(defaultObserver, movieId);
     }
 

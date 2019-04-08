@@ -10,4 +10,7 @@
     <string name="seek_to">Jump To</string>
     <string name="seek_to_hint">Seconds</string>
     <string name="movie_details_nothing_to_show">Sorry, nothing to show</string>
+    <string name="alert_dialog_done_button_text">DONE</string>
+    <string name="alert_dialog_desc">Desc</string>
+    <string name="alert_dialog_asc">Asc</string>
 </resources>

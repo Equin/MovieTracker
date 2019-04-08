@@ -14,7 +14,6 @@ import io.reactivex.annotations.NonNull;
 public class MainPresenter extends BasePresenter {
 
     private ModelContract.GenreModel genreModel;
-
     private MainView mainView;
 
     public MainPresenter(MainView mainView) {

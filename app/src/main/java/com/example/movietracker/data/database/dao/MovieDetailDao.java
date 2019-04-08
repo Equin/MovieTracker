@@ -34,8 +34,9 @@ public interface MovieDetailDao {
     Observable<MovieDetailsEntity> getMovieInfo(int movieId);
 
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
-    @Query("SELECT * FROM GenreEntity INNER JOIN MovieWithGenres ON GenreEntity.genreId " +
-            "= MovieWithGenres.genre_id " +
+    @Query("SELECT * FROM GenreEntity " +
+            "INNER JOIN MovieWithGenres " +
+            "ON GenreEntity.genreId = MovieWithGenres.genre_id " +
             "WHERE MovieWithGenres.movie_id = :movieId")
     Observable<List<GenreEntity>> getGenres(int movieId);
 

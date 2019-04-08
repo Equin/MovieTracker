@@ -17,7 +17,7 @@ import com.example.movietracker.di.DataProvider;
 import com.example.movietracker.presenter.MainPresenter;
 import com.example.movietracker.view.contract.MainView;
 import com.example.movietracker.view.custom_view.CustomGenreView;
-import com.example.movietracker.view.custom_view.FilterAlertDialog;
+import com.example.movietracker.view.FilterAlertDialog;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -75,14 +75,21 @@ public class MainFragment extends BaseFragment implements MainView, FilterAlertD
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        this.mainPresenter = new MainPresenter(this);
-
-        this.mainPresenter.getGenres();
-
         setSupportActionBar();
         setTransparentToolbar();
         setToolbarTitle(getString(R.string.main_fragment_toolbar_title));
         this.setupMenuDrawer();
+
+        getGenres();
+    }
+
+    private void getGenres() {
+        if(this.mainPresenter != null) {
+          this.renderGenreView(DataProvider.genresEntity);
+        } else {
+            this.mainPresenter = new MainPresenter(this);
+            this.mainPresenter.getGenres();
+        }
     }
 
     @Override
@@ -169,7 +176,7 @@ public class MainFragment extends BaseFragment implements MainView, FilterAlertD
     }
 
     @Override
-    public void OnDoneButtonClicked(AlertDialog alertDialog) {
+    public void OnAlertDialogDoneButtonClicked(AlertDialog alertDialog) {
             alertDialog.dismiss();
     }
 

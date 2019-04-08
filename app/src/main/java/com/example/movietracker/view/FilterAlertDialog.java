@@ -1,13 +1,18 @@
-package com.example.movietracker.view.custom_view;
+package com.example.movietracker.view;
 
 import android.content.Context;
-import android.view.ContextThemeWrapper;
+import android.graphics.Point;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import com.example.movietracker.R;
@@ -59,9 +64,23 @@ public class FilterAlertDialog {
     private void createDialog(View dialogCustomVIew) {
 
         AlertDialog.Builder alertDialogBuilder
-                = new AlertDialog.Builder(new ContextThemeWrapper(context, R.style.AppTheme));
+                = new AlertDialog.Builder(context);
         alertDialogBuilder.setView(dialogCustomVIew);
-        alertDialogBuilder.setTitle("Sort Movies By");
+        //alertDialogBuilder.setTitle("Sort Movies By");
+
+        RelativeLayout customTitleView = new RelativeLayout(this.context);
+        TextView textView = new TextView(this.context);
+
+        customTitleView.setGravity(Gravity.CENTER);
+        customTitleView.setBackground(
+                this.context.getResources().getDrawable(R.color.filter_alert_dialog_header_color));
+        textView.setText("Sort Movies By");
+        textView.setPadding(0, 40, 0, 40);
+        textView.setTextSize(24);
+        customTitleView.addView(textView);
+
+        alertDialogBuilder.setCustomTitle(customTitleView);
+
 
         alertDialog = alertDialogBuilder.create();
 
@@ -95,7 +114,7 @@ public class FilterAlertDialog {
             }
         }
 
-        saveScoreButton.setOnClickListener(v -> onClickListener.OnDoneButtonClicked(alertDialog));
+        saveScoreButton.setOnClickListener(v -> onClickListener.OnAlertDialogDoneButtonClicked(alertDialog));
 
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             for(int i =0; i<optionList.size(); i++) {
@@ -137,6 +156,6 @@ public class FilterAlertDialog {
     }
 
     public interface OnDoneButtonClickedListener {
-            void OnDoneButtonClicked(AlertDialog alertDialog);
+            void OnAlertDialogDoneButtonClicked(AlertDialog alertDialog);
     }
 }

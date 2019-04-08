@@ -1,10 +1,7 @@
 package com.example.movietracker.data.database.dao;
 
 import com.example.movietracker.data.entity.MovieResultEntity;
-import com.example.movietracker.data.entity.genre.GenreEntity;
-import com.example.movietracker.data.entity.movie_details.MovieDetailsEntity;
 import com.example.movietracker.data.entity.movie_details.MovieWithGenres;
-
 import java.util.List;
 
 import androidx.room.Dao;
@@ -19,7 +16,8 @@ public interface MovieDao {
 
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT * FROM MovieResultEntity " +
-            "INNER JOIN MovieWithGenres ON MovieResultEntity.movieId = MovieWithGenres.movie_id " +
+            "INNER JOIN MovieWithGenres " +
+            "ON MovieResultEntity.movieId = MovieWithGenres.movie_id " +
             "WHERE MovieWithGenres.genre_id in (:genresId) " +
             "GROUP BY movieId " +
             "ORDER BY moviePopularity DESC")
@@ -38,9 +36,3 @@ public interface MovieDao {
         }
     };
 }
-
-
-    //AND sortBy = :sortBy AND page = :page AND isAdult = :isIncludeAdult
-  /*  String sortBy,
-    int page,
-    boolean isIncludeAdult*/

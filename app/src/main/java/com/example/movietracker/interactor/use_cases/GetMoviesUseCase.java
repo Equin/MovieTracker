@@ -19,6 +19,5 @@ public class GetMoviesUseCase extends UseCase<MoviesEntity, MovieRequestEntity> 
     @Override
     protected Observable<MoviesEntity> buildUseCaseObservable(MovieRequestEntity requestParams) {
         return this.movieRepository.getMovies(requestParams);
-
     }
 }

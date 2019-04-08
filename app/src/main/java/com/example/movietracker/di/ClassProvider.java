@@ -1,6 +1,5 @@
 package com.example.movietracker.di;
 
-import android.app.Application;
 import android.util.Log;
 
 import com.example.movietracker.AndroidApplication;
@@ -10,7 +9,7 @@ import com.example.movietracker.data.net.RestClientImpl;
 import com.example.movietracker.data.net.constant.NetConstant;
 import com.example.movietracker.data.repository.MovieDataRepository;
 import com.example.movietracker.data.repository.MovieRepository;
-import com.example.movietracker.view.custom_view.FilterAlertDialog;
+import com.example.movietracker.view.FilterAlertDialog;
 
 public class ClassProvider {
 
@@ -23,7 +22,6 @@ public class ClassProvider {
     public static MoviesDatabase moviesDatabase;
     public static MovieRepository movieRepository;
     public static FilterAlertDialog filterAlertDialog;
-
 
     public static void initialize() {
 

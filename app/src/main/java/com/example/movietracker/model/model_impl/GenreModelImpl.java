@@ -7,7 +7,7 @@ import com.example.movietracker.model.ModelContract;
 
 public class GenreModelImpl implements ModelContract.GenreModel {
 
-    private final GetGenresUseCase getGenresUseCase;
+    private GetGenresUseCase getGenresUseCase;
 
     public GenreModelImpl() {
         this.getGenresUseCase = new GetGenresUseCase();
