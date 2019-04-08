@@ -18,11 +18,13 @@ import com.example.movietracker.view.fragment.MovieListFragment;
 import com.example.movietracker.view.fragment.movie_details.MovieVideoTabFragment;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 public class MainActivity extends BaseActivity implements
         MainFragment.MainFragmentInteractionListener,
         MovieListFragment.MovieListFragmentInteractionListener,
-        MovieVideoTabFragment.MovieVideoTabFragmentInteractionListener {
+        MovieVideoTabFragment.MovieVideoTabFragmentInteractionListener,
+        MovieDetailsFragment.MovieDetailsFragmentInteractionListener {
 
     public static Intent getCallingIntent(Context context) {
         return new Intent(context, MainActivity.class);
@@ -59,5 +61,10 @@ public class MainActivity extends BaseActivity implements
     @Override
     public void showYouTubePlayer(String videoId, MovieVideosEntity movieVideosEntity) {
         startActivity(YouTubeActivity.getCallingIntent(this, videoId, movieVideosEntity));
+    }
+
+    @Override
+    public void openNewFragmentInTab(Fragment fragment) {
+        replaceFragmentWithoutStack(R.id.fragment_container, fragment);
     }
 }

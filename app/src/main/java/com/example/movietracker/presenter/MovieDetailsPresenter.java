@@ -15,20 +15,13 @@ public class MovieDetailsPresenter extends BasePresenter {
 
     private MovieDetailsView view;
 
-    public MovieDetailsPresenter() {
+    public MovieDetailsPresenter(MovieDetailsView movieDetailsView) {
         this.movieInfoModel = new MovieInfoModelImpl();
-    }
-
-    public void setView(MovieDetailsView movieDetailsView) {
         this.view = movieDetailsView;
     }
 
-    public void initialize(int movieId) {
+    public void getMovieDetails(int movieId) {
         showLoading();
-        getMovieDetails(movieId);
-    }
-
-    private void getMovieDetails(int movieId) {
         this.movieInfoModel.getMovieInfo(new GetMovieDetailsObserver(), movieId);
     }
 

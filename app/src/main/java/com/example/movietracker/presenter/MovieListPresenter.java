@@ -25,11 +25,6 @@ public class MovieListPresenter extends BasePresenter {
         this.view = view;
         this.movieModel = new MovieModelImpl();
         this.moviesEntity = new MoviesEntity();
-        initialize();
-    }
-
-    private void initialize() {
-        showLoading();
     }
 
     public void onMovieItemClicked(int clickedMovieId) {

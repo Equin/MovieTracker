@@ -19,7 +19,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private enum FragmentAction {
         ADD,
-        REPLACE
+        REPLACE,
+        REPLACE_WITHOUT_STACK
     }
 
     @Override
@@ -73,6 +74,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         setFragment(containerViewId, fragment, FragmentAction.REPLACE);
     }
 
+    protected void replaceFragmentWithoutStack(int containerViewId, Fragment fragment) {
+        setFragment(containerViewId, fragment, FragmentAction.REPLACE_WITHOUT_STACK);
+    }
+
     private void setFragment(
             final int containerViewId,
             final Fragment fragment,
@@ -88,6 +93,10 @@ public abstract class BaseActivity extends AppCompatActivity {
                 fragmentTransaction.replace(containerViewId, fragment);
                 fragmentTransaction.addToBackStack("replacedFragment");
                 fragmentTransaction.commitAllowingStateLoss();
+                break;
+            case REPLACE_WITHOUT_STACK:
+                fragmentTransaction.replace(containerViewId, fragment);
+                fragmentTransaction.commit();
                 break;
             case ADD:
                 fragmentTransaction.add(containerViewId, fragment);

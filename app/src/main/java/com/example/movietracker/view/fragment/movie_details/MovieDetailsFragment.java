@@ -32,8 +32,10 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
 
     public static final String ARG_SELECTED_MOVIE_ID = "arg_selected_movie_id";
 
-    public interface MovieDetailsFragmentInteractionListener {
+    private static String[] tabTitles = new String[]{"Info", "Cast", "Review", "Video"};
 
+    public interface MovieDetailsFragmentInteractionListener {
+        void openNewFragmentInTab(Fragment fragment);
     }
 
     public static MovieDetailsFragment newInstance(int movieId) {
@@ -45,7 +47,7 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
     }
 
     private MovieDetailsPresenter movieDetailsPresenter;
-    private MainFragment.MainFragmentInteractionListener mainFragmentInteractionListener;
+    private MovieDetailsFragmentInteractionListener movieDetailsFragmentInteractionListener;
     private MovieDetailsEntity movieDetailsEntity;
     private int movieId;
 
@@ -98,13 +100,9 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
 
         this.movieId = getMovieIdFromArguments();
 
-        this.movieDetailsPresenter = new MovieDetailsPresenter();
-
-        this.movieDetailsPresenter.setView(this);
-        this.movieDetailsPresenter.initialize(this.movieId);
+        this.movieDetailsPresenter = new MovieDetailsPresenter(this);
+        this.movieDetailsPresenter.getMovieDetails(this.movieId);
     }
-
-    private static String[] tabTitles = new String[]{"Info", "Cast", "Review", "Video"};
 
     private void setupTabLayout() {
         for (int i = 0; i<tabTitles.length; i++) {
@@ -142,25 +140,22 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
     }
 
     private void replaceFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.fragment_container, fragment);
-
-        transaction.commit();
+        this.movieDetailsFragmentInteractionListener.openNewFragmentInTab(fragment);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof MainFragment.MainFragmentInteractionListener) {
-            this.mainFragmentInteractionListener = (MainFragment.MainFragmentInteractionListener) context;
+        if (context instanceof MovieDetailsFragmentInteractionListener) {
+            this.movieDetailsFragmentInteractionListener = (
+                    MovieDetailsFragmentInteractionListener) context;
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        this.mainFragmentInteractionListener = null;
+        this.movieDetailsFragmentInteractionListener = null;
     }
 
     @Override
@@ -190,17 +185,15 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
     }
 
     private void renderMovieDetailView() {
-        this.textViewMovieDuration.setText(UtilityHelpers.getAppropriateValue(this.movieDetailsEntity.getMovieRuntime())+ " min");
+        this.textViewMovieDuration.setText(UtilityHelpers.getAppropriateValue(this.movieDetailsEntity.getMovieRuntime()) + " min");
         this.textViewMovieTitle.setText(this.movieDetailsEntity.getMovieTitle());
         this.textViewMovieReleaseDate.setText(UtilityHelpers.getYear(this.movieDetailsEntity.getMovieReleaseDate()));
         this.textViewMovieGenres.setText(UtilityHelpers.getPipeDividedGenres(this.movieDetailsEntity.getGenres()));
 
         Glide
                 .with(this)
-                .load(NetConstant.IMAGE_BASE_URL +movieDetailsEntity.getMoviePosterPath())
+                .load(NetConstant.IMAGE_BASE_URL + movieDetailsEntity.getMoviePosterPath())
                 .centerCrop()
                 .into(this.imageViewMoviePoster);
-
     }
-
 }

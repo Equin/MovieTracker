@@ -17,7 +17,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="8dp"
         android:singleLine="false"
-        android:text="Cast name"
         android:textColor="@color/colorTextWhite"
         android:textSize="18sp" />
 
@@ -29,7 +28,6 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Author"
         android:textColor="@color/text_color_white_dark"
         android:textSize="18sp" />
 </RelativeLayout>

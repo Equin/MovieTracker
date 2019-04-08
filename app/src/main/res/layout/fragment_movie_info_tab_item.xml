@@ -45,7 +45,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="0dp"
                 android:layout_marginEnd="0dp"
-                android:text="N/A"
+                android:text="@string/detail_n_a_title"
                 android:textAlignment="center"
                 android:textColor="@color/colorTextWhite" />
 
@@ -57,7 +57,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="4dp"
-                android:text="IMDb"
+                android:text="@string/detail_imdb_title"
                 android:textAlignment="center"
                 android:textColor="@color/colorTextWhite"
                 android:textSize="10sp" />
@@ -89,7 +89,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="4dp"
-                android:text="TMDb"
+                android:text="@string/detail_tmdb_title"
                 android:textAlignment="center"
                 android:textColor="@color/colorTextWhite"
                 android:textSize="10sp" />
@@ -101,7 +101,7 @@
                 android:layout_below="@+id/imageView_tmdb"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:text="N/A"
+                android:text="@string/detail_n_a_title"
                 android:textAlignment="center"
                 android:textColor="@color/colorTextWhite" />
         </RelativeLayout>
@@ -129,7 +129,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="4dp"
-                android:text="Metascore"
+                android:text="@string/detail_metascore_title"
                 android:textAlignment="center"
                 android:textColor="@color/colorTextWhite"
                 android:textSize="10sp" />
@@ -141,7 +141,7 @@
                 android:layout_below="@+id/imageView_metascore"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:text="N/A"
+                android:text="@string/detail_n_a_title"
                 android:textAlignment="center"
                 android:textColor="@color/colorTextWhite" />
         </RelativeLayout>
@@ -172,7 +172,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="4dp"
-                android:text="Custom"
+                android:text="@string/detail_custom"
                 android:textAlignment="center"
                 android:textColor="@color/colorTextWhite"
                 android:textSize="10sp" />
@@ -184,7 +184,7 @@
                 android:layout_below="@+id/imageView_someasle"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:text="N/A"
+                android:text="@string/detail_n_a_title"
                 android:textAlignment="center"
                 android:textColor="@color/colorTextWhite" />
         </RelativeLayout>

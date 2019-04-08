@@ -13,4 +13,15 @@
     <string name="alert_dialog_done_button_text">DONE</string>
     <string name="alert_dialog_desc">Desc</string>
     <string name="alert_dialog_asc">Asc</string>
+
+    <string name="movie_list_there_are_no_pages">There are no more pages</string>
+
+    <string name="detail_imdb_title">IMDb</string>
+    <string name="detail_n_a_title">N/A</string>
+    <string name="detail_custom">Custom</string>
+    <string name="detail_metascore_title">Metascore</string>
+    <string name="detail_tmdb_title">TMDb</string>
+    <string name="cast_name_placeholder">Cast name</string>
+
+
 </resources>

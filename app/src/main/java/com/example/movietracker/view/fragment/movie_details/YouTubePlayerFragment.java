@@ -208,7 +208,6 @@ public class YouTubePlayerFragment extends BaseFragment implements OnBackPressLi
         }
     }
 
-
     private class ClickListener implements RecyclerView.OnClickListener {
 
         private int previousClick = -1;

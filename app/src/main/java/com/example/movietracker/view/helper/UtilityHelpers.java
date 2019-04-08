@@ -45,9 +45,11 @@ public class UtilityHelpers {
         List<GenreEntity> tempGenres = new ArrayList<>();
 
         for(int i = 0; i<genresId.size(); i++) {
-            for (int j = 0; j < genres.size(); j++) {
-                if(genres.get(j).getGenreId() == genresId.get(i)) {
-                    tempGenres.add(genres.get(j));
+            if(genres != null) {
+                for (int j = 0; j < genres.size(); j++) {
+                    if(genres.get(j).getGenreId() == genresId.get(i)) {
+                        tempGenres.add(genres.get(j));
+                    }
                 }
             }
         }

@@ -82,7 +82,7 @@ public class MovieRequestEntity implements Serializable {
         GenresEntity genres = new GenresEntity();
         List<GenreEntity> genreList = new ArrayList<>();
 
-        if (genresEntity != null) {
+        if (genresEntity != null && genresEntity.getGenres() != null) {
             for (GenreEntity genre : genresEntity.getGenres()) {
                 if (genre.isSelected()) {
                     genreList.add(genre);

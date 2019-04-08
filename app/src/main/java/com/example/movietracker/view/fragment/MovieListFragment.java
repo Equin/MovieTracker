@@ -185,7 +185,7 @@ public class MovieListFragment extends BaseFragment
                 showToast(DataProvider.movieRequestEntity.getPage() + "page");
                 this.movieListPresenter.getMoviesWithPagination(DataProvider.movieRequestEntity);
             } else {
-                showToast("There are no more pages");
+                showToast(R.string.movie_list_there_are_no_pages);
                 this.isActionAllowed = true;
             }
         }
