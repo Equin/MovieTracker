@@ -1,6 +1,6 @@
 package com.example.movietracker.model.model_impl;
 
-import com.example.movietracker.data.entity.MovieRequestEntity;
+import com.example.movietracker.data.entity.MovieFilter;
 import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.interactor.DefaultObserver;
 import com.example.movietracker.interactor.use_cases.GetMoviesUseCase;
@@ -15,8 +15,8 @@ public class MovieModelImpl implements ModelContract.MovieModel {
     }
 
     @Override
-    public void getMovies(DefaultObserver<MoviesEntity> defaultObserver, MovieRequestEntity movieRequestEntity) {
-        this.getMoviesUseCase.execute(defaultObserver, movieRequestEntity);
+    public void getMovies(DefaultObserver<MoviesEntity> defaultObserver, MovieFilter movieFilter) {
+        this.getMoviesUseCase.execute(defaultObserver, movieFilter);
     }
 
     @Override

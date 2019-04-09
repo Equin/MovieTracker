@@ -37,6 +37,7 @@ public class RestClientImpl implements RestClient {
         return SingletonHelper.INSTANCE;
     }
 
+    @Override
     public void init(String baseUrl) {
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);

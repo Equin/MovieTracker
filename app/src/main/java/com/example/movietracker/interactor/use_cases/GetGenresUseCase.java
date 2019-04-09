@@ -15,8 +15,10 @@ public class GetGenresUseCase extends UseCase<GenresEntity, Void> {
         this.movieRepository = ClassProvider.movieRepository;
     }
 
+    //What is the purpose now of UseCase?
     @Override
     protected Observable<GenresEntity> buildUseCaseObservable(Void aVoid) {
+        //??? Why Single to Observable? Do we need stream here???
         return this.movieRepository.getGenres().firstOrError().toObservable();
     }
 }

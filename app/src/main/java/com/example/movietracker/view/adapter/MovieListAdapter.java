@@ -66,7 +66,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
         Glide
           .with(holder.itemView)
-          .load(NetConstant.IMAGE_BASE_URL +movie.getPosterPath())
+          .load(NetConstant.IMAGE_BASE_URL + movie.getPosterPath())
           .centerCrop()
           .into(holder.moviePoster);
     }

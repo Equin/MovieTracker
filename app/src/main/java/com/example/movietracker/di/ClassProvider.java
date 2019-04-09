@@ -26,12 +26,12 @@ public class ClassProvider {
     public static void initialize() {
 
         restClient = RestClientImpl.getInstance();
-        ((RestClientImpl) restClient).init(NetConstant.BASE_URL);
+        restClient.init(NetConstant.BASE_URL);
 
         moviesDatabase = MoviesDatabase.getDatabase(AndroidApplication.getRunningActivity().getBaseContext());
 
         movieRepository = MovieDataRepository.getInstance();
-        ((MovieDataRepository) movieRepository).init(restClient, moviesDatabase);
+        movieRepository.init(restClient, moviesDatabase);
 
         filterAlertDialog = FilterAlertDialog.getInstance();
         filterAlertDialog.init();

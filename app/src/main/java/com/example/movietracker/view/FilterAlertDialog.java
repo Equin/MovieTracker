@@ -23,8 +23,6 @@ import com.example.movietracker.view.model.SortBy;
 import java.util.ArrayList;
 import java.util.List;
 
-
-//TODO Q. Или сделать так же как с GenreView типа кастомной View ???
 public class FilterAlertDialog {
 
     private  List<Option> optionList;
@@ -54,7 +52,6 @@ public class FilterAlertDialog {
     }
 
     private void pupulateModel() {
-
         optionList = new ArrayList<>();
         for(int i = 0; i< SortBy.values().length; i++) {
             optionList.add(new Option(i == 0,SortBy.values()[i], Order.DESC));
@@ -81,9 +78,7 @@ public class FilterAlertDialog {
 
         alertDialogBuilder.setCustomTitle(customTitleView);
 
-
         alertDialog = alertDialogBuilder.create();
-
         alertDialog.show();
     }
 

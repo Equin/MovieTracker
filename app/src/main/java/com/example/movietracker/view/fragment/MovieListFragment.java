@@ -11,10 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.MovieRequestEntity;
+import com.example.movietracker.data.entity.MovieFilter;
 import com.example.movietracker.data.entity.MoviesEntity;
+import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.di.ClassProvider;
-import com.example.movietracker.di.DataProvider;
 import com.example.movietracker.listener.OnLastElementReachedListener;
 import com.example.movietracker.presenter.MovieListPresenter;
 import com.example.movietracker.view.adapter.MovieListAdapter;
@@ -39,17 +39,17 @@ public class MovieListFragment extends BaseFragment
         OnLastElementReachedListener,
         FilterAlertDialog.OnDoneButtonClickedListener {
 
-    private static final String ARG_MOVIE_REQUEST_ENTITY = "args_movie_request_entity";
+    private static final String ARG_GENRES_ENTITY = "args_genres_entity";
     private static final String TAG = MovieListFragment.class.getCanonicalName();
 
     public interface MovieListFragmentInteractionListener {
         void showMovieDetailScreen(int movieId);
     }
 
-    public static MovieListFragment newInstance(MovieRequestEntity movieRequestEntity) {
+    public static MovieListFragment newInstance(GenresEntity genresEntity) {
         MovieListFragment movieListFragment = new MovieListFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ARG_MOVIE_REQUEST_ENTITY, movieRequestEntity);
+        bundle.putSerializable(ARG_GENRES_ENTITY, genresEntity);
         movieListFragment.setArguments(bundle);
         return movieListFragment;
     }
@@ -57,9 +57,6 @@ public class MovieListFragment extends BaseFragment
     private MovieListPresenter movieListPresenter;
     private MovieListFragmentInteractionListener movieListFragmentInteractionListener;
     private MovieListAdapter movieListAdapter;
-
-    private boolean isActionAllowed = true;
-    private int totalPages;
 
     @BindView(R.id.recyclerView_movies)
     RecyclerView movieRecyclerView;
@@ -97,7 +94,7 @@ public class MovieListFragment extends BaseFragment
         setNotTransparentToolbar();
         setToolbarTitle(
                 UtilityHelpers.getPipeDividedGenres(
-                        DataProvider.movieRequestEntity.getSelectedGenres().getGenres()));
+                        MovieFilter.getInstance().getSelectedGenres()));
         this.setupMenuDrawer();
 
         getMovies();
@@ -132,7 +129,6 @@ public class MovieListFragment extends BaseFragment
 
     @Override
     public void renderMoviesList(MoviesEntity moviesEntity) {
-        this.totalPages = moviesEntity.getTotalPages();
 
         RecyclerView.LayoutManager rowLayoutManager = new LinearLayoutManager(
                 getContext(), RecyclerView.VERTICAL, false);
@@ -140,22 +136,17 @@ public class MovieListFragment extends BaseFragment
         this.movieRecyclerView.setLayoutManager(rowLayoutManager);
         this.movieListAdapter = new MovieListAdapter(
                 moviesEntity,
-                new ClickListener(
-                        moviesEntity,
-                        movieRecyclerView,
-                        movieListPresenter),
-                DataProvider.movieRequestEntity.getGenresEntity());
+                new ClickListener(),
+                getGenresEntity());
 
         this.movieRecyclerView.setAdapter(movieListAdapter);
         this.movieRecyclerView.addOnScrollListener(new SnapScrollListener(this));
         this.swipeRefreshLayout.setRefreshing(false);
-        this.isActionAllowed = true;
     }
 
     @Override
     public void renderAdditionalMovieListPage(MoviesEntity moviesEntity) {
         this.movieListAdapter.updateMovieList(moviesEntity);
-        this.isActionAllowed = true;
     }
 
     @Override
@@ -186,17 +177,7 @@ public class MovieListFragment extends BaseFragment
 
     @Override
     public void lastElementReached() {
-        if(this.isActionAllowed) {
-            this.isActionAllowed = false;
-            if (this.totalPages > DataProvider.movieRequestEntity.getPage()) {
-                DataProvider.movieRequestEntity.incrementPage();
-                showToast(DataProvider.movieRequestEntity.getPage() + "page");
-                this.movieListPresenter.getMoviesWithPagination(DataProvider.movieRequestEntity);
-            } else {
-                showToast(R.string.movie_list_there_are_no_pages);
-                this.isActionAllowed = true;
-            }
-        }
+        this.movieListPresenter.lastMovieOfPageReached();
     }
 
     @Override
@@ -204,46 +185,36 @@ public class MovieListFragment extends BaseFragment
         alertDialog.dismiss();
 
         Option option = ClassProvider.filterAlertDialog.getFilterOptions();
-        DataProvider.movieRequestEntity.setOrder(option.getSortOrder());
-        DataProvider.movieRequestEntity.setSortBy(option.getSortBy().getSearchName());
+        MovieFilter.getInstance().setOrder(option.getSortOrder());
+        MovieFilter.getInstance().setSortBy(option.getSortBy().getSearchName());
 
-        this.movieListPresenter.getMoviesByFilters(DataProvider.movieRequestEntity);
+        this.movieListPresenter.getMoviesByFilters(MovieFilter.getInstance());
     }
 
     private void getMovies() {
-        if(this.movieListPresenter != null) {
-            renderMoviesList(this.movieListPresenter.getMoviesEntity());
-        } else {
+        if (this.movieListPresenter == null) {
             this.movieListPresenter = new MovieListPresenter(this);
-            this.movieListPresenter.getMoviesByFilters(DataProvider.movieRequestEntity);
+            this.movieListPresenter.getMoviesByFilters(MovieFilter.getInstance());
+        }
+         else {
+            this.movieListPresenter.getLocalMovies();
         }
     }
 
-    private MovieRequestEntity getMovieRequestEntity() {
+    private GenresEntity getGenresEntity() {
         if(getArguments() != null) {
-            return  (MovieRequestEntity) getArguments().getSerializable(ARG_MOVIE_REQUEST_ENTITY);
+            return  (GenresEntity) getArguments().getSerializable(ARG_GENRES_ENTITY);
         }
 
         return null;
     }
 
     private class ClickListener implements RecyclerView.OnClickListener {
-        MoviesEntity moviesEntity;
-        RecyclerView recyclerView;
-        MovieListPresenter movieListPresenter;
-
-        public ClickListener(MoviesEntity moviesEntity, RecyclerView recyclerView, MovieListPresenter movieListPresenter) {
-            this.moviesEntity = moviesEntity;
-            this.recyclerView = recyclerView;
-            this.movieListPresenter = movieListPresenter;
-        }
 
         @Override
         public void onClick(View v) {
-            int itemPosition = this.recyclerView.getChildAdapterPosition(v);
-
-            this.movieListPresenter.onMovieItemClicked(
-                    this.moviesEntity.getMovies().get(itemPosition).getMovieId());
+            int itemPosition = MovieListFragment.this.movieRecyclerView.getChildAdapterPosition(v);
+            MovieListFragment.this.movieListPresenter.onMovieItemClicked(itemPosition);
         }
     }
 
@@ -252,8 +223,8 @@ public class MovieListFragment extends BaseFragment
         @Override
         public void onRefresh() {
             Log.d(TAG, "onRefresh called from SwipeRefreshLayout");
-            DataProvider.movieRequestEntity.setPage(1);
-            MovieListFragment.this.movieListPresenter.getMoviesByFilters(DataProvider.movieRequestEntity);
+            MovieFilter.getInstance().setPage(1);
+            MovieListFragment.this.movieListPresenter.getMoviesByFilters(MovieFilter.getInstance());
         }
     }
 }

@@ -10,10 +10,10 @@ import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.MovieRequestEntity;
+import com.example.movietracker.data.entity.MovieFilter;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.di.ClassProvider;
-import com.example.movietracker.di.DataProvider;
+import com.example.movietracker.model.model_impl.GenreModelImpl;
 import com.example.movietracker.presenter.MainPresenter;
 import com.example.movietracker.view.contract.MainView;
 import com.example.movietracker.view.custom_view.CustomGenreView;
@@ -33,7 +33,7 @@ import butterknife.Optional;
 public class MainFragment extends BaseFragment implements MainView, FilterAlertDialog.OnDoneButtonClickedListener {
 
     public interface MainFragmentInteractionListener {
-        void showMovieListScreen(MovieRequestEntity movieRequestEntity);
+        void showMovieListScreen(GenresEntity genresEntity);
     }
 
     public static MainFragment newInstance() {
@@ -80,15 +80,19 @@ public class MainFragment extends BaseFragment implements MainView, FilterAlertD
         setToolbarTitle(getString(R.string.main_fragment_toolbar_title));
         this.setupMenuDrawer();
 
-        getGenres();
+        this.getGenres();
     }
 
     private void getGenres() {
-        if(this.mainPresenter != null) {
-          this.renderGenreView(DataProvider.genresEntity);
-        } else {
-            this.mainPresenter = new MainPresenter(this);
+        if(this.mainPresenter == null) {
+            this.mainPresenter = new MainPresenter(
+                    this,
+                    new GenreModelImpl(),
+                    MovieFilter.getInstance());
+
             this.mainPresenter.getGenres();
+        } else {
+            this.mainPresenter.getLocalGenres();
         }
     }
 
@@ -135,16 +139,16 @@ public class MainFragment extends BaseFragment implements MainView, FilterAlertD
 
     @Override
     public void renderGenreView(GenresEntity genreList) {
-        DataProvider.genresEntity = genreList;
-        this.customGenreView.renderGenreView(DataProvider.genresEntity,
-                new onCheckedListener(DataProvider.genresEntity));
+        this.customGenreView.renderGenreView(genreList,
+                new onCheckedListener());
     }
 
     @Optional
     @OnClick(R.id.main_button_search)
     public void onSearchButtonClicked(){
-         this.mainPresenter.onSearchButtonClicked(DataProvider.genresEntity,
-                 ClassProvider.filterAlertDialog.getFilterOptions());
+         this.mainPresenter.onSearchButtonClicked(
+                 ClassProvider.filterAlertDialog.getFilterOptions()
+         );
     }
 
     @Optional
@@ -160,8 +164,8 @@ public class MainFragment extends BaseFragment implements MainView, FilterAlertD
     }
 
     @Override
-    public void openMovieListView(MovieRequestEntity movieRequestEntity) {
-        this.mainFragmentInteractionListener.showMovieListScreen(movieRequestEntity);
+    public void openMovieListView(GenresEntity genresEntity) {
+        this.mainFragmentInteractionListener.showMovieListScreen(genresEntity);
     }
 
     @Override
@@ -181,20 +185,10 @@ public class MainFragment extends BaseFragment implements MainView, FilterAlertD
     }
 
     public class onCheckedListener implements ToggleButton.OnCheckedChangeListener {
-        private GenresEntity genresEntity;
-
-        public onCheckedListener(GenresEntity genresEntity) {
-            this.genresEntity = genresEntity;
-        }
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            for(int i = 0; i<this.genresEntity.getGenres().size(); i++) {
-                if (this.genresEntity.getGenres().get(i).getGenreName()
-                        .equals(buttonView.getText())) {
-                    this.genresEntity.getGenres().get(i).setSelected(isChecked);
-                }
-            }
+            MainFragment.this.mainPresenter.onGenreChecked(buttonView.getText().toString(), isChecked);
         }
     }
 }

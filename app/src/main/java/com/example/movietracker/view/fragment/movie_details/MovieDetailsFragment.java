@@ -185,10 +185,14 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
     }
 
     private void renderMovieDetailView() {
-        this.textViewMovieDuration.setText(UtilityHelpers.getAppropriateValue(this.movieDetailsEntity.getMovieRuntime()) + " min");
-        this.textViewMovieTitle.setText(this.movieDetailsEntity.getMovieTitle());
-        this.textViewMovieReleaseDate.setText(UtilityHelpers.getYear(this.movieDetailsEntity.getMovieReleaseDate()));
-        this.textViewMovieGenres.setText(UtilityHelpers.getPipeDividedGenres(this.movieDetailsEntity.getGenres()));
+        this.textViewMovieDuration.setText(
+                UtilityHelpers.getAppropriateValue(this.movieDetailsEntity.getMovieRuntime()) + " min");
+        this.textViewMovieTitle.setText(
+                this.movieDetailsEntity.getMovieTitle());
+        this.textViewMovieReleaseDate.setText(
+                UtilityHelpers.getYear(this.movieDetailsEntity.getMovieReleaseDate()));
+        this.textViewMovieGenres.setText(
+                UtilityHelpers.getPipeDividedGenres(this.movieDetailsEntity.getGenres()));
 
         Glide
                 .with(this)

@@ -4,7 +4,7 @@ import com.example.movietracker.data.database.MoviesDatabase;
 import com.example.movietracker.data.database.dao.GenresDao;
 import com.example.movietracker.data.database.dao.MovieDao;
 import com.example.movietracker.data.database.dao.MovieDetailDao;
-import com.example.movietracker.data.entity.MovieRequestEntity;
+import com.example.movietracker.data.entity.MovieFilter;
 import com.example.movietracker.data.entity.entity_mapper.MovieCastsDataMapper;
 import com.example.movietracker.data.entity.entity_mapper.MovieReviewsDataMapper;
 import com.example.movietracker.data.entity.entity_mapper.MovieVideosDataMapper;
@@ -17,14 +17,10 @@ import com.example.movietracker.data.entity.movie_details.video.MovieVideosEntit
 import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.data.net.RestClient;
 import com.example.movietracker.data.net.api.MovieApi;
-import com.google.common.collect.Lists;
 
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.Observer;
 
 public class MovieDataRepository implements MovieRepository {
 
@@ -47,6 +43,7 @@ public class MovieDataRepository implements MovieRepository {
         return SingletonHelper.INSTANCE;
     }
 
+    @Override
     public void init(RestClient restClient, MoviesDatabase moviesDatabase) {
         this.movieApi = restClient.getMovieApi();
         this.genresDao = moviesDatabase.genresDao();
@@ -58,6 +55,7 @@ public class MovieDataRepository implements MovieRepository {
     }
 
     @Override
+    //Why not single? Do we have case to have open stream here? Question.
     public Observable<GenresEntity> getGenres() {
         return this.movieApi.getGenres()
                         .doOnNext(genresEntity -> this.genresDao.saveGenres(genresEntity.getGenres()))
@@ -84,20 +82,20 @@ public class MovieDataRepository implements MovieRepository {
                 .onExceptionResumeNext(genresDao.getAllGenres().map(GenresEntity::new));*/
 
     @Override
-    public Observable<MoviesEntity> getMovies(MovieRequestEntity movieRequestEntity) {
+    public Observable<MoviesEntity> getMovies(MovieFilter movieFilter) {
         return this.movieApi.getMovies(
-                movieRequestEntity.getCommaSeparatedGenres(),
-                movieRequestEntity.getSortBy()
+                movieFilter.getCommaSeparatedGenres(),
+                movieFilter.getSortBy()
                         .concat(".").concat(
-                                movieRequestEntity.getOrder().name().toLowerCase()),
-                movieRequestEntity.getPage(),
-                movieRequestEntity.isIncludeAdult())
+                                movieFilter.getOrder().name().toLowerCase()),
+                movieFilter.getPage(),
+                movieFilter.isIncludeAdult())
                 .doOnNext(moviesEntity -> {
                     this.movieDao.saveMovies(moviesEntity.getMovies());
                     this.movieDao.addMovieGenreRelation(moviesEntity.getMovies());
                 })
                 .onExceptionResumeNext(
-                        this.movieDao.getMoviesByOptions(movieRequestEntity.getGenresId())
+                        this.movieDao.getMoviesByOptions(movieFilter.getGenresId())
                                 .map(movieResultEntities ->
                                         new MoviesEntity(0,0,movieResultEntities))
                 );

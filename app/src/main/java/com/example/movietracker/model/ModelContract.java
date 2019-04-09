@@ -1,6 +1,6 @@
 package com.example.movietracker.model;
 
-import com.example.movietracker.data.entity.MovieRequestEntity;
+import com.example.movietracker.data.entity.MovieFilter;
 import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.data.entity.movie_details.MovieDetailsEntity;
@@ -17,9 +17,10 @@ public class ModelContract {
     }
 
     public interface MovieModel {
-        void getMovies(DefaultObserver<MoviesEntity> defaultObserver, MovieRequestEntity movieRequestEntity);
+        void getMovies(DefaultObserver<MoviesEntity> defaultObserver, MovieFilter movieFilter);
         void stop();
     }
+
     public interface MovieInfoModel {
         void getMovieInfo(DefaultObserver<MovieDetailsEntity> defaultObserver, int movieId);
         void stop();

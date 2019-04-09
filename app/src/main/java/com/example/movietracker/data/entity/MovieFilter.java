@@ -8,27 +8,38 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MovieRequestEntity implements Serializable {
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+public class MovieFilter implements Serializable {
 
     private int page;
     private List<Integer> genresId;
-    private GenresEntity genresEntity;
+    private List<GenreEntity> selectedGenres;
     private boolean includeAdult;
     private String sortBy;
     private Order order;
 
-    public MovieRequestEntity() {
+    private static class SingletonHelper {
+        private static final MovieFilter INSTANCE = new MovieFilter();
+    }
+
+
+    public static MovieFilter getInstance(){
+        return SingletonHelper.INSTANCE;
+    }
+
+    private MovieFilter() {
         page = 1;
         sortBy = "Popularity";
         genresId = new ArrayList<>();
-        genresEntity = new GenresEntity();
+        selectedGenres = new ArrayList<>();
         order = Order.DESC;
     }
 
-    public MovieRequestEntity(int page, List<Integer> genresId, GenresEntity genresEntity, boolean includeAdult, String sortBy, Order order) {
+    public MovieFilter(int page, List<Integer> genresId, boolean includeAdult, String sortBy, Order order) {
         this.page = page;
         this.genresId = genresId;
-        this.genresEntity = genresEntity;
         this.includeAdult = includeAdult;
         this.sortBy = sortBy;
         this.order = order;
@@ -42,7 +53,7 @@ public class MovieRequestEntity implements Serializable {
         this.page = page;
     }
 
-    public void setGenresId(List<Integer> genresId) {
+    public void setGenresId(@NonNull List<Integer> genresId) {
         this.genresId = genresId;
     }
 
@@ -62,37 +73,28 @@ public class MovieRequestEntity implements Serializable {
         this.sortBy = sortBy;
     }
 
+    @Nullable
     public Order getOrder() {
         return order;
     }
 
-    public void setOrder(Order order) {
+    public void setOrder(@NonNull Order order) {
         this.order = order;
     }
 
-    public GenresEntity getGenresEntity() {
-        return genresEntity;
-    }
-
-    public void setGenresEntity(GenresEntity genresEntity) {
-        this.genresEntity = genresEntity;
-    }
-
-    public GenresEntity getSelectedGenres() {
-        GenresEntity genres = new GenresEntity();
-        List<GenreEntity> genreList = new ArrayList<>();
-
-        if (genresEntity != null && genresEntity.getGenres() != null) {
+    public void setSelectedGenres(@NonNull GenresEntity genresEntity) {
+        this.selectedGenres = new ArrayList<>();
+        if (genresEntity.getGenres() != null) {
             for (GenreEntity genre : genresEntity.getGenres()) {
                 if (genre.isSelected()) {
-                    genreList.add(genre);
+                    this.selectedGenres.add(genre);
                 }
             }
         }
+    }
 
-        genres.setGenres(genreList);
-
-        return genres;
+    public List<GenreEntity> getSelectedGenres() {
+        return this.selectedGenres;
     }
 
     public void incrementPage() {
@@ -100,16 +102,14 @@ public class MovieRequestEntity implements Serializable {
     }
 
     public List<Integer> getGenresId() {
-        GenresEntity genresEntity = getSelectedGenres();
-
-        for(GenreEntity genre : genresEntity.getGenres()) {
+        for(GenreEntity genre : getSelectedGenres()) {
             genresId.add(genre.getGenreId());
         }
         return genresId;
     }
 
     public String getCommaSeparatedGenres() {
-        List<GenreEntity> genreEntity = getSelectedGenres().getGenres();
+        List<GenreEntity> genreEntity = getSelectedGenres();
         StringBuilder sb = new StringBuilder();
 
         for (GenreEntity genre : genreEntity) {

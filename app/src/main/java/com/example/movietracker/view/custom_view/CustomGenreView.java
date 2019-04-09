@@ -20,8 +20,6 @@ public class CustomGenreView extends ViewGroup {
 
     private static final int COUNT_OF_BUTTONS_PER_ROW = 3;
 
-    private GenresEntity genresEntity;
-
     public CustomGenreView(Context context) {
         this(context, null);
     }
@@ -34,10 +32,11 @@ public class CustomGenreView extends ViewGroup {
         super(context, attrs, defStyleAttr);
     }
 
-    public void renderGenreView(GenresEntity genresEntity, CompoundButton.OnCheckedChangeListener onCheckedChangeListener) {
+    public void renderGenreView(GenresEntity genresEntity,
+                                CompoundButton.OnCheckedChangeListener onCheckedChangeListener) {
         removeAllViews();
-        this.genresEntity = genresEntity;
-        List<List<GenreEntity>> genres = Lists.partition( this.genresEntity.getGenres(), COUNT_OF_BUTTONS_PER_ROW);
+
+        List<List<GenreEntity>> genres = Lists.partition(genresEntity.getGenres(), COUNT_OF_BUTTONS_PER_ROW);
 
         LinearLayout.LayoutParams linearLayoutParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -57,7 +56,18 @@ public class CustomGenreView extends ViewGroup {
                 toggleButton.setTextOn(title);
 
                 toggleButton.setAllCaps(false);
+
                 toggleButton.setChecked(genres.get(j).get(i).isSelected());
+
+             /*   if(selectedGenres.size() == 0) {
+                    toggleButton.setChecked(genres.get(j).get(i).isSelected());
+                } else {
+                    for(int s = 0; s < selectedGenres.size(); s++) {
+                        if(selectedGenres.get(s).getGenreId() == genres.get(j).get(i).getGenreId()) {
+                            toggleButton.setChecked(selectedGenres.get(s).isSelected());
+                        }
+                    }
+                }*/
 
                 toggleButton.setPadding(25, 0, 25, 0);
 

@@ -8,6 +8,8 @@ import android.widget.Toast;
 
 import com.example.movietracker.AndroidApplication;
 import com.example.movietracker.R;
+import com.example.movietracker.view.FilterAlertDialog;
+import com.example.movietracker.view.model.Option;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
