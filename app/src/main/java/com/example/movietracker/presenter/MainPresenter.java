@@ -38,7 +38,7 @@ public class MainPresenter extends BasePresenter {
                 .subscribe(new SingleObserver<GenresEntity>() {
             @Override
             public void onSubscribe(Disposable d) {
-                Log.d(TAG, "Subscribed this.genreModel.getGenres()");
+                Log.d(TAG, "Subscribed to this.genreModel.getGenres()");
             }
 
             @Override
@@ -55,10 +55,6 @@ public class MainPresenter extends BasePresenter {
                 MainPresenter.this.hideLoading();
             }
         });
-    }
-
-    public void getLocalGenres() {
-        this.mainView.renderGenreView(this.genresEntity);
     }
 
     private void showLoading() {
@@ -82,7 +78,6 @@ public class MainPresenter extends BasePresenter {
         this.filters.setIncludeAdult(false);
         this.filters.setSortBy(option.getSortBy().getSearchName());
         this.filters.setOrder(option.getSortOrder());
-        this.filters.setSelectedGenres(this.genresEntity);
         this.mainView.openMovieListView(this.genresEntity);
     }
 
@@ -99,6 +94,15 @@ public class MainPresenter extends BasePresenter {
             if (this.genresEntity.getGenres().get(i).getGenreName()
                     .equals(text)) {
                 this.genresEntity.getGenres().get(i).setSelected(isChecked);
+
+                if(isChecked) {
+                    this.filters.addSelectedGenre(
+                            this.genresEntity.getGenres().get(i));
+                }
+                else {
+                    this.filters.removeUnselectedGenre(
+                            this.genresEntity.getGenres().get(i));
+                }
             }
         }
     }

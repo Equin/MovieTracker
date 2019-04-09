@@ -49,4 +49,14 @@ public class GenreEntity implements Serializable {
     public void setSelected(boolean selected) {
         this.isSelected = selected;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o == null) return false;
+
+        if(!(o instanceof GenreEntity)) return false;
+        GenreEntity genreEntity = (GenreEntity)o;
+
+        return this.genreId == genreEntity.genreId;
+    }
 }

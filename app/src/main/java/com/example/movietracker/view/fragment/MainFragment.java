@@ -80,20 +80,12 @@ public class MainFragment extends BaseFragment implements MainView, FilterAlertD
         setToolbarTitle(getString(R.string.main_fragment_toolbar_title));
         this.setupMenuDrawer();
 
-        this.getGenres();
-    }
+        this.mainPresenter = new MainPresenter(
+                this,
+                new GenreModelImpl(),
+                Filters.getInstance());
 
-    private void getGenres() {
-        if(this.mainPresenter == null) {
-            this.mainPresenter = new MainPresenter(
-                    this,
-                    new GenreModelImpl(),
-                    Filters.getInstance());
-
-            this.mainPresenter.getGenres();
-        } else {
-            this.mainPresenter.getLocalGenres();
-        }
+        this.mainPresenter.getGenres();
     }
 
     @Override
@@ -140,7 +132,7 @@ public class MainFragment extends BaseFragment implements MainView, FilterAlertD
     @Override
     public void renderGenreView(GenresEntity genreList) {
         this.customGenreView.renderGenreView(genreList,
-                new onCheckedListener());
+                new onCheckedListener(), Filters.getInstance().getSelectedGenresIds());
     }
 
     @Optional

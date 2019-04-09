@@ -98,7 +98,9 @@ public class MovieListFragment extends BaseFragment
                         Filters.getInstance().getSelectedGenres()));
         this.setupMenuDrawer();
 
-        getMovies();
+        this.movieListPresenter = new MovieListPresenter(this, new MovieModelImpl());
+        this.movieListPresenter.getMoviesByFilters(Filters.getInstance());
+
         this.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshListener());
     }
 
@@ -190,16 +192,6 @@ public class MovieListFragment extends BaseFragment
         Filters.getInstance().setSortBy(option.getSortBy().getSearchName());
 
         this.movieListPresenter.getMoviesByFilters(Filters.getInstance());
-    }
-
-    private void getMovies() {
-        if (this.movieListPresenter == null) {
-            this.movieListPresenter = new MovieListPresenter(this, new MovieModelImpl());
-            this.movieListPresenter.getMoviesByFilters(Filters.getInstance());
-        }
-         else {
-            this.movieListPresenter.getLocalMovies();
-        }
     }
 
     private GenresEntity getGenresEntity() {

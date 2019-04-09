@@ -25,24 +25,23 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
 
     private TabLayoutView view;
 
-    private Disposable movieCastsDiaposable;
-    private Disposable movieReviewsDiaposable;
-    private Disposable movieVideosDiaposable;
+    private Disposable movieCastsDisposable;
+    private Disposable movieReviewsDisposable;
+    private Disposable movieVideosDisposable;
 
     public MovieDetailsTabLayoutPresenter(TabLayoutView view) {
         this.movieDetailTabsModel = new MovieDetailTabsModelImpl();
         this.view = view;
 
-        this.movieCastsDiaposable = new CompositeDisposable();
-        this.movieReviewsDiaposable = new CompositeDisposable();
-        this.movieVideosDiaposable = new CompositeDisposable();
+        this.movieCastsDisposable = new CompositeDisposable();
+        this.movieReviewsDisposable = new CompositeDisposable();
+        this.movieVideosDisposable = new CompositeDisposable();
     }
 
     public void getMovieCasts(int movieId) {
         showLoading();
 
-
-        this.movieCastsDiaposable = this.movieDetailTabsModel.getMovieCasts(movieId)
+        this.movieCastsDisposable = this.movieDetailTabsModel.getMovieCasts(movieId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribeWith(new GetMovieCastObserver());
@@ -52,7 +51,7 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
     public void getMovieReviews(int movieId) {
         showLoading();
 
-        this.movieReviewsDiaposable = this.movieDetailTabsModel.getMovieReviews(movieId)
+        this.movieReviewsDisposable = this.movieDetailTabsModel.getMovieReviews(movieId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribeWith(new GetMovieReviewObserver());
@@ -61,7 +60,7 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
     public void getMovieVideos(int movieId) {
         showLoading();
 
-        this.movieVideosDiaposable = this.movieDetailTabsModel.getMovieVideos(movieId)
+        this.movieVideosDisposable = this.movieDetailTabsModel.getMovieVideos(movieId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribeWith(new GetMovieVideosObserver());
@@ -82,16 +81,16 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
     @Override
     public void destroy() {
         this.view = null;
-        if (!this.movieCastsDiaposable.isDisposed()) {
-            this.movieCastsDiaposable.dispose();
+        if (!this.movieCastsDisposable.isDisposed()) {
+            this.movieCastsDisposable.dispose();
         }
 
-        if (!this.movieReviewsDiaposable.isDisposed()) {
-            this.movieReviewsDiaposable.dispose();
+        if (!this.movieReviewsDisposable.isDisposed()) {
+            this.movieReviewsDisposable.dispose();
         }
 
-        if (!this.movieVideosDiaposable.isDisposed()) {
-            this.movieVideosDiaposable.dispose();
+        if (!this.movieVideosDisposable.isDisposed()) {
+            this.movieVideosDisposable.dispose();
         }
     }
 

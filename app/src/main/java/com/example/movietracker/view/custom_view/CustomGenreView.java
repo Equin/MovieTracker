@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.ToggleButton;
 
 import com.example.movietracker.R;
+import com.example.movietracker.data.entity.Filters;
 import com.example.movietracker.data.entity.genre.GenreEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.google.common.collect.Lists;
@@ -33,7 +34,8 @@ public class CustomGenreView extends ViewGroup {
     }
 
     public void renderGenreView(GenresEntity genresEntity,
-                                CompoundButton.OnCheckedChangeListener onCheckedChangeListener) {
+                                CompoundButton.OnCheckedChangeListener onCheckedChangeListener,
+                                List<Integer> selectedGenresIds) {
         removeAllViews();
 
         List<List<GenreEntity>> genres = Lists.partition(genresEntity.getGenres(), COUNT_OF_BUTTONS_PER_ROW);
@@ -59,15 +61,15 @@ public class CustomGenreView extends ViewGroup {
 
                 toggleButton.setChecked(genres.get(j).get(i).isSelected());
 
-             /*   if(selectedGenres.size() == 0) {
+                if(selectedGenresIds.size() == 0) {
                     toggleButton.setChecked(genres.get(j).get(i).isSelected());
                 } else {
-                    for(int s = 0; s < selectedGenres.size(); s++) {
-                        if(selectedGenres.get(s).getGenreId() == genres.get(j).get(i).getGenreId()) {
-                            toggleButton.setChecked(selectedGenres.get(s).isSelected());
-                        }
+                    if (selectedGenresIds.contains(genres.get(j).get(i).getGenreId())) {
+                        toggleButton.setChecked(true);
+                    } else {
+                        toggleButton.setChecked(false);
                     }
-                }*/
+                }
 
                 toggleButton.setPadding(25, 0, 25, 0);
 
@@ -85,6 +87,8 @@ public class CustomGenreView extends ViewGroup {
     }
 
     public void dismisSelections() {
+        Filters.getInstance().clearGenreFilters();
+
         for(int i = 0; i < getChildCount(); i++) {
             LinearLayout linearLayout = (LinearLayout) getChildAt(i);
             for(int j = 0; j < linearLayout.getChildCount(); j++) {

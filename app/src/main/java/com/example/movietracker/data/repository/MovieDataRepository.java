@@ -102,7 +102,7 @@ public class MovieDataRepository implements MovieRepository {
                     this.movieDao.addMovieGenreRelation(moviesEntity.getMovies());
                 })
                 .onExceptionResumeNext(
-                        this.movieDao.getMoviesByOptions(filters.getGenresId())
+                        this.movieDao.getMoviesByOptions(filters.getSelectedGenresIds())
                                 .map(movieResultEntities ->
                                         new MoviesEntity(0,0,movieResultEntities))
                 );

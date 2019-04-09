@@ -18,14 +18,17 @@ import io.reactivex.schedulers.Schedulers;
 public class MovieListPresenter extends BasePresenter {
 
     private static final String TAG = MovieListPresenter.class.getCanonicalName();
+
     private MovieListView view;
+
     private ModelContract.MovieModel movieModel;
+
     private MoviesEntity moviesEntity;
 
     private Disposable movieDisposable;
     private Disposable moviePageDisposable;
 
-    public MovieListPresenter(MovieListView view, ModelContract.MovieModel movieModel ) {
+    public MovieListPresenter(MovieListView view, ModelContract.MovieModel movieModel) {
         this.view = view;
         this.movieModel = movieModel;
         this.moviesEntity = new MoviesEntity();
@@ -50,9 +53,6 @@ public class MovieListPresenter extends BasePresenter {
         getMoviesByPage(filters);
     }
 
-    public MoviesEntity getMoviesEntity() {
-        return this.moviesEntity;
-    }
 
     private void getMovies(Filters filters) {
         showLoading();

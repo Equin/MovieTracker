@@ -15,7 +15,7 @@ import androidx.annotation.Nullable;
 public class Filters implements Serializable {
 
     private int page;
-    private List<Integer> genresId;
+    private List<Integer> selectedGenresIds;
     private List<GenreEntity> selectedGenres;
     private boolean includeAdult;
     private String sortBy;
@@ -25,7 +25,6 @@ public class Filters implements Serializable {
         private static final Filters INSTANCE = new Filters();
     }
 
-
     public static Filters getInstance(){
         return SingletonHelper.INSTANCE;
     }
@@ -33,14 +32,19 @@ public class Filters implements Serializable {
     private Filters() {
         page = 1;
         sortBy = SortBy.POPULARITY.getSearchName();
-        genresId = new ArrayList<>();
+        selectedGenresIds = new ArrayList<>();
         selectedGenres = new ArrayList<>();
         order = Order.DESC;
     }
 
-    public Filters(int page, List<Integer> genresId, boolean includeAdult, String sortBy, Order order) {
+    public void clearGenreFilters() {
+        selectedGenresIds = new ArrayList<>();
+        selectedGenres = new ArrayList<>();
+    }
+
+    public Filters(int page, List<GenreEntity> selectedGenres, boolean includeAdult, String sortBy, Order order) {
         this.page = page;
-        this.genresId = genresId;
+        this.selectedGenres = selectedGenres;
         this.includeAdult = includeAdult;
         this.sortBy = sortBy;
         this.order = order;
@@ -52,10 +56,6 @@ public class Filters implements Serializable {
 
     public void setPage(int page) {
         this.page = page;
-    }
-
-    public void setGenresId(@NonNull List<Integer> genresId) {
-        this.genresId = genresId;
     }
 
     public boolean isIncludeAdult() {
@@ -83,15 +83,40 @@ public class Filters implements Serializable {
         this.order = order;
     }
 
-    public void setSelectedGenres(@NonNull GenresEntity genresEntity) {
-        this.selectedGenres = new ArrayList<>();
+/*    public void setSelectedGenres(@NonNull GenresEntity genresEntity) {
+
         if (genresEntity.getGenres() != null) {
             for (GenreEntity genre : genresEntity.getGenres()) {
                 if (genre.isSelected()) {
                     this.selectedGenres.add(genre);
+                } else {
+                    this.selectedGenres.remove(genre);
                 }
             }
+
+            this.setSelectedGenresIds();
         }
+    }*/
+
+/*
+    private void setSelectedGenresIds() {
+        selectedGenresIds = new ArrayList<>();
+        for (GenreEntity genreEntity : this.getSelectedGenres()) {
+            if(genreEntity.isSelected()) {
+                this.selectedGenresIds.add(genreEntity.getGenreId());
+            }
+        }
+    }
+*/
+    public void addSelectedGenre(GenreEntity genreEntity) {
+        this.selectedGenres.add(genreEntity);
+        this.selectedGenresIds.add(genreEntity.getGenreId());
+    }
+
+    public void removeUnselectedGenre(GenreEntity genreEntity) {
+      this.selectedGenres.remove(genreEntity);
+      this.selectedGenresIds.remove(
+                this.selectedGenresIds.indexOf(genreEntity.getGenreId()));
     }
 
     public List<GenreEntity> getSelectedGenres() {
@@ -102,11 +127,8 @@ public class Filters implements Serializable {
         this.page++;
     }
 
-    public List<Integer> getGenresId() {
-        for(GenreEntity genre : getSelectedGenres()) {
-            genresId.add(genre.getGenreId());
-        }
-        return genresId;
+    public List<Integer> getSelectedGenresIds() {
+        return selectedGenresIds;
     }
 
     public String getCommaSeparatedGenres() {
