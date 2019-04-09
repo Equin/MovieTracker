@@ -1,25 +1,22 @@
 package com.example.movietracker.model.model_impl;
 
 import com.example.movietracker.data.entity.genre.GenresEntity;
-import com.example.movietracker.interactor.DefaultObserver;
-import com.example.movietracker.interactor.use_cases.GetGenresUseCase;
+import com.example.movietracker.data.repository.MovieRepository;
+import com.example.movietracker.di.ClassProvider;
 import com.example.movietracker.model.ModelContract;
+
+import io.reactivex.Single;
 
 public class GenreModelImpl implements ModelContract.GenreModel {
 
-    private GetGenresUseCase getGenresUseCase;
+    private final MovieRepository movieRepository;
 
     public GenreModelImpl() {
-        this.getGenresUseCase = new GetGenresUseCase();
+        this.movieRepository = ClassProvider.movieRepository;
     }
 
     @Override
-    public void getGenres(DefaultObserver<GenresEntity> defaultObserver) {
-        this.getGenresUseCase.execute(defaultObserver, null);
-    }
-
-    @Override
-    public void stop() {
-        this.getGenresUseCase.dispose();
+    public Single<GenresEntity> getGenres() {
+        return this.movieRepository.getGenres();
     }
 }

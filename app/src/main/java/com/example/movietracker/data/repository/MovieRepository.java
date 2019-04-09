@@ -11,9 +11,11 @@ import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.data.net.RestClient;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 
 public interface MovieRepository {
-    Observable<GenresEntity> getGenres();
+    Single<GenresEntity> getGenres();
+    Single<GenresEntity> getLocalGenres();
     Observable<MoviesEntity> getMovies(MovieFilter movieFilter);
     Observable<MovieDetailsEntity> getMovieDetails(int movieId);
     Observable<MovieCastsEntity> getMovieCasts(int movieId);

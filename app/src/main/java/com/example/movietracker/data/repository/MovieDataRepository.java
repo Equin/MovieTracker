@@ -21,6 +21,7 @@ import com.example.movietracker.data.net.api.MovieApi;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 
 public class MovieDataRepository implements MovieRepository {
 
@@ -55,11 +56,17 @@ public class MovieDataRepository implements MovieRepository {
     }
 
     @Override
-    //Why not single? Do we have case to have open stream here? Question.
-    public Observable<GenresEntity> getGenres() {
+    public Single<GenresEntity> getGenres() {
         return this.movieApi.getGenres()
-                        .doOnNext(genresEntity -> this.genresDao.saveGenres(genresEntity.getGenres()))
+                        .doOnSuccess(genresEntity -> this.genresDao.saveGenres(genresEntity.getGenres()))
                         .onErrorResumeNext(this.genresDao.getAllGenres().map(GenresEntity::new));
+    }
+
+    @Override
+    public Single<GenresEntity> getLocalGenres() {
+        return this.genresDao.getAllGenres().map(genreEntities -> new GenresEntity())
+                .onErrorResumeNext(this.movieApi.getGenres()
+                                .doOnSuccess(genresEntity -> this.genresDao.saveGenres(genresEntity.getGenres())));
     }
 
     /*  return  this.movieApi.getGenres().doOnNext(genresEntity -> this.genresDao.saveGenres(genresEntity.getGenres()))

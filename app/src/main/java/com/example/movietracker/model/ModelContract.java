@@ -9,11 +9,13 @@ import com.example.movietracker.data.entity.movie_details.review.MovieReviewsEnt
 import com.example.movietracker.data.entity.movie_details.video.MovieVideosEntity;
 import com.example.movietracker.interactor.DefaultObserver;
 
+import io.reactivex.Observable;
+import io.reactivex.Single;
+
 public class ModelContract {
 
     public  interface GenreModel {
-        void getGenres(DefaultObserver<GenresEntity> defaultObserver);
-        void stop();
+        Single<GenresEntity> getGenres();
     }
 
     public interface MovieModel {

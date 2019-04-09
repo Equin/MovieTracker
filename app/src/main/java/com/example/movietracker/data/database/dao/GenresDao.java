@@ -8,6 +8,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 
 import static androidx.room.OnConflictStrategy.REPLACE;
 
@@ -15,7 +16,7 @@ import static androidx.room.OnConflictStrategy.REPLACE;
 public interface GenresDao {
 
     @Query("SELECT * FROM GenreEntity")
-    Observable<List<GenreEntity>> getAllGenres();
+    Single<List<GenreEntity>> getAllGenres();
 
     @Insert(onConflict = REPLACE)
     void saveGenres(List<GenreEntity> genresEntity);

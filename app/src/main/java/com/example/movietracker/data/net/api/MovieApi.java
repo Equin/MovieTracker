@@ -8,6 +8,7 @@ import com.example.movietracker.data.entity.movie_details.video.MovieVideosEntit
 import com.example.movietracker.data.entity.MoviesEntity;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -15,7 +16,7 @@ import retrofit2.http.Query;
 public interface MovieApi {
 
     @GET("genre/movie/list")
-    Observable<GenresEntity> getGenres();
+    Single<GenresEntity> getGenres();
 
     @GET("discover/movie/")
     Observable<MoviesEntity> getMovies(@Query("with_genres") String genresIds, @Query("sort_by") String sortBy, @Query("page") int page, @Query("include_adult") boolean isIncludeAdult);

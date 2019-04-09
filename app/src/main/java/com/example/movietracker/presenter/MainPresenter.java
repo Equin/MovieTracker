@@ -1,6 +1,7 @@
 package com.example.movietracker.presenter;
 
 import android.graphics.Movie;
+import android.util.Log;
 
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.MovieFilter;
@@ -15,8 +16,11 @@ import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainPresenter extends BasePresenter {
+
+    private static final String TAG = MainPresenter.class.getCanonicalName();
 
     private ModelContract.GenreModel genreModel;
     private MainView mainView;
@@ -32,28 +36,29 @@ public class MainPresenter extends BasePresenter {
     public void getGenres() {
         showLoading();
 
-    /*    MovieRepository movieRepository;
-
-        movieRepository.getGenres().firstOrError()
+        this.genreModel.getGenres()
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new SingleObserver<GenresEntity>() {
+                .subscribeOn(Schedulers.io())
+                .subscribe(new SingleObserver<GenresEntity>() {
             @Override
             public void onSubscribe(Disposable d) {
-
+                Log.d(TAG, "Subscribed this.genreModel.getGenres()");
             }
 
             @Override
-            public void onSuccess(GenresEntity genresEntity) {
-
+            public void onSuccess(GenresEntity genreList) {
+                genresEntity = genreList;
+                MainPresenter.this.mainView.renderGenreView(genreList);
+                MainPresenter.this.hideLoading();
             }
 
             @Override
             public void onError(Throwable e) {
-
+                Log.d(TAG, e.getLocalizedMessage());
+                MainPresenter.this.mainView.showToast(R.string.main_error);
+                MainPresenter.this.hideLoading();
             }
-        });*/
-
-        this.genreModel.getGenres(new GetGenresObserver());
+        });
     }
 
     public void getLocalGenres() {
@@ -71,7 +76,9 @@ public class MainPresenter extends BasePresenter {
     @Override
     public void destroy() {
         this.mainView = null;
-        this.genreModel.stop();
+        this.movieFilter = null;
+        this.genresEntity = null;
+        this.genreModel = null;
     }
 
     public void onSearchButtonClicked(Option option) {
@@ -97,21 +104,6 @@ public class MainPresenter extends BasePresenter {
                     .equals(text)) {
                 this.genresEntity.getGenres().get(i).setSelected(isChecked);
             }
-        }
-    }
-
-    private class GetGenresObserver extends DefaultObserver<GenresEntity> {
-        @Override
-        public void onNext(GenresEntity genreList) {
-            genresEntity = genreList;
-            MainPresenter.this.mainView.renderGenreView(genreList);
-            MainPresenter.this.hideLoading();
-        }
-
-        @Override
-        public void onError(@NonNull Throwable e) {
-            MainPresenter.this.mainView.showToast(R.string.main_error);
-            MainPresenter.this.hideLoading();
         }
     }
 }
