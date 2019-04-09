@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.MovieFilter;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.data.entity.movie_details.video.MovieVideosEntity;
 import com.example.movietracker.view.fragment.MainFragment;

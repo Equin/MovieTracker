@@ -40,7 +40,7 @@ public class RestClientImpl implements RestClient {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(Date.class, new DateTypeDeserializer());
         Gson gson = gsonBuilder.create();
-        
+
         this.retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create(gson))

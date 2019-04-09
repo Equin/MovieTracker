@@ -1,25 +1,36 @@
 package com.example.movietracker.presenter;
 
+import android.util.Log;
+
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.MovieFilter;
+import com.example.movietracker.data.entity.Filters;
 import com.example.movietracker.data.entity.MoviesEntity;
-import com.example.movietracker.interactor.DefaultObserver;
 import com.example.movietracker.model.ModelContract;
-import com.example.movietracker.model.model_impl.MovieModelImpl;
 import com.example.movietracker.view.contract.MovieListView;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 public class MovieListPresenter extends BasePresenter {
 
+    private static final String TAG = MovieListPresenter.class.getCanonicalName();
     private MovieListView view;
     private ModelContract.MovieModel movieModel;
     private MoviesEntity moviesEntity;
 
-    public MovieListPresenter(MovieListView view) {
+    private Disposable movieDisposable;
+    private Disposable moviePageDisposable;
+
+    public MovieListPresenter(MovieListView view, ModelContract.MovieModel movieModel ) {
         this.view = view;
-        this.movieModel = new MovieModelImpl();
+        this.movieModel = movieModel;
         this.moviesEntity = new MoviesEntity();
+        this.movieDisposable = new CompositeDisposable();
+        this.moviePageDisposable = new CompositeDisposable();
     }
 
     public void onMovieItemClicked(int itemPosition) {
@@ -27,30 +38,37 @@ public class MovieListPresenter extends BasePresenter {
                 this.moviesEntity.getMovies().get(itemPosition).getMovieId());
     }
 
-    public void getMoviesByFilters(MovieFilter movieFilter) {
-        getMovies(movieFilter);
+    public void getMoviesByFilters(Filters filters) {
+        getMovies(filters);
     }
 
     public void getLocalMovies() {
         this.view.renderMoviesList(this.moviesEntity);
     }
 
-    public void getMoviesWithPagination(MovieFilter movieFilter) {
-        getMoviesByPage(movieFilter);
+    public void getMoviesWithPagination(Filters filters) {
+        getMoviesByPage(filters);
     }
 
     public MoviesEntity getMoviesEntity() {
         return this.moviesEntity;
     }
 
-    private void getMovies(MovieFilter movieFilter) {
+    private void getMovies(Filters filters) {
         showLoading();
-        this.movieModel.getMovies(new GetMoviesObserver(), movieFilter);
+
+        this.movieDisposable = this.movieModel.getMovies(filters)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribeWith(new GetMoviesObserver());
     }
 
-    private void getMoviesByPage(MovieFilter movieFilter) {
+    private void getMoviesByPage(Filters filters) {
         showLoading();
-        this.movieModel.getMovies(new GetMoviesPageObserver(), movieFilter);
+        this.moviePageDisposable = this.movieModel.getMovies(filters)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribeWith(new GetMoviesPageObserver());
     }
 
     private void showLoading() {
@@ -63,8 +81,15 @@ public class MovieListPresenter extends BasePresenter {
 
     @Override
     public void destroy() {
-        this.movieModel.stop();
         this.view = null;
+
+        if (!this.moviePageDisposable.isDisposed()) {
+            this.moviePageDisposable.dispose();
+        }
+
+        if (!this.movieDisposable.isDisposed()) {
+            this.movieDisposable.dispose();
+        }
     }
 
     private boolean isActionAllowed;
@@ -73,19 +98,21 @@ public class MovieListPresenter extends BasePresenter {
 
         if(this.isActionAllowed) {
             this.isActionAllowed = false;
-            if (this.moviesEntity.getTotalPages() > MovieFilter.getInstance().getPage()) {
-                MovieFilter.getInstance().incrementPage();
-                //showToast(MovieFilter.getInstance().getPage() + "page");
-                this.getMoviesWithPagination(MovieFilter.getInstance());
+            if (this.moviesEntity.getTotalPages() > Filters.getInstance().getPage()) {
+                Filters.getInstance().incrementPage();
+                this.getMoviesWithPagination(Filters.getInstance());
             } else {
-              //  showToast(R.string.movie_list_there_are_no_pages);
+                showToast(R.string.movie_list_there_are_no_pages);
                 this.isActionAllowed = true;
             }
         }
     }
 
+    private void showToast(int stringResource) {
+        this.view.showToast(stringResource);
+    }
 
-    private class GetMoviesObserver extends DefaultObserver<MoviesEntity> {
+    private class GetMoviesObserver extends DisposableObserver<MoviesEntity> {
         @Override
         public void onNext(MoviesEntity moviesEntity) {
             MovieListPresenter.this.moviesEntity = moviesEntity;
@@ -100,9 +127,14 @@ public class MovieListPresenter extends BasePresenter {
             MovieListPresenter.this.hideLoading();
             MovieListPresenter.this.isActionAllowed = true;
         }
+
+        @Override
+        public void onComplete() {
+
+        }
     }
 
-    private class GetMoviesPageObserver extends DefaultObserver<MoviesEntity> {
+    private class GetMoviesPageObserver extends DisposableObserver<MoviesEntity> {
         @Override
         public void onNext(MoviesEntity moviesEntity) {
             MovieListPresenter.this.moviesEntity.setPage(moviesEntity.getPage());
@@ -118,6 +150,12 @@ public class MovieListPresenter extends BasePresenter {
             MovieListPresenter.this.view.showToast(R.string.main_error);
             MovieListPresenter.this.hideLoading();
             MovieListPresenter.this.isActionAllowed = true;
+            Log.e(TAG, e.getLocalizedMessage());
+        }
+
+        @Override
+        public void onComplete() {
+            Log.d(TAG, "GetMoviesPageObserver onComplete");
         }
     }
 }

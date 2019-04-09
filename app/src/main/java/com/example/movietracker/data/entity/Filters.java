@@ -3,6 +3,7 @@ package com.example.movietracker.data.entity;
 import com.example.movietracker.data.entity.genre.GenreEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.view.model.Order;
+import com.example.movietracker.view.model.SortBy;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public class MovieFilter implements Serializable {
+public class Filters implements Serializable {
 
     private int page;
     private List<Integer> genresId;
@@ -21,23 +22,23 @@ public class MovieFilter implements Serializable {
     private Order order;
 
     private static class SingletonHelper {
-        private static final MovieFilter INSTANCE = new MovieFilter();
+        private static final Filters INSTANCE = new Filters();
     }
 
 
-    public static MovieFilter getInstance(){
+    public static Filters getInstance(){
         return SingletonHelper.INSTANCE;
     }
 
-    private MovieFilter() {
+    private Filters() {
         page = 1;
-        sortBy = "Popularity";
+        sortBy = SortBy.POPULARITY.getSearchName();
         genresId = new ArrayList<>();
         selectedGenres = new ArrayList<>();
         order = Order.DESC;
     }
 
-    public MovieFilter(int page, List<Integer> genresId, boolean includeAdult, String sortBy, Order order) {
+    public Filters(int page, List<Integer> genresId, boolean includeAdult, String sortBy, Order order) {
         this.page = page;
         this.genresId = genresId;
         this.includeAdult = includeAdult;

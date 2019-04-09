@@ -4,7 +4,7 @@ import com.example.movietracker.data.database.MoviesDatabase;
 import com.example.movietracker.data.database.dao.GenresDao;
 import com.example.movietracker.data.database.dao.MovieDao;
 import com.example.movietracker.data.database.dao.MovieDetailDao;
-import com.example.movietracker.data.entity.MovieFilter;
+import com.example.movietracker.data.entity.Filters;
 import com.example.movietracker.data.entity.entity_mapper.MovieCastsDataMapper;
 import com.example.movietracker.data.entity.entity_mapper.MovieReviewsDataMapper;
 import com.example.movietracker.data.entity.entity_mapper.MovieVideosDataMapper;
@@ -89,20 +89,20 @@ public class MovieDataRepository implements MovieRepository {
                 .onExceptionResumeNext(genresDao.getAllGenres().map(GenresEntity::new));*/
 
     @Override
-    public Observable<MoviesEntity> getMovies(MovieFilter movieFilter) {
+    public Observable<MoviesEntity> getMovies(Filters filters) {
         return this.movieApi.getMovies(
-                movieFilter.getCommaSeparatedGenres(),
-                movieFilter.getSortBy()
+                filters.getCommaSeparatedGenres(),
+                filters.getSortBy()
                         .concat(".").concat(
-                                movieFilter.getOrder().name().toLowerCase()),
-                movieFilter.getPage(),
-                movieFilter.isIncludeAdult())
+                                filters.getOrder().name().toLowerCase()),
+                filters.getPage(),
+                filters.isIncludeAdult())
                 .doOnNext(moviesEntity -> {
                     this.movieDao.saveMovies(moviesEntity.getMovies());
                     this.movieDao.addMovieGenreRelation(moviesEntity.getMovies());
                 })
                 .onExceptionResumeNext(
-                        this.movieDao.getMoviesByOptions(movieFilter.getGenresId())
+                        this.movieDao.getMoviesByOptions(filters.getGenresId())
                                 .map(movieResultEntities ->
                                         new MoviesEntity(0,0,movieResultEntities))
                 );

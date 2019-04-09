@@ -1,6 +1,5 @@
 package com.example.movietracker.view.contract;
 
-import com.example.movietracker.data.entity.MovieFilter;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 
 public interface MainView extends View {

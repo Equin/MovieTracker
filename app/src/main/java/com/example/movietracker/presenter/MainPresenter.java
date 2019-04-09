@@ -1,20 +1,16 @@
 package com.example.movietracker.presenter;
 
-import android.graphics.Movie;
 import android.util.Log;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.MovieFilter;
+import com.example.movietracker.data.entity.Filters;
 import com.example.movietracker.data.entity.genre.GenresEntity;
-import com.example.movietracker.data.repository.MovieRepository;
-import com.example.movietracker.interactor.DefaultObserver;
 import com.example.movietracker.model.ModelContract;
 import com.example.movietracker.view.contract.MainView;
 import com.example.movietracker.view.model.Option;
 
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -24,13 +20,13 @@ public class MainPresenter extends BasePresenter {
 
     private ModelContract.GenreModel genreModel;
     private MainView mainView;
-    private MovieFilter movieFilter;
+    private Filters filters;
     private GenresEntity genresEntity;
 
-    public MainPresenter(MainView mainView, ModelContract.GenreModel genreModel, MovieFilter movieFilter) {
+    public MainPresenter(MainView mainView, ModelContract.GenreModel genreModel, Filters filters) {
         this.mainView = mainView;
         this.genreModel = genreModel;
-        this.movieFilter = movieFilter;
+        this.filters = filters;
     }
 
     public void getGenres() {
@@ -54,7 +50,7 @@ public class MainPresenter extends BasePresenter {
 
             @Override
             public void onError(Throwable e) {
-                Log.d(TAG, e.getLocalizedMessage());
+                Log.e(TAG, e.getLocalizedMessage());
                 MainPresenter.this.mainView.showToast(R.string.main_error);
                 MainPresenter.this.hideLoading();
             }
@@ -76,17 +72,17 @@ public class MainPresenter extends BasePresenter {
     @Override
     public void destroy() {
         this.mainView = null;
-        this.movieFilter = null;
+        this.filters = null;
         this.genresEntity = null;
         this.genreModel = null;
     }
 
     public void onSearchButtonClicked(Option option) {
-        this.movieFilter.setPage(1);
-        this.movieFilter.setIncludeAdult(false);
-        this.movieFilter.setSortBy(option.getSortBy().getSearchName());
-        this.movieFilter.setOrder(option.getSortOrder());
-        this.movieFilter.setSelectedGenres(this.genresEntity);
+        this.filters.setPage(1);
+        this.filters.setIncludeAdult(false);
+        this.filters.setSortBy(option.getSortBy().getSearchName());
+        this.filters.setOrder(option.getSortOrder());
+        this.filters.setSelectedGenres(this.genresEntity);
         this.mainView.openMovieListView(this.genresEntity);
     }
 

@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide;
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.movie_details.MovieDetailsEntity;
 import com.example.movietracker.data.net.constant.NetConstant;
+import com.example.movietracker.model.model_impl.MovieInfoModelImpl;
 import com.example.movietracker.presenter.MovieDetailsPresenter;
 import com.example.movietracker.view.contract.MovieDetailsView;
 import com.example.movietracker.view.fragment.BaseFragment;
@@ -31,7 +32,6 @@ import butterknife.ButterKnife;
 public class MovieDetailsFragment extends BaseFragment implements MovieDetailsView {
 
     public static final String ARG_SELECTED_MOVIE_ID = "arg_selected_movie_id";
-
     private static String[] tabTitles = new String[]{"Info", "Cast", "Review", "Video"};
 
     public interface MovieDetailsFragmentInteractionListener {
@@ -48,8 +48,6 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
 
     private MovieDetailsPresenter movieDetailsPresenter;
     private MovieDetailsFragmentInteractionListener movieDetailsFragmentInteractionListener;
-    private MovieDetailsEntity movieDetailsEntity;
-    private int movieId;
 
     @BindView(R.id.drawerLayout)
     DrawerLayout drawerLayout;
@@ -97,14 +95,11 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        this.movieId = getMovieIdFromArguments();
-
-        this.movieDetailsPresenter = new MovieDetailsPresenter(this);
-        this.movieDetailsPresenter.getMovieDetails(this.movieId);
+        this.movieDetailsPresenter = new MovieDetailsPresenter(this, new MovieInfoModelImpl());
+        this.movieDetailsPresenter.getMovieDetails(getMovieIdFromArguments());
     }
 
-    private void setupTabLayout() {
+    private void setupTabLayout(MovieDetailsEntity movieDetailsEntity) {
         for (int i = 0; i<tabTitles.length; i++) {
             tabLayoutMovieDetails.addTab(tabLayoutMovieDetails.newTab().setText(tabTitles[i]), i == 0);
         }
@@ -117,11 +112,11 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
               switch (tab.getPosition()) {
                   case 0 : replaceFragment(MovieInfoTabFragment.newInstance(movieDetailsEntity));
                       break;
-                  case 1 : replaceFragment(MovieCastTabFragment.newInstance(movieId));
+                  case 1 : replaceFragment(MovieCastTabFragment.newInstance(movieDetailsEntity.getMovieId()));
                       break;
-                  case 2 : replaceFragment(MovieReviewTabFragment.newInstance(movieId));
+                  case 2 : replaceFragment(MovieReviewTabFragment.newInstance(movieDetailsEntity.getMovieId()));
                       break;
-                  case 3 : replaceFragment(MovieVideoTabFragment.newInstance(movieId));
+                  case 3 : replaceFragment(MovieVideoTabFragment.newInstance(movieDetailsEntity.getMovieId()));
                       break;
                   default: replaceFragment(new MovieCastTabFragment());
               }
@@ -179,20 +174,19 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
 
     @Override
     public void renderMovieDetails(MovieDetailsEntity movieDetailsEntity) {
-        this.movieDetailsEntity = movieDetailsEntity;
-        setupTabLayout();
-        renderMovieDetailView();
+        setupTabLayout(movieDetailsEntity);
+        renderMovieDetailView(movieDetailsEntity);
     }
 
-    private void renderMovieDetailView() {
+    private void renderMovieDetailView(MovieDetailsEntity movieDetailsEntity) {
         this.textViewMovieDuration.setText(
-                UtilityHelpers.getAppropriateValue(this.movieDetailsEntity.getMovieRuntime()) + " min");
+                UtilityHelpers.getAppropriateValue(movieDetailsEntity.getMovieRuntime()) + " min");
         this.textViewMovieTitle.setText(
-                this.movieDetailsEntity.getMovieTitle());
+                movieDetailsEntity.getMovieTitle());
         this.textViewMovieReleaseDate.setText(
-                UtilityHelpers.getYear(this.movieDetailsEntity.getMovieReleaseDate()));
+                UtilityHelpers.getYear(movieDetailsEntity.getMovieReleaseDate()));
         this.textViewMovieGenres.setText(
-                UtilityHelpers.getPipeDividedGenres(this.movieDetailsEntity.getGenres()));
+                UtilityHelpers.getPipeDividedGenres(movieDetailsEntity.getGenres()));
 
         Glide
                 .with(this)

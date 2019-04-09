@@ -11,11 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.MovieFilter;
+import com.example.movietracker.data.entity.Filters;
 import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.di.ClassProvider;
 import com.example.movietracker.listener.OnLastElementReachedListener;
+import com.example.movietracker.model.model_impl.MovieModelImpl;
 import com.example.movietracker.presenter.MovieListPresenter;
 import com.example.movietracker.view.adapter.MovieListAdapter;
 import com.example.movietracker.view.contract.MovieListView;
@@ -94,7 +95,7 @@ public class MovieListFragment extends BaseFragment
         setNotTransparentToolbar();
         setToolbarTitle(
                 UtilityHelpers.getPipeDividedGenres(
-                        MovieFilter.getInstance().getSelectedGenres()));
+                        Filters.getInstance().getSelectedGenres()));
         this.setupMenuDrawer();
 
         getMovies();
@@ -185,16 +186,16 @@ public class MovieListFragment extends BaseFragment
         alertDialog.dismiss();
 
         Option option = ClassProvider.filterAlertDialog.getFilterOptions();
-        MovieFilter.getInstance().setOrder(option.getSortOrder());
-        MovieFilter.getInstance().setSortBy(option.getSortBy().getSearchName());
+        Filters.getInstance().setOrder(option.getSortOrder());
+        Filters.getInstance().setSortBy(option.getSortBy().getSearchName());
 
-        this.movieListPresenter.getMoviesByFilters(MovieFilter.getInstance());
+        this.movieListPresenter.getMoviesByFilters(Filters.getInstance());
     }
 
     private void getMovies() {
         if (this.movieListPresenter == null) {
-            this.movieListPresenter = new MovieListPresenter(this);
-            this.movieListPresenter.getMoviesByFilters(MovieFilter.getInstance());
+            this.movieListPresenter = new MovieListPresenter(this, new MovieModelImpl());
+            this.movieListPresenter.getMoviesByFilters(Filters.getInstance());
         }
          else {
             this.movieListPresenter.getLocalMovies();
@@ -223,8 +224,8 @@ public class MovieListFragment extends BaseFragment
         @Override
         public void onRefresh() {
             Log.d(TAG, "onRefresh called from SwipeRefreshLayout");
-            MovieFilter.getInstance().setPage(1);
-            MovieListFragment.this.movieListPresenter.getMoviesByFilters(MovieFilter.getInstance());
+            Filters.getInstance().setPage(1);
+            MovieListFragment.this.movieListPresenter.getMoviesByFilters(Filters.getInstance());
         }
     }
 }
