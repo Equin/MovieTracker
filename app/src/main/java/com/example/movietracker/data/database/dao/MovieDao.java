@@ -20,8 +20,28 @@ public interface MovieDao {
             "ON MovieResultEntity.movieId = MovieWithGenres.movie_id " +
             "WHERE MovieWithGenres.genre_id in (:genresId) " +
             "GROUP BY movieId " +
-            "ORDER BY moviePopularity DESC")
-    Observable<List<MovieResultEntity>> getMoviesByOptions(List<Integer> genresId);
+            "ORDER BY moviePopularity DESC " +
+            "LIMIT (:limit)"
+    )
+    Observable<List<MovieResultEntity>> getMoviesForPages(List<Integer> genresId, int limit);
+
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
+    @Query("SELECT * FROM MovieResultEntity " +
+            "INNER JOIN MovieWithGenres " +
+            "ON MovieResultEntity.movieId = MovieWithGenres.movie_id " +
+            "WHERE MovieWithGenres.genre_id in (:genresId) " +
+            "GROUP BY movieId " +
+            "ORDER BY moviePopularity DESC " +
+            "LIMIT (:limit) OFFSET (:offset)"
+    )
+    Observable<List<MovieResultEntity>> getMovies(List<Integer> genresId, int limit, int offset);
+
+    @Query("SELECT count(movieId) FROM MovieResultEntity " +
+            "INNER JOIN MovieWithGenres " +
+            "ON MovieResultEntity.movieId = MovieWithGenres.movie_id " +
+            "WHERE MovieWithGenres.genre_id in (:genresId) "
+    )
+    int getTotalResults(List<Integer> genresId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void saveMovies(List<MovieResultEntity> moviesEntity);

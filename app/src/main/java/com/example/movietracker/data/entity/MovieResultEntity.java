@@ -1,5 +1,6 @@
 package com.example.movietracker.data.entity;
 
+import com.example.movietracker.data.entity.genre.GenreEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
@@ -121,5 +122,15 @@ public class MovieResultEntity {
 
     public void setMoviePopularity(double moviePopularity) {
         this.moviePopularity = moviePopularity;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o == null) return false;
+
+        if(!(o instanceof MovieResultEntity)) return false;
+        MovieResultEntity movieResultEntity = (MovieResultEntity)o;
+
+        return this.movieId == movieResultEntity.movieId;
     }
 }

@@ -1,9 +1,6 @@
-package com.example.movietracker.data.entity;
+package com.example.movietracker.view.model;
 
 import com.example.movietracker.data.entity.genre.GenreEntity;
-import com.example.movietracker.data.entity.genre.GenresEntity;
-import com.example.movietracker.view.model.Order;
-import com.example.movietracker.view.model.SortBy;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -42,7 +39,7 @@ public class Filters implements Serializable {
         selectedGenres = new ArrayList<>();
     }
 
-    public Filters(int page, List<GenreEntity> selectedGenres, boolean includeAdult, String sortBy, Order order) {
+    public Filters(int page, @NonNull List<GenreEntity> selectedGenres, boolean includeAdult, @NonNull String sortBy, @NonNull Order order) {
         this.page = page;
         this.selectedGenres = selectedGenres;
         this.includeAdult = includeAdult;
@@ -70,7 +67,7 @@ public class Filters implements Serializable {
         return sortBy;
     }
 
-    public void setSortBy(String sortBy) {
+    public void setSortBy(@NonNull String sortBy) {
         this.sortBy = sortBy;
     }
 
@@ -83,37 +80,12 @@ public class Filters implements Serializable {
         this.order = order;
     }
 
-/*    public void setSelectedGenres(@NonNull GenresEntity genresEntity) {
-
-        if (genresEntity.getGenres() != null) {
-            for (GenreEntity genre : genresEntity.getGenres()) {
-                if (genre.isSelected()) {
-                    this.selectedGenres.add(genre);
-                } else {
-                    this.selectedGenres.remove(genre);
-                }
-            }
-
-            this.setSelectedGenresIds();
-        }
-    }*/
-
-/*
-    private void setSelectedGenresIds() {
-        selectedGenresIds = new ArrayList<>();
-        for (GenreEntity genreEntity : this.getSelectedGenres()) {
-            if(genreEntity.isSelected()) {
-                this.selectedGenresIds.add(genreEntity.getGenreId());
-            }
-        }
-    }
-*/
-    public void addSelectedGenre(GenreEntity genreEntity) {
+    public void addSelectedGenre(@NonNull GenreEntity genreEntity) {
         this.selectedGenres.add(genreEntity);
         this.selectedGenresIds.add(genreEntity.getGenreId());
     }
 
-    public void removeUnselectedGenre(GenreEntity genreEntity) {
+    public void removeUnselectedGenre(@NonNull GenreEntity genreEntity) {
       this.selectedGenres.remove(genreEntity);
       this.selectedGenresIds.remove(
                 this.selectedGenresIds.indexOf(genreEntity.getGenreId()));
@@ -140,5 +112,31 @@ public class Filters implements Serializable {
         }
         return sb.toString();
     }
+
+    /*    public void setSelectedGenres(@NonNull GenresEntity genresEntity) {
+
+        if (genresEntity.getGenres() != null) {
+            for (GenreEntity genre : genresEntity.getGenres()) {
+                if (genre.isSelected()) {
+                    this.selectedGenres.add(genre);
+                } else {
+                    this.selectedGenres.remove(genre);
+                }
+            }
+
+            this.setSelectedGenresIds();
+        }
+    }*/
+
+/*
+    private void setSelectedGenresIds() {
+        selectedGenresIds = new ArrayList<>();
+        for (GenreEntity genreEntity : this.getSelectedGenres()) {
+            if(genreEntity.isSelected()) {
+                this.selectedGenresIds.add(genreEntity.getGenreId());
+            }
+        }
+    }
+*/
 }
 

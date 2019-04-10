@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.ToggleButton;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.Filters;
+import com.example.movietracker.view.model.Filters;
 import com.example.movietracker.data.entity.genre.GenreEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.google.common.collect.Lists;

@@ -10,7 +10,7 @@ import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.Filters;
+import com.example.movietracker.view.model.Filters;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.di.ClassProvider;
 import com.example.movietracker.model.model_impl.GenreModelImpl;

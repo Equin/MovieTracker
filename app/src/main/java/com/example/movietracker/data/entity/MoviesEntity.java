@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 import java.util.UUID;
 
 import androidx.room.Entity;

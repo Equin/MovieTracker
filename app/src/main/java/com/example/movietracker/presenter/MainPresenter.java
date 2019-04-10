@@ -3,7 +3,7 @@ package com.example.movietracker.presenter;
 import android.util.Log;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.Filters;
+import com.example.movietracker.view.model.Filters;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.model.ModelContract;
 import com.example.movietracker.view.contract.MainView;

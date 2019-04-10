@@ -2,6 +2,7 @@ package com.example.movietracker.view.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -11,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.Filters;
+import com.example.movietracker.view.model.Filters;
 import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.di.ClassProvider;
@@ -22,6 +23,7 @@ import com.example.movietracker.view.adapter.MovieListAdapter;
 import com.example.movietracker.view.contract.MovieListView;
 import com.example.movietracker.listener.SnapScrollListener;
 import com.example.movietracker.view.FilterAlertDialog;
+import com.example.movietracker.view.model.MovieRecyclerItemPosition;
 import com.example.movietracker.view.model.Option;
 import com.example.movietracker.view.helper.UtilityHelpers;
 
@@ -98,7 +100,10 @@ public class MovieListFragment extends BaseFragment
                         Filters.getInstance().getSelectedGenres()));
         this.setupMenuDrawer();
 
-        this.movieListPresenter = new MovieListPresenter(this, new MovieModelImpl());
+        this.movieListPresenter = new MovieListPresenter(
+                    this,
+                    new MovieModelImpl(),
+                    MovieRecyclerItemPosition.getInstance());
         this.movieListPresenter.getMoviesByFilters(Filters.getInstance());
 
         this.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshListener());
@@ -179,6 +184,21 @@ public class MovieListFragment extends BaseFragment
     }
 
     @Override
+    public void scrollToMovie(int itemPosition, int itemOffset) {
+            this.movieRecyclerView.postOnAnimation(new Runnable() {
+                @Override
+                public void run() {
+                    LinearLayoutManager manager =((LinearLayoutManager) movieRecyclerView.getLayoutManager());
+                    if (manager != null) {
+                        manager.scrollToPositionWithOffset(itemPosition, itemOffset);
+                    }
+
+                    MovieRecyclerItemPosition.getInstance().setValuesToZero();
+                }
+            });
+    }
+
+    @Override
     public void lastElementReached() {
         this.movieListPresenter.lastMovieOfPageReached();
     }
@@ -207,7 +227,8 @@ public class MovieListFragment extends BaseFragment
         @Override
         public void onClick(View v) {
             int itemPosition = MovieListFragment.this.movieRecyclerView.getChildAdapterPosition(v);
-            MovieListFragment.this.movieListPresenter.onMovieItemClicked(itemPosition);
+            int itemOffset = v.getTop();
+            MovieListFragment.this.movieListPresenter.onMovieItemClicked(itemPosition, itemOffset);
         }
     }
 

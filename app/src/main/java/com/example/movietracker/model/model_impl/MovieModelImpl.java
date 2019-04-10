@@ -1,6 +1,6 @@
 package com.example.movietracker.model.model_impl;
 
-import com.example.movietracker.data.entity.Filters;
+import com.example.movietracker.view.model.Filters;
 import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.data.repository.MovieRepository;
 import com.example.movietracker.di.ClassProvider;
@@ -19,5 +19,10 @@ public class MovieModelImpl implements ModelContract.MovieModel {
     @Override
     public Observable<MoviesEntity> getMovies(Filters filters) {
         return this.movieRepository.getMovies(filters);
+    }
+
+    @Override
+    public Observable<MoviesEntity> getMovieListForPages(Filters filters) {
+        return this.movieRepository.getMovieListForPages(filters);
     }
 }

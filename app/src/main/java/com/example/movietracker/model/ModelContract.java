@@ -1,6 +1,6 @@
 package com.example.movietracker.model;
 
-import com.example.movietracker.data.entity.Filters;
+import com.example.movietracker.view.model.Filters;
 import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.data.entity.movie_details.MovieDetailsEntity;
@@ -19,6 +19,8 @@ public class ModelContract {
 
     public interface MovieModel {
         Observable<MoviesEntity> getMovies(Filters filters);
+
+        Observable<MoviesEntity> getMovieListForPages(Filters filters);
     }
 
     public interface MovieInfoModel {

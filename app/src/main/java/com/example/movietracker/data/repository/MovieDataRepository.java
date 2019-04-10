@@ -4,7 +4,7 @@ import com.example.movietracker.data.database.MoviesDatabase;
 import com.example.movietracker.data.database.dao.GenresDao;
 import com.example.movietracker.data.database.dao.MovieDao;
 import com.example.movietracker.data.database.dao.MovieDetailDao;
-import com.example.movietracker.data.entity.Filters;
+import com.example.movietracker.view.model.Filters;
 import com.example.movietracker.data.entity.entity_mapper.MovieCastsDataMapper;
 import com.example.movietracker.data.entity.entity_mapper.MovieReviewsDataMapper;
 import com.example.movietracker.data.entity.entity_mapper.MovieVideosDataMapper;
@@ -18,12 +18,18 @@ import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.data.net.RestClient;
 import com.example.movietracker.data.net.api.MovieApi;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 
 public class MovieDataRepository implements MovieRepository {
+
+    private static final int MOVIE_PER_PAGE = 20;
 
     private MovieApi movieApi;
     private GenresDao genresDao;
@@ -58,35 +64,16 @@ public class MovieDataRepository implements MovieRepository {
     @Override
     public Single<GenresEntity> getGenres() {
         return this.movieApi.getGenres()
-                        .doOnSuccess(genresEntity -> this.genresDao.saveGenres(genresEntity.getGenres()))
-                        .onErrorResumeNext(this.genresDao.getAllGenres().map(GenresEntity::new));
+                .doOnSuccess(genresEntity -> this.genresDao.saveGenres(genresEntity.getGenres()))
+                .onErrorResumeNext(this.genresDao.getAllGenres().map(GenresEntity::new));
     }
 
     @Override
     public Single<GenresEntity> getLocalGenres() {
         return this.genresDao.getAllGenres().map(genreEntities -> new GenresEntity())
                 .onErrorResumeNext(this.movieApi.getGenres()
-                                .doOnSuccess(genresEntity -> this.genresDao.saveGenres(genresEntity.getGenres())));
+                        .doOnSuccess(genresEntity -> this.genresDao.saveGenres(genresEntity.getGenres())));
     }
-
-    /*  return  this.movieApi.getGenres().doOnNext(genresEntity -> this.genresDao.saveGenres(genresEntity.getGenres()))
-                .flatMap(genresEntity -> Observable.create( emitter -> emitter.onNext(genresDao.getAllGenres().map(GenresEntity::new).blockingFirst())))
-                .onErrorResumeNext((error) -> { return Observable.error(BadRequestExceptionMaker.makeCustomExceptionIfBadRequestOrReturnOriginal(error, NoNetworkException.class));})
-                .flatMap(genresEntity -> Observable.create( emitter -> emitter.onNext(genresDao.getAllGenres().map(GenresEntity::new).blockingFirst())));*/
-
-    /* return  this.genresDao.getAllGenres().map(GenresEntity::new).flatMap(
-                genreEntities -> this.movieApi.getGenres())
-                 .doOnNext(genres -> this.genresDao.saveGenres(genres.getGenres()));*/
-
-    /* return  this.movieApi.getGenres().doOnNext(genresEntity -> this.genresDao.saveGenres(genresEntity.getGenres()))
-                .onErrorResumeNext((error) -> { return Observable.error(BadRequestExceptionMaker.makeCustomExceptionIfBadRequestOrReturnOriginal(error, NoNetworkException.class));})
-            .flatMap( (genresEntity) -> { return Observable.just(genresDao.getAllGenres().map(GenresEntity::new)).blockingFirst();});*/
-
-        /* return  this.movieApi.getGenres().doOnNext(genresEntity -> this.genresDao.saveGenres(genresEntity.getGenres()))
-                .onExceptionResumeNext(Observable.concat(genresDao.getAllGenres().map(GenresEntity::new), Observable.error(new IOException())).share());*/
-
-    /* return  this.movieApi.getGenres().doOnNext(genresEntity -> this.genresDao.saveGenres(genresEntity.getGenres()))
-                .onExceptionResumeNext(genresDao.getAllGenres().map(GenresEntity::new));*/
 
     @Override
     public Observable<MoviesEntity> getMovies(Filters filters) {
@@ -94,7 +81,7 @@ public class MovieDataRepository implements MovieRepository {
                 filters.getCommaSeparatedGenres(),
                 filters.getSortBy()
                         .concat(".").concat(
-                                filters.getOrder().name().toLowerCase()),
+                        filters.getOrder().name().toLowerCase()),
                 filters.getPage(),
                 filters.isIncludeAdult())
                 .doOnNext(moviesEntity -> {
@@ -102,24 +89,96 @@ public class MovieDataRepository implements MovieRepository {
                     this.movieDao.addMovieGenreRelation(moviesEntity.getMovies());
                 })
                 .onExceptionResumeNext(
-                        this.movieDao.getMoviesByOptions(filters.getSelectedGenresIds())
-                                .map(movieResultEntities ->
-                                        new MoviesEntity(0,0,movieResultEntities))
+                        this.movieDao.getMovies(
+                                filters.getSelectedGenresIds(),
+                                MOVIE_PER_PAGE,
+                                (filters.getPage()-1)*MOVIE_PER_PAGE
+                        ).map(movieResultEntities -> {
+                                    int totalPage = Math.round((float)this.movieDao.getTotalResults(
+                                            filters.getSelectedGenresIds()) / MOVIE_PER_PAGE);
+
+                                    return new MoviesEntity(
+                                            filters.getPage(),
+                                            totalPage,
+                                            movieResultEntities
+                                    );
+                                }
+                        ).firstOrError().toObservable()
+                        // some problems... when getting from Retrofit
+                        // its Calling OnComplete, but when from DB its not. SO firstOrError().toObservable() added to call onComplete.
+                );
+    }
+
+    @Override
+    public Observable<MoviesEntity> getMovieListForPages(Filters filters) {
+        List<Observable<?>> requests = new ArrayList<>();
+
+        for (int i = 1; i <= filters.getPage(); i++) {
+            requests.add(addRequest(filters, i));
+        }
+
+        return Observable.zip(requests, (Function<Object[], Object>) objects -> {
+            MoviesEntity moviesEntity = new MoviesEntity();
+
+            for(int i=0; i<objects.length; i++) {
+                moviesEntity.setPage(((MoviesEntity)objects[i]).getPage());
+                moviesEntity.setTotalPages(((MoviesEntity)objects[i]).getTotalPages());
+
+                if( moviesEntity.getMovies().size() == 0
+                        || (moviesEntity.getMovies().size() > 0
+                            && ((MoviesEntity)objects[i]).getMovies().get(0).getMovieId()
+                                != moviesEntity.getMovies().get(0).getMovieId())) {
+                    moviesEntity.addMovies(((MoviesEntity)objects[i]).getMovies());
+                }
+            }
+
+            return moviesEntity;
+        }).map(o -> new MoviesEntity(((MoviesEntity)o).getPage(), ((MoviesEntity)o).getTotalPages(), ((MoviesEntity)o).getMovies()));
+    }
+
+    public Observable<MoviesEntity> addRequest(Filters filters, int page) {
+        return this.movieApi.getMoviesForPages(
+                filters.getCommaSeparatedGenres(),
+                filters.getSortBy()
+                        .concat(".").concat(
+                        filters.getOrder().name().toLowerCase()),
+                page,
+                filters.isIncludeAdult())
+                .doOnNext(moviesEntity -> {
+                    this.movieDao.saveMovies(moviesEntity.getMovies());
+                    this.movieDao.addMovieGenreRelation(moviesEntity.getMovies());
+                })
+                .onExceptionResumeNext(
+                        this.movieDao.getMoviesForPages(
+                                filters.getSelectedGenresIds(),
+                                filters.getPage() * MOVIE_PER_PAGE
+                        )
+                                .map(movieResultEntities -> {
+                                    int totalPage = Math.round((float)this.movieDao.getTotalResults(
+                                            filters.getSelectedGenresIds()) / MOVIE_PER_PAGE);
+
+                                      return  new MoviesEntity(filters.getPage(),
+                                                totalPage,
+                                                movieResultEntities
+                                        );
+                                }).firstOrError().toObservable()
+                        // some problems... when getting from Retrofit
+                        // its Calling OnComplete, but when from DB its not. SO firstOrError().toObservable() added to call onComplete.
                 );
     }
 
     @Override
     public Observable<MovieDetailsEntity> getMovieDetails(int movieId) {
         return this.movieApi.getMovieDetailsById(movieId)
-                .doOnNext(movieDetailsEntity -> {
-                    movieDetailDao.saveInfo(movieDetailsEntity);
-                })
+                .doOnNext(movieDetailsEntity ->
+                        movieDetailDao.saveInfo(movieDetailsEntity)
+                )
                 .onExceptionResumeNext(
                         movieDetailDao.getMovieInfo(movieId).map(movieDetailsEntity -> {
-                    List<GenreEntity> genreEntities = movieDetailDao.getGenres(movieId).blockingFirst();
-                    movieDetailsEntity.setGenres(genreEntities);
-                    return movieDetailsEntity;
-                }));
+                            List<GenreEntity> genreEntities = movieDetailDao.getGenres(movieId).blockingFirst();
+                            movieDetailsEntity.setGenres(genreEntities);
+                            return movieDetailsEntity;
+                        }));
     }
 
     @Override
