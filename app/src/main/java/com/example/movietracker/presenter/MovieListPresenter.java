@@ -31,6 +31,7 @@ public class MovieListPresenter extends BasePresenter {
 
     private Disposable movieDisposable;
     private Disposable moviePageDisposable;
+    private Disposable movieListPagesDisposable;
 
 
     public MovieListPresenter(
@@ -42,6 +43,7 @@ public class MovieListPresenter extends BasePresenter {
         this.moviesEntity = new MoviesEntity();
         this.movieDisposable = new CompositeDisposable();
         this.moviePageDisposable = new CompositeDisposable();
+        this.movieListPagesDisposable = new CompositeDisposable();
         this.recyclerItemPosition = recyclerItemPosition;
     }
 
@@ -115,7 +117,7 @@ public class MovieListPresenter extends BasePresenter {
     private void getMovieListForAllPages(Filters filters) {
         showLoading();
 
-        this.moviePageDisposable = this.movieModel.getMovieListForPages(filters)
+        this.movieListPagesDisposable = this.movieModel.getMovieListForPages(filters)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribeWith(new GetMovieListForPagesObserver());
@@ -145,6 +147,10 @@ public class MovieListPresenter extends BasePresenter {
 
         if (!this.movieDisposable.isDisposed()) {
             this.movieDisposable.dispose();
+        }
+
+        if (!this.movieListPagesDisposable.isDisposed()) {
+            this.movieListPagesDisposable.dispose();
         }
     }
 
