@@ -167,7 +167,7 @@ public class MainFragment extends BaseFragment implements MainView, FilterAlertD
 
     @Override
     public void dismissAllSelections() {
-        this.customGenreView.dismisSelections();
+        this.customGenreView.dismissSelections();
         ClassProvider.filterAlertDialog.dismissSelection();
     }
 

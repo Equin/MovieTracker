@@ -162,6 +162,7 @@ public class MovieListPresenter extends BasePresenter {
             MovieListPresenter.this.isActionAllowed = true;
             MovieListPresenter.this.hideLoading();
             MovieListPresenter.this.scrollToMovieIfPossible(moviesEntity);
+            movieDisposable.dispose();
         }
 
         @Override
@@ -181,6 +182,11 @@ public class MovieListPresenter extends BasePresenter {
         @Override
         public void onNext(MoviesEntity moviesEntity) {
             MovieListPresenter.this.moviesEntity = moviesEntity;
+            MovieListPresenter.this.view.renderMoviesList(moviesEntity);
+            MovieListPresenter.this.isActionAllowed = true;
+            MovieListPresenter.this.hideLoading();
+            MovieListPresenter.this.scrollToMovieIfPossible(moviesEntity);
+            movieListPagesDisposable.dispose();
         }
 
         @Override
@@ -193,10 +199,7 @@ public class MovieListPresenter extends BasePresenter {
         @Override
         public void onComplete() {
             Log.d(TAG, "GetMoviesObserver onComplete");
-            MovieListPresenter.this.view.renderMoviesList(moviesEntity);
-            MovieListPresenter.this.isActionAllowed = true;
-            MovieListPresenter.this.hideLoading();
-            MovieListPresenter.this.scrollToMovieIfPossible(moviesEntity);
+
         }
     }
 
@@ -210,6 +213,7 @@ public class MovieListPresenter extends BasePresenter {
             MovieListPresenter.this.view.renderAdditionalMovieListPage(MovieListPresenter.this.moviesEntity);
             MovieListPresenter.this.hideLoading();
             MovieListPresenter.this.isActionAllowed = true;
+            moviePageDisposable.dispose();
         }
 
         @Override

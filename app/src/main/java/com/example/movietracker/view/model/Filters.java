@@ -34,11 +34,6 @@ public class Filters implements Serializable {
         order = Order.DESC;
     }
 
-    public void clearGenreFilters() {
-        selectedGenresIds = new ArrayList<>();
-        selectedGenres = new ArrayList<>();
-    }
-
     public Filters(int page, @NonNull List<GenreEntity> selectedGenres, boolean includeAdult, @NonNull String sortBy, @NonNull Order order) {
         this.page = page;
         this.selectedGenres = selectedGenres;

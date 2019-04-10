@@ -24,6 +24,7 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 
@@ -103,7 +104,7 @@ public class MovieDataRepository implements MovieRepository {
                                             movieResultEntities
                                     );
                                 }
-                        ).firstOrError().toObservable()
+                        )//.unsubscribeOn(AndroidSchedulers.mainThread())//.firstOrError().toObservable()
                         // some problems... when getting from Retrofit
                         // its Calling OnComplete, but when from DB its not. SO firstOrError().toObservable() added to call onComplete.
                 );
@@ -161,7 +162,7 @@ public class MovieDataRepository implements MovieRepository {
                                                 totalPage,
                                                 movieResultEntities
                                         );
-                                }).firstOrError().toObservable()
+                                })//.unsubscribeOn(AndroidSchedulers.mainThread()) //.firstOrError().toObservable()
                         // some problems... when getting from Retrofit
                         // its Calling OnComplete, but when from DB its not. SO firstOrError().toObservable() added to call onComplete.
                 );

@@ -86,9 +86,7 @@ public class CustomGenreView extends ViewGroup {
         }
     }
 
-    public void dismisSelections() {
-        Filters.getInstance().clearGenreFilters();
-
+    public void dismissSelections() {
         for(int i = 0; i < getChildCount(); i++) {
             LinearLayout linearLayout = (LinearLayout) getChildAt(i);
             for(int j = 0; j < linearLayout.getChildCount(); j++) {
