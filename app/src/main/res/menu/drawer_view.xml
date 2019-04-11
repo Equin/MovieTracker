@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/menu"
@@ -10,13 +11,12 @@
             android:icon="@drawable/ic_menu"
             android:title="Favorite" />
         <item
-            android:id="@+id/parent_control"
-            android:icon="@drawable/ic_menu"
-            android:title="Parent Control" />
-        <item
             android:id="@+id/password_reset"
             android:icon="@drawable/ic_menu"
             android:title="Password Reset" />
-
     </group>
+    <item
+        android:id="@+id/parent_control"
+        android:title="Parental Control"
+        app:actionLayout="@layout/switch_item" />
 </menu>

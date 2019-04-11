@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "70936b8bbb500bf5302b559e29d0b493",
+    "identityHash": "c697448f786b7f3f0e91a181da1064f0",
     "entities": [
       {
         "tableName": "GenreEntity",
@@ -400,11 +400,49 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "UserEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` INTEGER NOT NULL, `pinCode` TEXT, `isParentalControlEnabled` INTEGER NOT NULL, `masterPinCode` TEXT, PRIMARY KEY(`userId`))",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pinCode",
+            "columnName": "pinCode",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isParentalControlEnabled",
+            "columnName": "isParentalControlEnabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "masterPinCode",
+            "columnName": "masterPinCode",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "userId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"70936b8bbb500bf5302b559e29d0b493\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"c697448f786b7f3f0e91a181da1064f0\")"
     ]
   }
 }

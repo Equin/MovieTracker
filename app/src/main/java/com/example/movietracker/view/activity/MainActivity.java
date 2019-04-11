@@ -3,6 +3,7 @@ package com.example.movietracker.view.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.genre.GenresEntity;
@@ -11,9 +12,13 @@ import com.example.movietracker.view.fragment.MainFragment;
 import com.example.movietracker.view.fragment.movie_details.MovieDetailsFragment;
 import com.example.movietracker.view.fragment.MovieListFragment;
 import com.example.movietracker.view.fragment.movie_details.MovieVideoTabFragment;
+import com.google.android.material.navigation.NavigationView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MainActivity extends BaseActivity implements
         MainFragment.MainFragmentInteractionListener,
@@ -34,7 +39,6 @@ public class MainActivity extends BaseActivity implements
             addFragment(R.id.container_for_fragment, MainFragment.newInstance());
         }
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();

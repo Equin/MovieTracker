@@ -1,6 +1,7 @@
 package com.example.movietracker.data.repository;
 
 import com.example.movietracker.data.database.MoviesDatabase;
+import com.example.movietracker.data.entity.UserEntity;
 import com.example.movietracker.view.model.Filters;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.data.entity.movie_details.cast.MovieCastsEntity;
@@ -12,6 +13,7 @@ import com.example.movietracker.data.net.RestClient;
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 
@@ -24,5 +26,8 @@ public interface MovieRepository {
     Observable<MovieCastsEntity> getMovieCasts(int movieId);
     Observable<MovieVideosEntity> getMovieVideos(int movieId);
     Observable<MovieReviewsEntity> getMovieReviews(int movieId);
+    Observable<UserEntity> getUser();
+    void saveUser(UserEntity userEntity);
+    Completable updateUser(UserEntity userEntity);
     void init(RestClient restClient, MoviesDatabase moviesDatabase);
 }

@@ -49,9 +49,6 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
     private MovieDetailsPresenter movieDetailsPresenter;
     private MovieDetailsFragmentInteractionListener movieDetailsFragmentInteractionListener;
 
-    @BindView(R.id.drawerLayout)
-    DrawerLayout drawerLayout;
-
     @BindView(R.id.tabLayout_movieDetails)
     TabLayout tabLayoutMovieDetails;
 

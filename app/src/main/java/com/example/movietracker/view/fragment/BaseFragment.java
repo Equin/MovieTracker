@@ -2,17 +2,21 @@ package com.example.movietracker.view.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.movietracker.AndroidApplication;
 import com.example.movietracker.R;
-import com.example.movietracker.view.FilterAlertDialog;
-import com.example.movietracker.view.model.Option;
+import com.example.movietracker.presenter.MainPresenter;
+import com.google.android.material.textfield.TextInputLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -35,6 +39,8 @@ public abstract class BaseFragment extends Fragment {
     @Nullable
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+
+    private AlertDialog alertDialog;
 
     @Override
     public void onAttach(Context context) {
@@ -117,5 +123,104 @@ public abstract class BaseFragment extends Fragment {
 
     private boolean progressViewNotExists() {
         return this.progressView == null;
+    }
+
+
+    public void createPasswordResetDialog(MainPresenter mainPresenter) {
+        LayoutInflater li = LayoutInflater.from(getContext());
+        View dialogView =  li.inflate(R.layout.password_reset_dialog, null);
+        initializeResetPasswordDialogContent(dialogView, mainPresenter);
+        createDialog(dialogView);
+    }
+
+    public void createNewPasswordDialog(MainPresenter mainPresenter) {
+        LayoutInflater li = LayoutInflater.from(getContext());
+        View dialogView =  li.inflate(R.layout.password_new_dialog, null);
+        initializeNewPasswordDialogContent(dialogView, mainPresenter);
+        createDialog(dialogView);
+    }
+
+    public void createCheckPasswordDialog(MainPresenter mainPresenter) {
+        LayoutInflater li = LayoutInflater.from(getContext());
+        View dialogView =  li.inflate(R.layout.password_new_dialog, null);
+        initializeCheckPasswordDialogContent(dialogView, mainPresenter);
+        createDialog(dialogView);
+    }
+
+    public void dismissDialog() {
+        if (alertDialog != null) {
+            alertDialog.dismiss();
+        }
+    }
+
+
+    private void initializeResetPasswordDialogContent(View dialogCustomVIew, MainPresenter mainPresenter) {
+        Button savePassword = dialogCustomVIew.findViewById(R.id.button_save_password);
+
+        EditText oldPasswordEditText = dialogCustomVIew.findViewById(R.id.textInputEditText_old_password);
+        EditText newPasswordEditText = dialogCustomVIew.findViewById(R.id.textInputEditText_new_password);
+
+        savePassword.setOnClickListener((click)-> {
+            String oldPasswordValue = oldPasswordEditText.getText().toString();
+
+            String newPasswordValue = newPasswordEditText.getText().toString();
+
+            mainPresenter.onSaveResetedPasswordButtonClicked(
+                    oldPasswordValue,
+                    newPasswordValue);
+        });
+    }
+
+    private void initializeNewPasswordDialogContent(View dialogCustomVIew, MainPresenter mainPresenter) {
+        Button savePassword = dialogCustomVIew.findViewById(R.id.button_save_password);
+
+        EditText newPasswordEditText = dialogCustomVIew.findViewById(R.id.textInputEditText_new_password);
+
+        savePassword.setOnClickListener((click)->{
+            String newPasswordValue = newPasswordEditText.getText().toString();
+
+            mainPresenter.onSaveNewPasswordButtonClicked(
+                    newPasswordValue);
+        });
+    }
+
+    private void initializeCheckPasswordDialogContent(View dialogCustomVIew, MainPresenter mainPresenter) {
+        Button checkPassword = dialogCustomVIew.findViewById(R.id.button_save_password);
+        checkPassword.setText("CHECK");
+
+        EditText passwordEditText = dialogCustomVIew.findViewById(R.id.textInputEditText_new_password);
+        TextInputLayout textInputLayout = dialogCustomVIew.findViewById(R.id.textInputLayout_new_password);
+        textInputLayout.setHint("Enter your password");
+
+        checkPassword.setOnClickListener((click)->{
+            String passwordValue = passwordEditText.getText().toString();
+
+            mainPresenter.onCheckPasswordButtonClicked(
+                    passwordValue);
+        });
+    }
+
+    private void createDialog(View dialogCustomVIew) {
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        alertDialogBuilder.setView(dialogCustomVIew);
+
+        if(alertDialog == null) {
+            alertDialog = alertDialogBuilder.create();
+        } else {
+            alertDialog.dismiss();
+            alertDialog = alertDialogBuilder.create();
+        }
+
+        alertDialog.setOnShowListener(dialogInterface -> {
+            showKeyboard();
+
+        });
+
+        alertDialog.setOnDismissListener(dialogInterface -> {
+            hideKeyboard();
+        });
+
+        alertDialog.show();
     }
 }

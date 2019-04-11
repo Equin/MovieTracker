@@ -1,13 +1,10 @@
 package com.example.movietracker.view;
 
 import android.content.Context;
-import android.graphics.Point;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -27,7 +24,7 @@ public class FilterAlertDialog {
 
     private  List<Option> optionList;
     private  AlertDialog alertDialog;
-    private  Context context;
+
     private OnDoneButtonClickedListener onClickListener;
 
     private static class SingletonHelper {
@@ -46,9 +43,8 @@ public class FilterAlertDialog {
     }
 
     public void showFilterAlertDialog(Context context, OnDoneButtonClickedListener clickListener) {
-        this.context = context;
         this.onClickListener = clickListener;
-        createFilterDialog();
+        createFilterDialog(context);
     }
 
     private void pupulateModel() {
@@ -58,19 +54,19 @@ public class FilterAlertDialog {
         }
     }
 
-    private void createDialog(View dialogCustomVIew) {
+    private void createDialog(View dialogCustomVIew, Context context) {
 
         AlertDialog.Builder alertDialogBuilder
                 = new AlertDialog.Builder(context);
         alertDialogBuilder.setView(dialogCustomVIew);
         //alertDialogBuilder.setTitle("Sort Movies By");
 
-        RelativeLayout customTitleView = new RelativeLayout(this.context);
-        TextView textView = new TextView(this.context);
+        RelativeLayout customTitleView = new RelativeLayout(context);
+        TextView textView = new TextView(context);
 
         customTitleView.setGravity(Gravity.CENTER);
         customTitleView.setBackground(
-                this.context.getResources().getDrawable(R.color.filter_alert_dialog_header_color));
+                context.getResources().getDrawable(R.color.filter_alert_dialog_header_color));
         textView.setText("Sort Movies By");
         textView.setPadding(0, 40, 0, 40);
         textView.setTextSize(24);
@@ -82,15 +78,15 @@ public class FilterAlertDialog {
         alertDialog.show();
     }
 
-    private void createFilterDialog() {
+    private void createFilterDialog(Context context) {
         LayoutInflater li = LayoutInflater.from(context);
         View dialogCustomVIew = li.inflate(R.layout.filter_dialog, null);
 
-        createDialog(dialogCustomVIew);
-        initializeFilterDialogContent(dialogCustomVIew);
+        createDialog(dialogCustomVIew, context);
+        initializeFilterDialogContent(dialogCustomVIew, context);
     }
 
-    private void  initializeFilterDialogContent(View dialogCustomVIew) {
+    private void  initializeFilterDialogContent(View dialogCustomVIew, Context context) {
 
         Button saveScoreButton = dialogCustomVIew.findViewById(R.id.button_save_score);
         RadioGroup radioGroup = dialogCustomVIew.findViewById(R.id.radioButtonsGroup);

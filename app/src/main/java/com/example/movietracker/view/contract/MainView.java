@@ -7,5 +7,10 @@ public interface MainView extends View {
     void openMovieListView(GenresEntity genreList);
     void openAlertDialog();
     void dismissAllSelections();
+    void openNewPasswordDialog();
+    void openCheckPasswordDialog();
+    void openResetPasswordDialog();
+    void dismissPasswordDialog();
 
+    void setParentalControlEnabled(boolean parentalControlEnabled);
 }

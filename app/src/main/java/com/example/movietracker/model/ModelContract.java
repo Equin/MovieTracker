@@ -1,5 +1,6 @@
 package com.example.movietracker.model;
 
+import com.example.movietracker.data.entity.UserEntity;
 import com.example.movietracker.view.model.Filters;
 import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
@@ -8,6 +9,7 @@ import com.example.movietracker.data.entity.movie_details.cast.MovieCastsEntity;
 import com.example.movietracker.data.entity.movie_details.review.MovieReviewsEntity;
 import com.example.movietracker.data.entity.movie_details.video.MovieVideosEntity;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 
@@ -31,5 +33,11 @@ public class ModelContract {
         Observable<MovieCastsEntity> getMovieCasts(int movieId);
         Observable<MovieReviewsEntity> getMovieReviews(int movieId);
         Observable<MovieVideosEntity> getMovieVideos(int movieId);
+    }
+
+    public interface UserModel {
+        Observable<UserEntity> getUser();
+        void saveUser(UserEntity userEntity);
+        Completable updateUser(UserEntity userEntity);
     }
 }

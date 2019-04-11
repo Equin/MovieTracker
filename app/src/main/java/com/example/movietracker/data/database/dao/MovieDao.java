@@ -19,29 +19,32 @@ public interface MovieDao {
             "INNER JOIN MovieWithGenres " +
             "ON MovieResultEntity.movieId = MovieWithGenres.movie_id " +
             "WHERE MovieWithGenres.genre_id in (:genresId) " +
+            "AND isAdult = 0 OR isAdult = (:isAdult)" +
             "GROUP BY movieId " +
             "ORDER BY moviePopularity DESC " +
             "LIMIT (:limit)"
     )
-    Observable<List<MovieResultEntity>> getMoviesForPages(List<Integer> genresId, int limit);
+    Observable<List<MovieResultEntity>> getMoviesForPages(List<Integer> genresId, int limit, boolean isAdult);
 
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT * FROM MovieResultEntity " +
             "INNER JOIN MovieWithGenres " +
             "ON MovieResultEntity.movieId = MovieWithGenres.movie_id " +
             "WHERE MovieWithGenres.genre_id in (:genresId) " +
+            "AND isAdult = 0 OR isAdult = (:isAdult)" +
             "GROUP BY movieId " +
             "ORDER BY moviePopularity DESC " +
             "LIMIT (:limit) OFFSET (:offset)"
     )
-    Observable<List<MovieResultEntity>> getMovies(List<Integer> genresId, int limit, int offset);
+    Observable<List<MovieResultEntity>> getMovies(List<Integer> genresId, int limit, int offset, boolean isAdult);
 
     @Query("SELECT count(movieId) FROM MovieResultEntity " +
             "INNER JOIN MovieWithGenres " +
             "ON MovieResultEntity.movieId = MovieWithGenres.movie_id " +
-            "WHERE MovieWithGenres.genre_id in (:genresId) "
+            "WHERE MovieWithGenres.genre_id in (:genresId)"+
+            "AND isAdult = 0 OR isAdult = (:isAdult)"
     )
-    int getTotalResults(List<Integer> genresId);
+    int getTotalResults(List<Integer> genresId, boolean isAdult);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void saveMovies(List<MovieResultEntity> moviesEntity);
@@ -54,5 +57,5 @@ public interface MovieDao {
         for(int genreId : movieResultEntity.getGenreIds()) {
             saveRelation(new MovieWithGenres(movieResultEntity.getMovieId(), genreId));
         }
-    };
+    }
 }

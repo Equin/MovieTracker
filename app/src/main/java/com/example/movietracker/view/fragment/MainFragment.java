@@ -7,9 +7,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.ToggleButton;
 
 import com.example.movietracker.R;
+import com.example.movietracker.model.model_impl.UserModelImpl;
 import com.example.movietracker.view.model.Filters;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.di.ClassProvider;
@@ -18,6 +20,7 @@ import com.example.movietracker.presenter.MainPresenter;
 import com.example.movietracker.view.contract.MainView;
 import com.example.movietracker.view.custom_view.CustomGenreView;
 import com.example.movietracker.view.FilterAlertDialog;
+import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,7 +33,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Optional;
 
-public class MainFragment extends BaseFragment implements MainView, FilterAlertDialog.OnDoneButtonClickedListener {
+public class MainFragment extends BaseFragment implements MainView, FilterAlertDialog.OnDoneButtonClickedListener, NavigationView.OnNavigationItemSelectedListener {
 
     public interface MainFragmentInteractionListener {
         void showMovieListScreen(GenresEntity genresEntity);
@@ -48,6 +51,11 @@ public class MainFragment extends BaseFragment implements MainView, FilterAlertD
 
     @BindView(R.id.custom_genreView)
     CustomGenreView customGenreView;
+
+    @BindView(R.id.nav_view)
+    NavigationView navigationView;
+
+    Switch parentalControlSwitch;
 
     public MainFragment() {
         setRetainInstance(true);
@@ -83,9 +91,16 @@ public class MainFragment extends BaseFragment implements MainView, FilterAlertD
         this.mainPresenter = new MainPresenter(
                 this,
                 new GenreModelImpl(),
+                new UserModelImpl(),
                 Filters.getInstance());
 
         this.mainPresenter.getGenres();
+
+        this.navigationView.setNavigationItemSelectedListener(this);
+        this.parentalControlSwitch = this.navigationView.getMenu()
+                .findItem(R.id.parent_control).getActionView()
+                .findViewById(R.id.switch_parent_control);
+        this.parentalControlSwitch.setOnCheckedChangeListener(new onMenuSwitchCheckedListener());
     }
 
     @Override
@@ -124,6 +139,8 @@ public class MainFragment extends BaseFragment implements MainView, FilterAlertD
         return super.onOptionsItemSelected(item);
     }
 
+
+
     @Override
     public void showToast(int resourceId) {
         showToast(getString(resourceId));
@@ -138,9 +155,9 @@ public class MainFragment extends BaseFragment implements MainView, FilterAlertD
     @Optional
     @OnClick(R.id.main_button_search)
     public void onSearchButtonClicked(){
-         this.mainPresenter.onSearchButtonClicked(
-                 ClassProvider.filterAlertDialog.getFilterOptions()
-         );
+        this.mainPresenter.onSearchButtonClicked(
+                ClassProvider.filterAlertDialog.getFilterOptions()
+        );
     }
 
     @Optional
@@ -172,15 +189,66 @@ public class MainFragment extends BaseFragment implements MainView, FilterAlertD
     }
 
     @Override
-    public void OnAlertDialogDoneButtonClicked(AlertDialog alertDialog) {
-            alertDialog.dismiss();
+    public void openNewPasswordDialog() {
+        createNewPasswordDialog(this.mainPresenter);
     }
 
-    public class onCheckedListener implements ToggleButton.OnCheckedChangeListener {
+    @Override
+    public void openCheckPasswordDialog() {
+        createCheckPasswordDialog(this.mainPresenter);
+    }
+
+    @Override
+    public void openResetPasswordDialog() {
+        createPasswordResetDialog(this.mainPresenter);
+    }
+
+    @Override
+    public void dismissPasswordDialog() {
+        dismissDialog();
+    }
+
+    @Override
+    public void setParentalControlEnabled(boolean parentalControlEnabled) {
+        if(this.parentalControlSwitch != null) {
+            this.parentalControlSwitch.setChecked(parentalControlEnabled);
+        }
+    }
+
+    @Override
+    public void OnAlertDialogDoneButtonClicked(AlertDialog alertDialog) {
+        alertDialog.dismiss();
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+
+        switch (menuItem.getItemId()) {
+            case R.id.password_reset:
+                this.mainPresenter.onPasswordResetMenuItemClicked();
+                this.drawerLayout.closeDrawers();
+                return false;
+
+            case R.id.favorite:
+
+                return false;
+        }
+        return true;
+    }
+
+    private class onCheckedListener implements ToggleButton.OnCheckedChangeListener {
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             MainFragment.this.mainPresenter.onGenreChecked(buttonView.getText().toString(), isChecked);
+        }
+    }
+
+    private class onMenuSwitchCheckedListener implements Switch.OnCheckedChangeListener {
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            MainFragment.this.mainPresenter.onParentalControlSwitchChanged(isChecked);
         }
     }
 }

@@ -11,11 +11,11 @@ import androidx.room.Index;
         indices = {@Index("movie_id"), @Index("genre_id")},
         foreignKeys = {
                 @ForeignKey(entity = MovieResultEntity.class,
-        parentColumns ="movieId",
-        childColumns ="movie_id"),
-                 @ForeignKey(entity=GenreEntity.class,
-        parentColumns="genreId",
-        childColumns="genre_id")
+                        parentColumns ="movieId",
+                        childColumns ="movie_id"),
+                @ForeignKey(entity=GenreEntity.class,
+                        parentColumns="genreId",
+                        childColumns="genre_id")
         })
 public class MovieWithGenres {
     @ColumnInfo(name = "movie_id")

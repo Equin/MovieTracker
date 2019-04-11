@@ -23,5 +23,16 @@
     <string name="detail_tmdb_title">TMDb</string>
     <string name="cast_name_placeholder">Cast name</string>
 
+    <string name="new_password_saved">New password saved</string>
+
+    <string name="empty_new_password_field">New password field is empty</string>
+    <string name="empty_old_password_field">Old password field is empty</string>
+    <string name="wrong_old_password">Wrong old password</string>
+    <string name="wrong_password">Wrong password</string>
+
+    <string name="parent_control_state">Parent control is </string>
+
+    <string name="hint_to_enable_parent_control">You need to provide password to enable parent controle</string>
+
 
 </resources>

@@ -4,6 +4,8 @@ import com.example.movietracker.data.database.MoviesDatabase;
 import com.example.movietracker.data.database.dao.GenresDao;
 import com.example.movietracker.data.database.dao.MovieDao;
 import com.example.movietracker.data.database.dao.MovieDetailDao;
+import com.example.movietracker.data.database.dao.UserDao;
+import com.example.movietracker.data.entity.UserEntity;
 import com.example.movietracker.view.model.Filters;
 import com.example.movietracker.data.entity.entity_mapper.MovieCastsDataMapper;
 import com.example.movietracker.data.entity.entity_mapper.MovieReviewsDataMapper;
@@ -18,14 +20,12 @@ import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.data.net.RestClient;
 import com.example.movietracker.data.net.api.MovieApi;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 
 public class MovieDataRepository implements MovieRepository {
@@ -36,6 +36,7 @@ public class MovieDataRepository implements MovieRepository {
     private GenresDao genresDao;
     private MovieDao movieDao;
     private MovieDetailDao movieDetailDao;
+    private UserDao userDao;
 
     private MovieVideosDataMapper movieVideosDataMapper;
     private MovieCastsDataMapper movieCastsDataMapper;
@@ -54,9 +55,10 @@ public class MovieDataRepository implements MovieRepository {
     @Override
     public void init(RestClient restClient, MoviesDatabase moviesDatabase) {
         this.movieApi = restClient.getMovieApi();
-        this.genresDao = moviesDatabase.genresDao();
-        this.movieDao = moviesDatabase.movieDao();
-        this.movieDetailDao = moviesDatabase.movieDetailDao();
+        this.genresDao = moviesDatabase.getGenresDao();
+        this.movieDao = moviesDatabase.getMovieDao();
+        this.userDao = moviesDatabase.getUserDao();
+        this.movieDetailDao = moviesDatabase.getMovieDetailDao();
         this.movieCastsDataMapper = new MovieCastsDataMapper();
         this.movieVideosDataMapper = new MovieVideosDataMapper();
         this.movieReviewsDataMapper = new MovieReviewsDataMapper();
@@ -93,10 +95,12 @@ public class MovieDataRepository implements MovieRepository {
                         this.movieDao.getMovies(
                                 filters.getSelectedGenresIds(),
                                 MOVIE_PER_PAGE,
-                                (filters.getPage()-1)*MOVIE_PER_PAGE
+                                (filters.getPage()-1)*MOVIE_PER_PAGE,
+                                filters.isIncludeAdult()
                         ).map(movieResultEntities -> {
                                     int totalPage = Math.round((float)this.movieDao.getTotalResults(
-                                            filters.getSelectedGenresIds()) / MOVIE_PER_PAGE);
+                                            filters.getSelectedGenresIds(),
+                                            filters.isIncludeAdult()) / MOVIE_PER_PAGE);
 
                                     return new MoviesEntity(
                                             filters.getPage(),
@@ -137,7 +141,7 @@ public class MovieDataRepository implements MovieRepository {
         }).map(o -> new MoviesEntity(((MoviesEntity)o).getPage(), ((MoviesEntity)o).getTotalPages(), ((MoviesEntity)o).getMovies()));
     }
 
-    public Observable<MoviesEntity> addRequest(Filters filters, int page) {
+    private Observable<MoviesEntity> addRequest(Filters filters, int page) {
         return this.movieApi.getMoviesForPages(
                 filters.getCommaSeparatedGenres(),
                 filters.getSortBy()
@@ -152,11 +156,13 @@ public class MovieDataRepository implements MovieRepository {
                 .onExceptionResumeNext(
                         this.movieDao.getMoviesForPages(
                                 filters.getSelectedGenresIds(),
-                                filters.getPage() * MOVIE_PER_PAGE
+                                filters.getPage() * MOVIE_PER_PAGE,
+                                filters.isIncludeAdult()
                         )
                                 .map(movieResultEntities -> {
                                     int totalPage = Math.round((float)this.movieDao.getTotalResults(
-                                            filters.getSelectedGenresIds()) / MOVIE_PER_PAGE);
+                                            filters.getSelectedGenresIds(),
+                                            filters.isIncludeAdult()) / MOVIE_PER_PAGE);
 
                                       return  new MoviesEntity(filters.getPage(),
                                                 totalPage,
@@ -213,5 +219,20 @@ public class MovieDataRepository implements MovieRepository {
                         this.movieDetailDao.getMovieReviews(movieId)
                                 .map(this.movieReviewsDataMapper::transformFromList)
                 );
+    }
+
+    @Override
+    public Observable<UserEntity> getUser() {
+        return this.userDao.getUser();
+    }
+
+    @Override
+    public void saveUser(UserEntity userEntity) {
+        this.userDao.saveUser(userEntity);
+    }
+
+    @Override
+    public Completable updateUser(UserEntity userEntity) {
+        return this.userDao.updateUser(userEntity);
     }
 }
