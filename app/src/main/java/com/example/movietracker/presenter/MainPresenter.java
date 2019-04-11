@@ -14,6 +14,7 @@ import com.example.movietracker.view.model.Option;
 import io.reactivex.CompletableObserver;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -30,12 +31,14 @@ public class MainPresenter extends BasePresenter {
 
     private GenresEntity genresEntity;
     private UserEntity userEntity;
+    private Disposable userDisposable;
 
     public MainPresenter(MainView mainView, ModelContract.GenreModel genreModel, ModelContract.UserModel userModel, Filters filters) {
         this.mainView = mainView;
         this.genreModel = genreModel;
         this.filters = filters;
         this.userModel = userModel;
+        this.userDisposable = new CompositeDisposable();
     }
 
     public void getGenres() {
@@ -52,6 +55,10 @@ public class MainPresenter extends BasePresenter {
         this.filters = null;
         this.genresEntity = null;
         this.genreModel = null;
+
+        if (!this.userDisposable.isDisposed()) {
+            this.userDisposable.dispose();
+        }
     }
 
     public void onSearchButtonClicked(Option option) {
@@ -128,23 +135,6 @@ public class MainPresenter extends BasePresenter {
         this.mainView.hideLoading();
     }
 
-    private void savePassword(String newPassword) {
-        this.userEntity.setPinCode(newPassword);
-        this.userEntity.setParentalControlEnabled(true);
-
-        this.userModel.updateUser(userEntity)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new CompletableSavePasswordObserver());
-    }
-
-    private void getUser() {
-        Disposable disposable = this.userModel.getUser().
-                observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribeWith(new GetUserObserver());
-    }
-
     public void onParentalControlSwitchChanged(boolean isChecked) {
         if (this.userEntity == null) return;
         if(isChecked && this.userEntity.isParentalControlEnabled()) {
@@ -161,6 +151,23 @@ public class MainPresenter extends BasePresenter {
                 this.mainView.openCheckPasswordDialog();
             }
         }
+    }
+
+    private void savePassword(String newPassword) {
+        this.userEntity.setPinCode(newPassword);
+        this.userEntity.setParentalControlEnabled(true);
+
+        this.userModel.updateUser(userEntity)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new CompletableSavePasswordObserver());
+    }
+
+    private void getUser() {
+        this.userDisposable = this.userModel.getUser().
+                observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribeWith(new GetUserObserver());
     }
 
     private void updateParentalControlState(boolean isChecked) {
