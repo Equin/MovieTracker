@@ -2,6 +2,7 @@ package com.example.movietracker.data.repository;
 
 import com.example.movietracker.data.database.MoviesDatabase;
 import com.example.movietracker.data.entity.UserEntity;
+import com.example.movietracker.data.entity.UserWithFavoriteMovies;
 import com.example.movietracker.view.model.Filters;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.data.entity.movie_details.cast.MovieCastsEntity;
@@ -21,13 +22,17 @@ public interface MovieRepository {
     Single<GenresEntity> getGenres();
     Single<GenresEntity> getLocalGenres();
     Observable<MoviesEntity> getMovies(Filters filters);
+    Observable<MoviesEntity> getMoviesWithFavorites(Filters filters);
     Observable<MoviesEntity> getMovieListForPages(Filters filters);
+    Observable<MoviesEntity> getMovieListForPagesWithFavorites(Filters filters);
     Observable<MovieDetailsEntity> getMovieDetails(int movieId);
     Observable<MovieCastsEntity> getMovieCasts(int movieId);
     Observable<MovieVideosEntity> getMovieVideos(int movieId);
     Observable<MovieReviewsEntity> getMovieReviews(int movieId);
     Observable<UserEntity> getUser();
+    Observable<UserEntity> getUserWithFavorites();
     void saveUser(UserEntity userEntity);
     Completable updateUser(UserEntity userEntity);
+    Completable deleteMovieFromFavorites(UserWithFavoriteMovies userWithFavoriteMovies);
     void init(RestClient restClient, MoviesDatabase moviesDatabase);
 }

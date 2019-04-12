@@ -1,7 +1,9 @@
 package com.example.movietracker.data.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -14,18 +16,22 @@ public class UserEntity {
     private String pinCode;
     private boolean isParentalControlEnabled;
     @Ignore
-    private List<MovieResultEntity> favoriteMoviesIds;
+    private List<MovieResultEntity> favoriteMovies;
     private String masterPinCode;
+
+    @ColumnInfo(name = "movie_id")
+    private int movieId;
 
     public UserEntity() {
     }
 
-    public UserEntity(int userId, String pinCode, boolean isParentalControlEnabled, List<MovieResultEntity> favoriteMoviesIds, String masterPinCode) {
+    public UserEntity(int userId, String pinCode, boolean isParentalControlEnabled, List<MovieResultEntity> favoriteMovies, String masterPinCode, int movieId) {
         this.userId = userId;
         this.pinCode = pinCode;
         this.isParentalControlEnabled = isParentalControlEnabled;
-        this.favoriteMoviesIds = favoriteMoviesIds;
+        this.favoriteMovies = favoriteMovies;
         this.masterPinCode = masterPinCode;
+        this.movieId = movieId;
     }
 
     public String getPinCode() {
@@ -44,12 +50,27 @@ public class UserEntity {
         isParentalControlEnabled = parentalControlEnabled;
     }
 
-    public List<MovieResultEntity> getFavoriteMoviesIds() {
-        return favoriteMoviesIds;
+    public List<MovieResultEntity> getFavoriteMovies() {
+        return favoriteMovies;
     }
 
-    public void setFavoriteMoviesIds(List<MovieResultEntity> favoriteMoviesIds) {
-        this.favoriteMoviesIds = favoriteMoviesIds;
+    public void setFavoriteMovies(List<MovieResultEntity> favoriteMovies) {
+        this.favoriteMovies = favoriteMovies;
+    }
+
+    public void addToFavorites(MovieResultEntity movieResultEntity) {
+        if (favoriteMovies != null && !favoriteMovies.contains(movieResultEntity)) {
+            favoriteMovies.add(movieResultEntity);
+        } else {
+            favoriteMovies = new ArrayList<>();
+            favoriteMovies.add(movieResultEntity);
+        }
+    }
+
+    public void removeFromFavorites(MovieResultEntity movieResultEntity) {
+        if (favoriteMovies != null) {
+            favoriteMovies.remove(movieResultEntity);
+        }
     }
 
     public String getMasterPinCode() {
@@ -61,7 +82,7 @@ public class UserEntity {
     }
 
     public static UserEntity initialUser() {
-        return new UserEntity(1, null, false, null, "4546");
+        return new UserEntity(1, null, false, new ArrayList<>(), "4546", -1);
     }
 
     public int getUserId() {
@@ -70,5 +91,13 @@ public class UserEntity {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public int getMovieId() {
+        return movieId;
+    }
+
+    public void setMovieId(int movieId) {
+        this.movieId = movieId;
     }
 }

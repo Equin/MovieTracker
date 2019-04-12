@@ -10,8 +10,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 
 import com.example.movietracker.R;
+import com.example.movietracker.model.model_impl.UserModelImpl;
 import com.example.movietracker.view.model.Filters;
 import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
@@ -101,10 +103,12 @@ public class MovieListFragment extends BaseFragment
         this.setupMenuDrawer();
 
         this.movieListPresenter = new MovieListPresenter(
-                    this,
-                    new MovieModelImpl(),
-                    MovieRecyclerItemPosition.getInstance());
-        this.movieListPresenter.getMoviesByFilters(Filters.getInstance());
+                this,
+                new MovieModelImpl(),
+                new UserModelImpl(),
+                MovieRecyclerItemPosition.getInstance());
+
+        this.movieListPresenter.initialize(Filters.getInstance());
 
         this.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshListener());
     }
@@ -145,7 +149,8 @@ public class MovieListFragment extends BaseFragment
         this.movieListAdapter = new MovieListAdapter(
                 moviesEntity,
                 new ClickListener(),
-                getGenresEntity());
+                getGenresEntity(),
+                new OnFavoriteCheckedListener());
 
         this.movieRecyclerView.setAdapter(movieListAdapter);
         this.movieRecyclerView.addOnScrollListener(new SnapScrollListener(this));
@@ -185,17 +190,17 @@ public class MovieListFragment extends BaseFragment
 
     @Override
     public void scrollToMovie(int itemPosition, int itemOffset) {
-            this.movieRecyclerView.postOnAnimation(new Runnable() {
-                @Override
-                public void run() {
-                    LinearLayoutManager manager =((LinearLayoutManager) movieRecyclerView.getLayoutManager());
-                    if (manager != null) {
-                        manager.scrollToPositionWithOffset(itemPosition, itemOffset);
-                    }
-
-                    MovieRecyclerItemPosition.getInstance().setValuesToZero();
+        this.movieRecyclerView.postOnAnimation(new Runnable() {
+            @Override
+            public void run() {
+                LinearLayoutManager manager =((LinearLayoutManager) movieRecyclerView.getLayoutManager());
+                if (manager != null) {
+                    manager.scrollToPositionWithOffset(itemPosition, itemOffset);
                 }
-            });
+
+                MovieRecyclerItemPosition.getInstance().setValuesToZero();
+            }
+        });
     }
 
     @Override
@@ -239,6 +244,15 @@ public class MovieListFragment extends BaseFragment
             Log.d(TAG, "onRefresh called from SwipeRefreshLayout");
             Filters.getInstance().setPage(1);
             MovieListFragment.this.movieListPresenter.getMoviesByFilters(Filters.getInstance());
+        }
+    }
+
+    private class OnFavoriteCheckedListener implements CompoundButton.OnCheckedChangeListener {
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            int position = movieRecyclerView.getChildLayoutPosition((View) buttonView.getParent().getParent());
+            MovieListFragment.this.movieListPresenter.onFavoriteChecked(position, isChecked);
         }
     }
 }

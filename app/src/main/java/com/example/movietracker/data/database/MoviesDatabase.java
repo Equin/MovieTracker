@@ -8,6 +8,7 @@ import com.example.movietracker.data.database.dao.MovieDetailDao;
 import com.example.movietracker.data.database.dao.UserDao;
 import com.example.movietracker.data.entity.MovieResultEntity;
 import com.example.movietracker.data.entity.UserEntity;
+import com.example.movietracker.data.entity.UserWithFavoriteMovies;
 import com.example.movietracker.data.entity.genre.GenreEntity;
 import com.example.movietracker.data.entity.movie_details.MovieDetailsEntity;
 import com.example.movietracker.data.entity.movie_details.MovieWithGenres;
@@ -32,7 +33,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
         MovieVideoResultEntity.class,
         MovieDetailsEntity.class,
         MovieWithGenres.class,
-        UserEntity.class}, version = 1)
+        UserEntity.class,
+        UserWithFavoriteMovies.class}, version = 1)
 @TypeConverters(MyConverters.class)
 public abstract class MoviesDatabase extends RoomDatabase {
 
@@ -52,7 +54,9 @@ public abstract class MoviesDatabase extends RoomDatabase {
                                 public void onCreate(@NonNull SupportSQLiteDatabase db) {
                                     super.onCreate(db);
                                     Executors.newSingleThreadScheduledExecutor().execute(
-                                            () -> getDatabase(context).getUserDao().saveUser(UserEntity.initialUser()));
+                                            () ->  {
+                                                getDatabase(context).getUserDao().saveUser(UserEntity.initialUser());
+                                            });
                                 }
                             })
                             .build();

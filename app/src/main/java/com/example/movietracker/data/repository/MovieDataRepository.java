@@ -5,7 +5,9 @@ import com.example.movietracker.data.database.dao.GenresDao;
 import com.example.movietracker.data.database.dao.MovieDao;
 import com.example.movietracker.data.database.dao.MovieDetailDao;
 import com.example.movietracker.data.database.dao.UserDao;
+import com.example.movietracker.data.entity.MovieResultEntity;
 import com.example.movietracker.data.entity.UserEntity;
+import com.example.movietracker.data.entity.UserWithFavoriteMovies;
 import com.example.movietracker.view.model.Filters;
 import com.example.movietracker.data.entity.entity_mapper.MovieCastsDataMapper;
 import com.example.movietracker.data.entity.entity_mapper.MovieReviewsDataMapper;
@@ -27,6 +29,7 @@ import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 public class MovieDataRepository implements MovieRepository {
 
@@ -115,6 +118,39 @@ public class MovieDataRepository implements MovieRepository {
     }
 
     @Override
+    public Observable<MoviesEntity>  getMoviesWithFavorites(Filters filters) {
+        return  getMovieFavorites(getMovies(filters));
+    }
+
+    private Observable<MoviesEntity>  getMovieFavorites( Observable<MoviesEntity> moviesEntityObservable ) {
+        return Observable.zip(
+                getUserWithFavorites().subscribeOn(Schedulers.newThread()),
+                moviesEntityObservable.subscribeOn(Schedulers.newThread()),
+                (userEntity, moviesEntity) -> {
+
+                    if (userEntity.getFavoriteMovies() == null || userEntity.getFavoriteMovies().size() == 0) {
+                        return moviesEntity;
+                    }
+
+                    for (MovieResultEntity movieResultEntity : moviesEntity.getMovies()) {
+                        boolean isFavorite = false;
+                        for (MovieResultEntity userFavMovies : userEntity.getFavoriteMovies()) {
+                            if(movieResultEntity.getMovieId() == userFavMovies.getMovieId()) {
+                                isFavorite = true;
+                            }
+                        }
+                        movieResultEntity.setFavorite(isFavorite);
+                    }
+                    return moviesEntity;
+                });
+    }
+
+    @Override
+    public Observable<MoviesEntity> getMovieListForPagesWithFavorites(Filters filters) {
+       return  getMovieFavorites(getMovieListForPages(filters));
+    }
+
+    @Override
     public Observable<MoviesEntity> getMovieListForPages(Filters filters) {
         List<Observable<?>> requests = new ArrayList<>();
 
@@ -164,7 +200,8 @@ public class MovieDataRepository implements MovieRepository {
                                             filters.getSelectedGenresIds(),
                                             filters.isIncludeAdult()) / MOVIE_PER_PAGE);
 
-                                      return  new MoviesEntity(filters.getPage(),
+                                      return  new MoviesEntity(
+                                              filters.getPage(),
                                                 totalPage,
                                                 movieResultEntities
                                         );
@@ -227,12 +264,41 @@ public class MovieDataRepository implements MovieRepository {
     }
 
     @Override
+    public Observable<UserEntity> getUserWithFavorites() {
+        return this.userDao.getUserWithFavorites().map(userEntities -> {
+
+            if (userEntities == null || userEntities.size() == 0) {
+                userEntities = new ArrayList<>();
+                userEntities.add(this.userDao.getUser1());
+            }
+
+            UserEntity userEntity =  userEntities.get(0);
+
+            for(int i = 0; i < userEntities.size(); i++) {
+                MovieResultEntity movieResultEntity = this.movieDao.getMovieById(userEntities.get(i).getMovieId(), userEntities.get(i).isParentalControlEnabled());
+                if(movieResultEntity != null) {
+                    userEntity.addToFavorites(movieResultEntity);
+                }
+            }
+            return userEntity;
+        });
+    }
+
+    @Override
     public void saveUser(UserEntity userEntity) {
         this.userDao.saveUser(userEntity);
     }
 
     @Override
     public Completable updateUser(UserEntity userEntity) {
+        if(userEntity.getFavoriteMovies() != null && userEntity.getFavoriteMovies().size() != 0) {
+            this.userDao.addUserFavoriteMoviesRelation(userEntity);
+        }
         return this.userDao.updateUser(userEntity);
+    }
+
+    @Override
+    public Completable deleteMovieFromFavorites(UserWithFavoriteMovies userWithFavoriteMovies) {
+      return this.userDao.deleteMovieFromFavorites(userWithFavoriteMovies);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.movietracker.model.model_impl;
 
 import com.example.movietracker.data.entity.UserEntity;
+import com.example.movietracker.data.entity.UserWithFavoriteMovies;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.data.repository.MovieRepository;
 import com.example.movietracker.di.ClassProvider;
@@ -25,6 +26,11 @@ public class UserModelImpl implements ModelContract.UserModel {
     }
 
     @Override
+    public Observable<UserEntity> getUserWithFavorites() {
+        return this.movieRepository.getUserWithFavorites();
+    }
+
+    @Override
     public void saveUser(UserEntity userEntity) {
         this.movieRepository.saveUser(userEntity);
     }
@@ -32,5 +38,10 @@ public class UserModelImpl implements ModelContract.UserModel {
     @Override
     public Completable updateUser(UserEntity userEntity) {
         return this.movieRepository.updateUser(userEntity);
+    }
+
+    @Override
+    public Completable deleteUserFromFavorites(UserWithFavoriteMovies userWithFavoriteMovies) {
+        return this.movieRepository.deleteMovieFromFavorites(userWithFavoriteMovies);
     }
 }

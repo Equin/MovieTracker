@@ -3,8 +3,10 @@ package com.example.movietracker.view.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.bumptech.glide.Glide;
 import com.example.movietracker.R;
@@ -31,12 +33,18 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     private List<MovieResultEntity> movieList;
     private GenresEntity genresEntity;
     private View.OnClickListener clickListener;
+    private CompoundButton.OnCheckedChangeListener onCheckedChangeListener;
 
-    public MovieListAdapter(MoviesEntity movieList, View.OnClickListener clickListener, GenresEntity genresEntity ) {
+    public MovieListAdapter(
+            MoviesEntity movieList,
+            View.OnClickListener clickListener,
+            GenresEntity genresEntity,
+            CompoundButton.OnCheckedChangeListener onCheckedChangeListener) {
         this.movieList = new ArrayList<>();
         this.movieList.addAll(movieList.getMovies());
         this.genresEntity = genresEntity;
         this.clickListener = clickListener;
+        this.onCheckedChangeListener = onCheckedChangeListener;
     }
 
     @NonNull
@@ -64,6 +72,9 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
         holder.movieRating.setText(String.format(Locale.ENGLISH, "%.1f",
                         movie.getMovieVoteAverage()));
 
+        holder.favoriteToggleButton.setChecked(movie.isFavorite());
+      holder.favoriteToggleButton.postOnAnimation(() -> holder.favoriteToggleButton.setOnCheckedChangeListener(onCheckedChangeListener));
+
         Glide
           .with(holder.itemView)
           .load(NetConstant.IMAGE_BASE_URL + movie.getPosterPath())
@@ -83,6 +94,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
         private TextView movieTitle;
         private TextView movieGenres;
         private TextView movieRating;
+        private ToggleButton favoriteToggleButton;
 
         MovieListViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -91,6 +103,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
             this.movieTitle = itemView.findViewById(R.id.textView_movieTitle);
             this.movieGenres = itemView.findViewById(R.id.textView_MovieGenres);
             this.movieRating = itemView.findViewById(R.id.textView_movieRating);
+            this.favoriteToggleButton = itemView.findViewById(R.id.toggleButton_favorite);
         }
     }
 

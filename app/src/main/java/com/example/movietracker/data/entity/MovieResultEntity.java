@@ -1,12 +1,12 @@
 package com.example.movietracker.data.entity;
 
-import com.example.movietracker.data.entity.genre.GenreEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 import java.util.List;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity
@@ -40,6 +40,12 @@ public class MovieResultEntity {
     @SerializedName("popularity")
     private double moviePopularity;
 
+    @Ignore
+    private boolean isFavorite;
+
+    @Ignore
+    public MovieResultEntity() {}
+
     public MovieResultEntity(int movieId, String movieTitle, String posterPath, List<Integer> genreIds, boolean isAdult, String movieOverview, double movieVoteAverage, Date movieReleaseDate, double moviePopularity) {
         this.movieId = movieId;
         this.movieTitle = movieTitle;
@@ -50,6 +56,20 @@ public class MovieResultEntity {
         this.movieVoteAverage = movieVoteAverage;
         this.movieReleaseDate = movieReleaseDate;
         this.moviePopularity = moviePopularity;
+    }
+
+    @Ignore
+    public MovieResultEntity(int movieId, String movieTitle, String posterPath, List<Integer> genreIds, boolean isAdult, String movieOverview, double movieVoteAverage, Date movieReleaseDate, double moviePopularity, boolean isFavorite) {
+        this.movieId = movieId;
+        this.movieTitle = movieTitle;
+        this.posterPath = posterPath;
+        this.genreIds = genreIds;
+        this.isAdult = isAdult;
+        this.movieOverview = movieOverview;
+        this.movieVoteAverage = movieVoteAverage;
+        this.movieReleaseDate = movieReleaseDate;
+        this.moviePopularity = moviePopularity;
+        this.isFavorite = isFavorite;
     }
 
     public int getMovieId() {
@@ -130,7 +150,19 @@ public class MovieResultEntity {
 
         if(!(o instanceof MovieResultEntity)) return false;
         MovieResultEntity movieResultEntity = (MovieResultEntity)o;
+int id1 = this.movieId;
+int id2 =  movieResultEntity.movieId;
+
+
 
         return this.movieId == movieResultEntity.movieId;
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
     }
 }

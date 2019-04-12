@@ -19,7 +19,7 @@ public interface MovieDao {
             "INNER JOIN MovieWithGenres " +
             "ON MovieResultEntity.movieId = MovieWithGenres.movie_id " +
             "WHERE MovieWithGenres.genre_id in (:genresId) " +
-            "AND isAdult = 0 OR isAdult = (:isAdult)" +
+            "AND (isAdult = 0 OR isAdult = (:isAdult))" +
             "GROUP BY movieId " +
             "ORDER BY moviePopularity DESC " +
             "LIMIT (:limit)"
@@ -31,7 +31,7 @@ public interface MovieDao {
             "INNER JOIN MovieWithGenres " +
             "ON MovieResultEntity.movieId = MovieWithGenres.movie_id " +
             "WHERE MovieWithGenres.genre_id in (:genresId) " +
-            "AND isAdult = 0 OR isAdult = (:isAdult)" +
+            "AND (isAdult = 0 OR isAdult = (:isAdult))" +
             "GROUP BY movieId " +
             "ORDER BY moviePopularity DESC " +
             "LIMIT (:limit) OFFSET (:offset)"
@@ -45,6 +45,17 @@ public interface MovieDao {
             "AND isAdult = 0 OR isAdult = (:isAdult)"
     )
     int getTotalResults(List<Integer> genresId, boolean isAdult);
+
+
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
+    @Query("SELECT * FROM MovieResultEntity " +
+            "WHERE movieId = (:movieId) " +
+            "AND (isAdult = 0 or isAdult = (:isAdult))" +
+            "GROUP BY movieId"
+    )
+    MovieResultEntity getMovieById(int movieId, boolean isAdult);
+
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void saveMovies(List<MovieResultEntity> moviesEntity);

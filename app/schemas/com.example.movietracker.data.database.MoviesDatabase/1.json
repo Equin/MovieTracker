@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "c697448f786b7f3f0e91a181da1064f0",
+    "identityHash": "b984a1355333e857a4cf9d1cb4aebc2b",
     "entities": [
       {
         "tableName": "GenreEntity",
@@ -403,7 +403,7 @@
       },
       {
         "tableName": "UserEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` INTEGER NOT NULL, `pinCode` TEXT, `isParentalControlEnabled` INTEGER NOT NULL, `masterPinCode` TEXT, PRIMARY KEY(`userId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` INTEGER NOT NULL, `pinCode` TEXT, `isParentalControlEnabled` INTEGER NOT NULL, `masterPinCode` TEXT, `movie_id` INTEGER NOT NULL, PRIMARY KEY(`userId`))",
         "fields": [
           {
             "fieldPath": "userId",
@@ -428,6 +428,12 @@
             "columnName": "masterPinCode",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "movieId",
+            "columnName": "movie_id",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -438,11 +444,79 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "UserWithFavoriteMovies",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`movie_id` INTEGER NOT NULL, `user_id` INTEGER NOT NULL, PRIMARY KEY(`movie_id`, `user_id`), FOREIGN KEY(`movie_id`) REFERENCES `MovieResultEntity`(`movieId`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`user_id`) REFERENCES `UserEntity`(`userId`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "movieId",
+            "columnName": "movie_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "movie_id",
+            "user_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_UserWithFavoriteMovies_movie_id",
+            "unique": false,
+            "columnNames": [
+              "movie_id"
+            ],
+            "createSql": "CREATE  INDEX `index_UserWithFavoriteMovies_movie_id` ON `${TABLE_NAME}` (`movie_id`)"
+          },
+          {
+            "name": "index_UserWithFavoriteMovies_user_id",
+            "unique": false,
+            "columnNames": [
+              "user_id"
+            ],
+            "createSql": "CREATE  INDEX `index_UserWithFavoriteMovies_user_id` ON `${TABLE_NAME}` (`user_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "MovieResultEntity",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "movie_id"
+            ],
+            "referencedColumns": [
+              "movieId"
+            ]
+          },
+          {
+            "table": "UserEntity",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id"
+            ],
+            "referencedColumns": [
+              "userId"
+            ]
+          }
+        ]
       }
     ],
+    "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"c697448f786b7f3f0e91a181da1064f0\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"b984a1355333e857a4cf9d1cb4aebc2b\")"
     ]
   }
 }
