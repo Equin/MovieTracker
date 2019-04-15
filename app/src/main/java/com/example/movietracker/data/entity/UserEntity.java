@@ -13,11 +13,11 @@ public class UserEntity {
 
     @PrimaryKey
     private int userId;
-    private String pinCode;
+    private String password;
     private boolean isParentalControlEnabled;
     @Ignore
     private List<MovieResultEntity> favoriteMovies;
-    private String masterPinCode;
+    private String masterPassword;
 
     @ColumnInfo(name = "movie_id")
     private int movieId;
@@ -25,21 +25,21 @@ public class UserEntity {
     public UserEntity() {
     }
 
-    public UserEntity(int userId, String pinCode, boolean isParentalControlEnabled, List<MovieResultEntity> favoriteMovies, String masterPinCode, int movieId) {
+    public UserEntity(int userId, String password, boolean isParentalControlEnabled, List<MovieResultEntity> favoriteMovies, String masterPassword, int movieId) {
         this.userId = userId;
-        this.pinCode = pinCode;
+        this.password = password;
         this.isParentalControlEnabled = isParentalControlEnabled;
         this.favoriteMovies = favoriteMovies;
-        this.masterPinCode = masterPinCode;
+        this.masterPassword = masterPassword;
         this.movieId = movieId;
     }
 
-    public String getPinCode() {
-        return pinCode;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPinCode(String pinCode) {
-        this.pinCode = pinCode;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public boolean isParentalControlEnabled() {
@@ -73,12 +73,12 @@ public class UserEntity {
         }
     }
 
-    public String getMasterPinCode() {
-        return masterPinCode;
+    public String getMasterPassword() {
+        return masterPassword;
     }
 
-    public void setMasterPinCode(String masterPinCode) {
-        this.masterPinCode = masterPinCode;
+    public void setMasterPassword(String masterPassword) {
+        this.masterPassword = masterPassword;
     }
 
     public static UserEntity initialUser() {

@@ -1,5 +1,6 @@
 package com.example.movietracker.view.model;
 
+
 public enum Order {
 
     ASC(true),

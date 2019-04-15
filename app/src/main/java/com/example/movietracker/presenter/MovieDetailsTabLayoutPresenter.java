@@ -45,7 +45,6 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribeWith(new GetMovieCastObserver());
-
     }
 
     public void getMovieReviews(int movieId) {
@@ -67,15 +66,27 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
     }
 
     private void showLoading() {
-        this.view.showLoading();
+        if (this.view != null) {
+            this.view.showLoading();
+        }
     }
 
     private void hideLoading() {
-        this.view.hideLoading();
+        if (this.view != null) {
+            this.view.hideLoading();
+        }
     }
 
     private void displayNothingToShow() {
-        this.view.displayNothingToShowHint();
+        if (this.view != null) {
+            this.view.displayNothingToShowHint();
+        }
+    }
+
+    private void showToast(int resourceId) {
+        if (this.view != null) {
+            this.view.showToast(resourceId);
+        }
     }
 
     @Override
@@ -108,7 +119,7 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
 
         @Override
         public void onError(@NonNull Throwable e) {
-            MovieDetailsTabLayoutPresenter.this.view.showToast(R.string.main_error);
+            MovieDetailsTabLayoutPresenter.this.showToast(R.string.main_error);
             MovieDetailsTabLayoutPresenter.this.hideLoading();
             MovieDetailsTabLayoutPresenter.this.displayNothingToShow();
             Log.e(TAG, e.getLocalizedMessage());
@@ -134,7 +145,7 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
 
         @Override
         public void onError(@NonNull Throwable e) {
-            MovieDetailsTabLayoutPresenter.this.view.showToast(R.string.main_error);
+            MovieDetailsTabLayoutPresenter.this.showToast(R.string.main_error);
             MovieDetailsTabLayoutPresenter.this.hideLoading();
             MovieDetailsTabLayoutPresenter.this.displayNothingToShow();
             Log.e(TAG, e.getLocalizedMessage());
@@ -160,7 +171,7 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
 
         @Override
         public void onError(@NonNull Throwable e) {
-            MovieDetailsTabLayoutPresenter.this.view.showToast(R.string.main_error);
+            MovieDetailsTabLayoutPresenter.this.showToast(R.string.main_error);
             MovieDetailsTabLayoutPresenter.this.hideLoading();
             MovieDetailsTabLayoutPresenter.this.displayNothingToShow();
             Log.e(TAG, e.getLocalizedMessage());

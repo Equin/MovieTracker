@@ -66,10 +66,4 @@ public class CastListAdapter extends RecyclerView.Adapter<CastListAdapter.CastLi
             this.castName = itemView.findViewById(R.id.textView_castName);
         }
     }
-
-
-    public void updateMovieList(MoviesEntity newMovieList) {
-     //   DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new MovieDiffCallback(this.castsEntity, newMovieList));
-     //   diffResult.dispatchUpdatesTo(this);
-    }
 }

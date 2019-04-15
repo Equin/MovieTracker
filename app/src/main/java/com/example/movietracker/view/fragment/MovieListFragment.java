@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.TextView;
 
 import com.example.movietracker.R;
 import com.example.movietracker.model.model_impl.UserModelImpl;
@@ -29,6 +30,8 @@ import com.example.movietracker.view.model.MovieRecyclerItemPosition;
 import com.example.movietracker.view.model.Option;
 import com.example.movietracker.view.helper.UtilityHelpers;
 
+import java.util.zip.Inflater;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -45,16 +48,18 @@ public class MovieListFragment extends BaseFragment
         FilterAlertDialog.OnDoneButtonClickedListener {
 
     private static final String ARG_GENRES_ENTITY = "args_genres_entity";
+    private static final String ARG_SHOW_FAVORITE_MOVIES = "args_show_favorite_movies";
     private static final String TAG = MovieListFragment.class.getCanonicalName();
 
     public interface MovieListFragmentInteractionListener {
         void showMovieDetailScreen(int movieId);
     }
 
-    public static MovieListFragment newInstance(GenresEntity genresEntity) {
+    public static MovieListFragment newInstance(GenresEntity genresEntity, boolean shouldShowFavoriteMovies) {
         MovieListFragment movieListFragment = new MovieListFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(ARG_GENRES_ENTITY, genresEntity);
+        bundle.putBoolean(ARG_SHOW_FAVORITE_MOVIES, shouldShowFavoriteMovies);
         movieListFragment.setArguments(bundle);
         return movieListFragment;
     }
@@ -68,6 +73,9 @@ public class MovieListFragment extends BaseFragment
 
     @BindView(R.id.swipeRefreshLayout)
     SwipeRefreshLayout swipeRefreshLayout;
+
+    @BindView(R.id.textView_nothingToShow)
+    TextView textViewNothingToShow;
 
     public MovieListFragment() {
         setRetainInstance(true);
@@ -97,19 +105,25 @@ public class MovieListFragment extends BaseFragment
 
         setSupportActionBar();
         setNotTransparentToolbar();
-        setToolbarTitle(
-                UtilityHelpers.getPipeDividedGenres(
-                        Filters.getInstance().getSelectedGenres()));
+
+        if (!shouldShowFavoriteMoviesList()) {
+            setToolbarTitle(
+                    UtilityHelpers.getPipeDividedGenres(
+                            Filters.getInstance().getSelectedGenres()));
+        } else  {
+            setToolbarTitle("Favorites");
+        }
+
         this.setupMenuDrawer();
 
         this.movieListPresenter = new MovieListPresenter(
                 this,
                 new MovieModelImpl(),
                 new UserModelImpl(),
+                Filters.getInstance(),
                 MovieRecyclerItemPosition.getInstance());
 
-        this.movieListPresenter.initialize(Filters.getInstance());
-
+        this.movieListPresenter.initialize(shouldShowFavoriteMoviesList());
         this.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshListener());
     }
 
@@ -163,8 +177,19 @@ public class MovieListFragment extends BaseFragment
     }
 
     @Override
+    public void displayNothingToShowHint() {
+        this.textViewNothingToShow.setVisibility(View.VISIBLE);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.toolbar_actions, menu);
+
+        if(shouldShowFavoriteMoviesList()) {
+           MenuItem filterMunuItem = menu.findItem(R.id.action_filter);
+            filterMunuItem.setVisible(false);
+        }
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -190,16 +215,13 @@ public class MovieListFragment extends BaseFragment
 
     @Override
     public void scrollToMovie(int itemPosition, int itemOffset) {
-        this.movieRecyclerView.postOnAnimation(new Runnable() {
-            @Override
-            public void run() {
-                LinearLayoutManager manager =((LinearLayoutManager) movieRecyclerView.getLayoutManager());
-                if (manager != null) {
-                    manager.scrollToPositionWithOffset(itemPosition, itemOffset);
-                }
-
-                MovieRecyclerItemPosition.getInstance().setValuesToZero();
+        this.movieRecyclerView.postOnAnimation(() -> {
+            LinearLayoutManager manager =((LinearLayoutManager) movieRecyclerView.getLayoutManager());
+            if (manager != null) {
+                manager.scrollToPositionWithOffset(itemPosition, itemOffset);
             }
+
+            MovieRecyclerItemPosition.getInstance().setValuesToZero();
         });
     }
 
@@ -209,7 +231,7 @@ public class MovieListFragment extends BaseFragment
     }
 
     @Override
-    public void OnAlertDialogDoneButtonClicked(AlertDialog alertDialog) {
+    public void onAlertDialogDoneButtonClicked(AlertDialog alertDialog) {
         alertDialog.dismiss();
 
         Option option = ClassProvider.filterAlertDialog.getFilterOptions();
@@ -227,6 +249,14 @@ public class MovieListFragment extends BaseFragment
         return null;
     }
 
+    private boolean shouldShowFavoriteMoviesList() {
+        if(getArguments() != null) {
+            return   getArguments().getBoolean(ARG_SHOW_FAVORITE_MOVIES, false);
+        }
+
+        return false;
+    }
+
     private class ClickListener implements RecyclerView.OnClickListener {
 
         @Override
@@ -242,8 +272,7 @@ public class MovieListFragment extends BaseFragment
         @Override
         public void onRefresh() {
             Log.d(TAG, "onRefresh called from SwipeRefreshLayout");
-            Filters.getInstance().setPage(1);
-            MovieListFragment.this.movieListPresenter.getMoviesByFilters(Filters.getInstance());
+            MovieListFragment.this.movieListPresenter.onSwipeToRefresh();
         }
     }
 

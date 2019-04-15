@@ -58,11 +58,6 @@ public class YouTubePlayerFragment extends BaseFragment implements OnBackPressLi
     RecyclerView recyclerViewYoutubeVideo;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater,
             ViewGroup container,

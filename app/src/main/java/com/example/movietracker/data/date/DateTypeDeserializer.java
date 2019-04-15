@@ -12,6 +12,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * The Date type deserializer for parsing date replacing null values with "1000-08-28"
+ */
 public class DateTypeDeserializer implements JsonDeserializer<Date> {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd";

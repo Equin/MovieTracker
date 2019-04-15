@@ -56,9 +56,4 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Re
             this.reviewContent = itemView.findViewById(R.id.textView_reviewContent);
         }
     }
-
-    public void updateMovieList(MoviesEntity newMovieList) {
-     //   DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new MovieDiffCallback(this.castsEntity, newMovieList));
-     //   diffResult.dispatchUpdatesTo(this);
-    }
 }

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "b984a1355333e857a4cf9d1cb4aebc2b",
+    "identityHash": "00a1c62326c601213ebb8376dadcca62",
     "entities": [
       {
         "tableName": "GenreEntity",
@@ -403,7 +403,7 @@
       },
       {
         "tableName": "UserEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` INTEGER NOT NULL, `pinCode` TEXT, `isParentalControlEnabled` INTEGER NOT NULL, `masterPinCode` TEXT, `movie_id` INTEGER NOT NULL, PRIMARY KEY(`userId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` INTEGER NOT NULL, `password` TEXT, `isParentalControlEnabled` INTEGER NOT NULL, `masterPassword` TEXT, `movie_id` INTEGER NOT NULL, PRIMARY KEY(`userId`))",
         "fields": [
           {
             "fieldPath": "userId",
@@ -412,8 +412,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "pinCode",
-            "columnName": "pinCode",
+            "fieldPath": "password",
+            "columnName": "password",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -424,8 +424,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "masterPinCode",
-            "columnName": "masterPinCode",
+            "fieldPath": "masterPassword",
+            "columnName": "masterPassword",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -516,7 +516,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"b984a1355333e857a4cf9d1cb4aebc2b\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"00a1c62326c601213ebb8376dadcca62\")"
     ]
   }
 }

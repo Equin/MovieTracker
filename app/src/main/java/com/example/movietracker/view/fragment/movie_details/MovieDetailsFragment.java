@@ -103,32 +103,32 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
 
         replaceFragment(MovieInfoTabFragment.newInstance(movieDetailsEntity));
 
-      tabLayoutMovieDetails.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-          @Override
-          public void onTabSelected(TabLayout.Tab tab) {
-              switch (tab.getPosition()) {
-                  case 0 : replaceFragment(MovieInfoTabFragment.newInstance(movieDetailsEntity));
-                      break;
-                  case 1 : replaceFragment(MovieCastTabFragment.newInstance(movieDetailsEntity.getMovieId()));
-                      break;
-                  case 2 : replaceFragment(MovieReviewTabFragment.newInstance(movieDetailsEntity.getMovieId()));
-                      break;
-                  case 3 : replaceFragment(MovieVideoTabFragment.newInstance(movieDetailsEntity.getMovieId()));
-                      break;
-                  default: replaceFragment(new MovieCastTabFragment());
-              }
-          }
+        tabLayoutMovieDetails.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()) {
+                    case 0 : replaceFragment(MovieInfoTabFragment.newInstance(movieDetailsEntity));
+                        break;
+                    case 1 : replaceFragment(MovieCastTabFragment.newInstance(movieDetailsEntity.getMovieId()));
+                        break;
+                    case 2 : replaceFragment(MovieReviewTabFragment.newInstance(movieDetailsEntity.getMovieId()));
+                        break;
+                    case 3 : replaceFragment(MovieVideoTabFragment.newInstance(movieDetailsEntity.getMovieId()));
+                        break;
+                    default: replaceFragment(new MovieCastTabFragment());
+                }
+            }
 
-          @Override
-          public void onTabUnselected(TabLayout.Tab tab) {
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                //intentionally left empty
+            }
 
-          }
-
-          @Override
-          public void onTabReselected(TabLayout.Tab tab) {
-
-          }
-      });
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                //intentionally left empty
+            }
+        });
     }
 
     private void replaceFragment(Fragment fragment) {

@@ -122,13 +122,13 @@ public class MovieDataRepository implements MovieRepository {
         return  getMovieFavorites(getMovies(filters));
     }
 
-    private Observable<MoviesEntity>  getMovieFavorites( Observable<MoviesEntity> moviesEntityObservable ) {
+    private Observable<MoviesEntity> getMovieFavorites( Observable<MoviesEntity> moviesEntityObservable ) {
         return Observable.zip(
                 getUserWithFavorites().subscribeOn(Schedulers.newThread()),
                 moviesEntityObservable.subscribeOn(Schedulers.newThread()),
                 (userEntity, moviesEntity) -> {
 
-                    if (userEntity.getFavoriteMovies() == null || userEntity.getFavoriteMovies().size() == 0) {
+                    if (userEntity.getFavoriteMovies() == null || userEntity.getFavoriteMovies().isEmpty()) {
                         return moviesEntity;
                     }
 
@@ -152,29 +152,30 @@ public class MovieDataRepository implements MovieRepository {
 
     @Override
     public Observable<MoviesEntity> getMovieListForPages(Filters filters) {
-        List<Observable<?>> requests = new ArrayList<>();
+        List<Observable<MoviesEntity>> requests = new ArrayList<>();
 
         for (int i = 1; i <= filters.getPage(); i++) {
             requests.add(addRequest(filters, i));
         }
 
-        return Observable.zip(requests, (Function<Object[], Object>) objects -> {
+        return Observable.zip(requests, movie -> {
             MoviesEntity moviesEntity = new MoviesEntity();
 
-            for(int i=0; i<objects.length; i++) {
-                moviesEntity.setPage(((MoviesEntity)objects[i]).getPage());
-                moviesEntity.setTotalPages(((MoviesEntity)objects[i]).getTotalPages());
+            for(int i=0; i < movie.length; i++) {
+                moviesEntity.setPage(((MoviesEntity)movie[i]).getPage());
+                moviesEntity.setTotalPages(((MoviesEntity)movie[i]).getTotalPages());
 
-                if( moviesEntity.getMovies().size() == 0
-                        || (moviesEntity.getMovies().size() > 0
-                            && ((MoviesEntity)objects[i]).getMovies().get(0).getMovieId()
+                //removing duplicates of movie pages
+                if(moviesEntity.getMovies().isEmpty()
+                        || (!moviesEntity.getMovies().isEmpty()
+                            && ((MoviesEntity)movie[i]).getMovies().get(0).getMovieId()
                                 != moviesEntity.getMovies().get(0).getMovieId())) {
-                    moviesEntity.addMovies(((MoviesEntity)objects[i]).getMovies());
+                    moviesEntity.addMovies(((MoviesEntity)movie[i]).getMovies());
                 }
             }
 
             return moviesEntity;
-        }).map(o -> new MoviesEntity(((MoviesEntity)o).getPage(), ((MoviesEntity)o).getTotalPages(), ((MoviesEntity)o).getMovies()));
+        });
     }
 
     private Observable<MoviesEntity> addRequest(Filters filters, int page) {
@@ -266,17 +267,20 @@ public class MovieDataRepository implements MovieRepository {
     @Override
     public Observable<UserEntity> getUserWithFavorites() {
         return this.userDao.getUserWithFavorites().map(userEntities -> {
-
-            if (userEntities == null || userEntities.size() == 0) {
+            if (userEntities == null || userEntities.isEmpty()) {
                 userEntities = new ArrayList<>();
-                userEntities.add(this.userDao.getUser1());
+                userEntities.add(this.userDao.getUserNotObservable());
             }
 
             UserEntity userEntity =  userEntities.get(0);
 
             for(int i = 0; i < userEntities.size(); i++) {
-                MovieResultEntity movieResultEntity = this.movieDao.getMovieById(userEntities.get(i).getMovieId(), userEntities.get(i).isParentalControlEnabled());
+                MovieResultEntity movieResultEntity
+                        = this.movieDao.getMovieById(
+                                userEntities.get(i).getMovieId(), !userEntities.get(i).isParentalControlEnabled());
+
                 if(movieResultEntity != null) {
+                    movieResultEntity.setFavorite(true);
                     userEntity.addToFavorites(movieResultEntity);
                 }
             }
@@ -291,7 +295,7 @@ public class MovieDataRepository implements MovieRepository {
 
     @Override
     public Completable updateUser(UserEntity userEntity) {
-        if(userEntity.getFavoriteMovies() != null && userEntity.getFavoriteMovies().size() != 0) {
+        if(userEntity.getFavoriteMovies() != null && !userEntity.getFavoriteMovies().isEmpty()) {
             this.userDao.addUserFavoriteMoviesRelation(userEntity);
         }
         return this.userDao.updateUser(userEntity);

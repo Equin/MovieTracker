@@ -20,6 +20,9 @@ import com.example.movietracker.view.model.SortBy;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Filter alert dialog.
+ */
 public class FilterAlertDialog {
 
     private  List<Option> optionList;
@@ -38,15 +41,27 @@ public class FilterAlertDialog {
     private FilterAlertDialog() {
     }
 
+    /**
+     * Init.
+     */
     public void init() {
         pupulateModel();
     }
 
+    /**
+     * Show filter alert dialog.
+     *
+     * @param context       the context
+     * @param clickListener the click listener
+     */
     public void showFilterAlertDialog(Context context, OnDoneButtonClickedListener clickListener) {
         this.onClickListener = clickListener;
         createFilterDialog(context);
     }
 
+    /**
+     * Populating filter alert dialog model with initial data
+     */
     private void pupulateModel() {
         optionList = new ArrayList<>();
         for(int i = 0; i< SortBy.values().length; i++) {
@@ -59,7 +74,6 @@ public class FilterAlertDialog {
         AlertDialog.Builder alertDialogBuilder
                 = new AlertDialog.Builder(context);
         alertDialogBuilder.setView(dialogCustomVIew);
-        //alertDialogBuilder.setTitle("Sort Movies By");
 
         RelativeLayout customTitleView = new RelativeLayout(context);
         TextView textView = new TextView(context);
@@ -105,7 +119,7 @@ public class FilterAlertDialog {
             }
         }
 
-        saveScoreButton.setOnClickListener(v -> onClickListener.OnAlertDialogDoneButtonClicked(alertDialog));
+        saveScoreButton.setOnClickListener(v -> onClickListener.onAlertDialogDoneButtonClicked(alertDialog));
 
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             for(int i =0; i<optionList.size(); i++) {
@@ -125,6 +139,9 @@ public class FilterAlertDialog {
         });
     }
 
+    /**
+     * Dismiss selection.
+     */
     public void dismissSelection() {
         for (Option option: optionList) {
             if(option.isSelected()) {
@@ -136,6 +153,11 @@ public class FilterAlertDialog {
         optionList.get(0).setSelected(true);
     }
 
+    /**
+     * Gets filter selected options.
+     *
+     * @return the filter options
+     */
     public Option getFilterOptions() {
         Option option = new Option();
         for(Option option1: optionList) {
@@ -147,6 +169,6 @@ public class FilterAlertDialog {
     }
 
     public interface OnDoneButtonClickedListener {
-            void OnAlertDialogDoneButtonClicked(AlertDialog alertDialog);
+        void onAlertDialogDoneButtonClicked(AlertDialog alertDialog);
     }
 }

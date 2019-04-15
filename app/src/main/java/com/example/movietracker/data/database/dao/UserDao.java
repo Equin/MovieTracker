@@ -22,7 +22,7 @@ public interface UserDao {
     Observable<UserEntity> getUser();
 
     @Query("SELECT * FROM UserEntity WHERE userId = 1")
-    UserEntity getUser1();
+    UserEntity getUserNotObservable();
 
     @Query("SELECT * FROM UserEntity INNER JOIN userwithfavoritemovies ON user_id = userId WHERE userId = 1")
     Observable<List<UserEntity>> getUserWithFavorites();

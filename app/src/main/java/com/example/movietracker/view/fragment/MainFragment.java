@@ -33,10 +33,20 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Optional;
 
-public class MainFragment extends BaseFragment implements MainView, FilterAlertDialog.OnDoneButtonClickedListener, NavigationView.OnNavigationItemSelectedListener {
+/**
+ * Main fragment for displaying genres and menu
+ */
+public class MainFragment extends BaseFragment
+        implements MainView,
+        FilterAlertDialog.OnDoneButtonClickedListener,
+        NavigationView.OnNavigationItemSelectedListener {
 
+    /**
+     * The interface Main fragment interaction listener.
+     */
     public interface MainFragmentInteractionListener {
         void showMovieListScreen(GenresEntity genresEntity);
+        void showFavoriteMovieListScreen(GenresEntity genresEntity);
     }
 
     public static MainFragment newInstance() {
@@ -55,7 +65,7 @@ public class MainFragment extends BaseFragment implements MainView, FilterAlertD
     @BindView(R.id.nav_view)
     NavigationView navigationView;
 
-    Switch parentalControlSwitch;
+    private Switch parentalControlSwitch;
 
     public MainFragment() {
         setRetainInstance(true);
@@ -94,7 +104,7 @@ public class MainFragment extends BaseFragment implements MainView, FilterAlertD
                 new UserModelImpl(),
                 Filters.getInstance());
 
-        this.mainPresenter.getGenres();
+        this.mainPresenter.getUser();
 
         this.navigationView.setNavigationItemSelectedListener(this);
         this.parentalControlSwitch = this.navigationView.getMenu()
@@ -178,6 +188,11 @@ public class MainFragment extends BaseFragment implements MainView, FilterAlertD
     }
 
     @Override
+    public void openFavoriteMoviesList(GenresEntity genreList) {
+        this.mainFragmentInteractionListener.showFavoriteMovieListScreen(genreList);
+    }
+
+    @Override
     public void openAlertDialog() {
         ClassProvider.filterAlertDialog.showFilterAlertDialog(this.getContext(), this);
     }
@@ -216,21 +231,22 @@ public class MainFragment extends BaseFragment implements MainView, FilterAlertD
     }
 
     @Override
-    public void OnAlertDialogDoneButtonClicked(AlertDialog alertDialog) {
+    public void onAlertDialogDoneButtonClicked(AlertDialog alertDialog) {
         alertDialog.dismiss();
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
-        switch (menuItem.getItemId()) {
+        switch(menuItem.getItemId()) {
             case R.id.password_reset:
                 this.mainPresenter.onPasswordResetMenuItemClicked();
                 this.drawerLayout.closeDrawers();
                 return false;
 
             case R.id.favorite:
-
+                this.mainPresenter.onFavoriteMenuItemClicked();
+                this.drawerLayout.closeDrawer(GravityCompat.START);
                 return false;
         }
         return true;

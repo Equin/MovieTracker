@@ -10,22 +10,44 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+
+/**
+ * The type Utility helpers.
+ */
 public class UtilityHelpers {
 
     private UtilityHelpers() {
 
     }
 
+    /**
+     * Gets year  in format YYYY from date .
+     *
+     * @param date the date
+     * @return the year
+     */
     public static String getYear(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         return getAppropriateValue(calendar.get(Calendar.YEAR));
     }
 
+    /**
+     * Gets string from value or "" if null
+     *
+     * @param value the value
+     * @return the appropriate string value
+     */
     public static String getAppropriateValue(Object value) {
         return value == null ? "" : value.toString();
     }
 
+    /**
+     * Gets pipe divided genres.
+     *
+     * @param genres the genres
+     * @return the string pipe divided genres
+     */
     public static String getPipeDividedGenres(List<GenreEntity> genres) {
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -41,6 +63,13 @@ public class UtilityHelpers {
         return stringBuilder.toString();
     }
 
+    /**
+     * Gets pipe divided genres from genres and int genreIds
+     *
+     * @param genresId the genres id
+     * @param genres   the genres
+     * @return the pipe divided genres from id
+     */
     public static String getPipeDividedGenresFromId(List<Integer> genresId, List<GenreEntity> genres) {
         List<GenreEntity> tempGenres = new ArrayList<>();
 

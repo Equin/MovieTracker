@@ -39,6 +39,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 public abstract class MoviesDatabase extends RoomDatabase {
 
     private static MoviesDatabase INSTANCE;
+
     private static final String DB_NAME = "MovieTrackerDB";
 
     public static MoviesDatabase getDatabase(final Context context) {
@@ -54,9 +55,7 @@ public abstract class MoviesDatabase extends RoomDatabase {
                                 public void onCreate(@NonNull SupportSQLiteDatabase db) {
                                     super.onCreate(db);
                                     Executors.newSingleThreadScheduledExecutor().execute(
-                                            () ->  {
-                                                getDatabase(context).getUserDao().saveUser(UserEntity.initialUser());
-                                            });
+                                            () -> INSTANCE.getUserDao().saveUser(UserEntity.initialUser()));
                                 }
                             })
                             .build();

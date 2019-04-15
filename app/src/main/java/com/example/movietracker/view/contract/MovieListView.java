@@ -8,4 +8,5 @@ public interface MovieListView extends View {
     void renderAdditionalMovieListPage(MoviesEntity moviesEntity);
     void showMovieDetailScreen(int movieId);
     void scrollToMovie(int itemPosition, int itemOffset);
+    void displayNothingToShowHint();
 }

@@ -8,6 +8,5 @@ public class NetConstant {
     public static final String YOUTUBE_THUMBAI_IMAGE_SIZE_URL_SUFIX = "/mqdefault.jpg";
 
     private NetConstant() {
-
     }
 }

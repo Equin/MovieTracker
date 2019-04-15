@@ -53,6 +53,16 @@ public abstract class BaseFragment extends Fragment {
         ButterKnife.bind(this, view);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        this.toolbar = null;
+        this.backPlateConstraintLayout = null;
+        this.progressView = null;
+        this.alertDialog = null;
+        this.toast = null;
+    }
+
     public void setSupportActionBar() {
         ((AppCompatActivity) getActivity()).setSupportActionBar(this.toolbar);
     }

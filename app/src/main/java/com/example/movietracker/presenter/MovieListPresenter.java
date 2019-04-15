@@ -12,6 +12,8 @@ import com.example.movietracker.model.ModelContract;
 import com.example.movietracker.view.contract.MovieListView;
 import com.example.movietracker.view.model.MovieRecyclerItemPosition;
 
+import java.util.ArrayList;
+
 import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
@@ -20,6 +22,9 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
+/**
+ * Presenter for displaying movies list and favorite movies list
+ */
 public class MovieListPresenter extends BasePresenter {
 
     private static final String TAG = MovieListPresenter.class.getCanonicalName();
@@ -29,45 +34,73 @@ public class MovieListPresenter extends BasePresenter {
     private ModelContract.MovieModel movieModel;
     private ModelContract.UserModel userModel;
 
-    private MoviesEntity moviesEntity;
-    private UserEntity userEntity;
+    private MoviesEntity moviesEntity = new MoviesEntity();
+    private UserEntity userEntity = new UserEntity();
+    private Filters filters;
     private MovieRecyclerItemPosition recyclerItemPosition;
 
     private boolean isActionAllowed;
+    private boolean shouldShowFavoriteMoviesList;
 
-    private Disposable userDisposable;
-    private Disposable movieDisposable;
-    private Disposable moviePageDisposable;
-    private Disposable movieListPagesDisposable;
+    private Disposable userDisposable = new CompositeDisposable();
+    private Disposable userWithFavoriteMoviesDisposable = new CompositeDisposable();
+    private Disposable movieDisposable = new CompositeDisposable();
+    private Disposable moviePageDisposable = new CompositeDisposable();
+    private Disposable movieListPagesDisposable = new CompositeDisposable();
 
+    /**
+     * Instantiates a new Movie list presenter.
+     *
+     * @param view                 the view that implements fragment
+     * @param recyclerItemPosition  postion and offset of clicked movie, for scrolling purpose on return.
+     */
     public MovieListPresenter(
             MovieListView view,
             ModelContract.MovieModel movieModel,
             ModelContract.UserModel userModel,
+            Filters filters,
             MovieRecyclerItemPosition recyclerItemPosition) {
         this.view = view;
         this.movieModel = movieModel;
         this.userModel = userModel;
-        this.moviesEntity = new MoviesEntity();
-        this.movieDisposable = new CompositeDisposable();
-        this.moviePageDisposable = new CompositeDisposable();
-        this.movieListPagesDisposable = new CompositeDisposable();
-        this.userDisposable = new CompositeDisposable();
+        this.filters = filters;
         this.recyclerItemPosition = recyclerItemPosition;
     }
 
+    /**
+     * Initialize.
+     *
+     * @param shouldShowFavoriteMoviesList  true if showing only favorite movies
+     */
+    public void initialize(boolean shouldShowFavoriteMoviesList) {
+        this.shouldShowFavoriteMoviesList = shouldShowFavoriteMoviesList;
+        if (this.shouldShowFavoriteMoviesList) {
+            getUserWithFavoriteMovies();
+        } else {
+            getUser();
+            getMoviesByFilters(this.filters);
+        }
+    }
+
+    /**
+     * On movie item clicked.
+     * saving position and offset of clicked movie
+     */
     public void onMovieItemClicked(int itemPosition, int itemOffset) {
         int movieId = this.moviesEntity.getMovies().get(itemPosition).getMovieId();
         this.view.showMovieDetailScreen(movieId);
         this.setRecyclerItemPosition(movieId, itemOffset);
     }
 
+    /**
+     * Last movie of page reached, calls when last element of recycler view is completely visible.
+     */
     public void lastMovieOfPageReached() {
         if(this.isActionAllowed) {
             this.isActionAllowed = false;
-            if (this.moviesEntity.getTotalPages() > Filters.getInstance().getPage()) {
-                Filters.getInstance().incrementPage();
-                this.getMoviesWithPagination(Filters.getInstance());
+            if (this.moviesEntity.getTotalPages() > this.filters.getPage()) {
+                this.filters.incrementPage();
+                this.getMoviesWithPagination(this.filters);
             } else {
                 showToast(R.string.movie_list_there_are_no_pages);
                 this.isActionAllowed = true;
@@ -76,95 +109,11 @@ public class MovieListPresenter extends BasePresenter {
     }
 
     public void getMoviesByFilters(Filters filters) {
-
         if(this.recyclerItemPosition.getMovieId() == 0) {
             getMovies(filters);
         } else {
             getMovieListForAllPages(filters);
         }
-    }
-
-    private void setRecyclerItemPosition(int movieId, int offset) {
-        this.recyclerItemPosition.setMovieId(movieId);
-        this.recyclerItemPosition.setOffset(offset);
-    }
-
-    private void scrollToMovieWithId(int itemPosition, int itemOffset) {
-        this.view.scrollToMovie(itemPosition, itemOffset);
-    }
-
-    private void scrollToMovieIfPossible(MoviesEntity moviesEntity) {
-        for(int i = 0; i < moviesEntity.getMovies().size(); i++) {
-            if (moviesEntity.getMovies().get(i).getMovieId() == recyclerItemPosition.getMovieId()) {
-                this.scrollToMovieWithId(i, recyclerItemPosition.getOffset());
-            }
-        }
-    }
-
-    private void getMoviesWithPagination(Filters filters) {
-        getMoviesByPage(filters);
-    }
-
-    private void getMovies(Filters filters) {
-        showLoading();
-
-       // this.movieDisposable = this.movieModel.getMovies(filters)
-        this.moviePageDisposable = this.movieModel.getMoviesWithFavorites(filters)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribeWith(new GetMoviesObserver());
-    }
-
-    private void getUser() {
-        this.userDisposable = this.userModel.getUserWithFavorites()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribeWith(new GetUserObserver());
-    }
-
-    private void updateUser(UserEntity userEntity) {
-        this.userModel.updateUser(userEntity)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new CompletableUpdateUserObserver());
-    }
-
-    private void deleteMovieFromFavorites(UserWithFavoriteMovies movieId) {
-        this.userModel.deleteUserFromFavorites(movieId)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new CompletableDeleteMovieFromFavoritesObserver());
-    }
-
-    private void getMoviesByPage(Filters filters) {
-        showLoading();
-
-       // this.moviePageDisposable = this.movieModel.getMovies(filters)
-        this.moviePageDisposable = this.movieModel.getMoviesWithFavorites(filters)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribeWith(new GetMoviesPageObserver());
-    }
-
-    private void getMovieListForAllPages(Filters filters) {
-        showLoading();
-
-        this.movieListPagesDisposable = this.movieModel.getMovieListForPagesWithFavorites(filters)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribeWith(new GetMovieListForPagesObserver());
-    }
-
-    private void showLoading() {
-        this.view.showLoading();
-    }
-
-    private void hideLoading() {
-        this.view.hideLoading();
-    }
-
-    private void showToast(int stringResource) {
-        this.view.showToast(stringResource);
     }
 
     @Override
@@ -184,42 +133,204 @@ public class MovieListPresenter extends BasePresenter {
         if (!this.movieListPagesDisposable.isDisposed()) {
             this.movieListPagesDisposable.dispose();
         }
+
+        if (!this.userDisposable.isDisposed()) {
+            this.userDisposable.dispose();
+        }
+
+        if (!this.userWithFavoriteMoviesDisposable.isDisposed()) {
+            this.userWithFavoriteMoviesDisposable.dispose();
+        }
     }
 
+    /**
+     * On favorite icon clicked.
+     *
+     * @param itemClickPosition the item click position
+     * @param isChecked         the is checked
+     */
     public void onFavoriteChecked(int itemClickPosition, boolean isChecked) {
         MovieResultEntity movie = this.moviesEntity.getMovies().get(itemClickPosition);
         if (movie.isFavorite() != isChecked) {
             movie.setFavorite(isChecked);
             if (isChecked) {
                 this.userEntity.addToFavorites(movie);
-                updateUser(this.userEntity);
+                addFavoriteMovie(this.userEntity);
             } else {
                 this.userEntity.removeFromFavorites(movie);
                 deleteMovieFromFavorites(new UserWithFavoriteMovies(movie.getMovieId(), userEntity.getUserId()));
+                if (this.userEntity.getFavoriteMovies().isEmpty()) {
+                    this.userEntity.setMovieId(-1);
+                    updateUser(this.userEntity);
+                }
             }
         }
     }
 
-    public void initialize(Filters filters) {
-        getUser();
-        getMoviesByFilters(filters);
+    /**
+     * On swipe to refresh.
+     */
+    public void onSwipeToRefresh() {
+        if (this.userEntity.getFavoriteMovies() == null || this.userEntity.getFavoriteMovies().isEmpty()) {
+            displayNothingToShow();
+        }
+
+        this.filters.setPage(1);
+        if (this.shouldShowFavoriteMoviesList) {
+            this.getUserWithFavoriteMovies();
+        } else  {
+            this.getMoviesByFilters(this.filters);
+        }
+    }
+
+    private void setRecyclerItemPosition(int movieId, int offset) {
+        this.recyclerItemPosition.setMovieId(movieId);
+        this.recyclerItemPosition.setOffset(offset);
+    }
+
+    private void scrollToMovieWithId(int itemPosition, int itemOffset) {
+        if (this.view != null) {
+            this.view.scrollToMovie(itemPosition, itemOffset);
+        }
+    }
+
+    private void scrollToMovieIfPossible(MoviesEntity moviesEntity) {
+        for(int i = 0; i < moviesEntity.getMovies().size(); i++) {
+            if (moviesEntity.getMovies().get(i).getMovieId() == recyclerItemPosition.getMovieId()) {
+                this.scrollToMovieWithId(i, recyclerItemPosition.getOffset());
+            }
+        }
+    }
+
+    private void renderMovieList(MoviesEntity moviesEntity) {
+        if(this.view !=null) {
+            this.view.renderMoviesList(moviesEntity);
+        }
+    }
+
+    private void getMoviesWithPagination(Filters filters) {
+        getMoviesByPage(filters);
+    }
+
+    private void getMovies(Filters filters) {
+        showLoading();
+
+        this.movieDisposable = this.movieModel.getMoviesWithFavorites(filters)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribeWith(new GetMoviesObserver());
+    }
+
+    private void getUser() {
+        this.userDisposable = this.userModel.getUserWithFavorites()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribeWith(new GetUserObserver());
+    }
+
+    private void getUserWithFavoriteMovies() {
+        this.userWithFavoriteMoviesDisposable = this.userModel.getUserWithFavorites()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribeWith(new GetUserWithFavoriteMoviesObserver());
+    }
+
+    private void updateUser(UserEntity userEntity) {
+        this.userModel.updateUser(userEntity)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new CompletableUpdateUserObserver());
+    }
+
+    private void addFavoriteMovie(UserEntity userEntity) {
+        this.userModel.updateUser(userEntity)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new CompletableAddFavoriteMovieObserver());
+    }
+
+    private void deleteMovieFromFavorites(UserWithFavoriteMovies movieId) {
+        this.userModel.deleteUserFromFavorites(movieId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new CompletableDeleteMovieFromFavoritesObserver());
+    }
+
+    private void getMoviesByPage(Filters filters) {
+        showLoading();
+
+        this.moviePageDisposable = this.movieModel.getMoviesWithFavorites(filters)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribeWith(new GetMoviesPageObserver());
+    }
+
+    private void getMovieListForAllPages(Filters filters) {
+        showLoading();
+
+        this.movieListPagesDisposable = this.movieModel.getMovieListForPagesWithFavorites(filters)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribeWith(new GetMovieListForPagesObserver());
+    }
+
+    private void showLoading() {
+        if (view != null) {
+            this.view.showLoading();
+        }
+    }
+
+    private void hideLoading() {
+        if (view != null) {
+            this.view.hideLoading();
+        }
+    }
+
+    private void showToast(int resourceId) {
+        if (view != null) {
+            this.view.showToast(resourceId);
+        }
+    }
+
+    private void showToast(String text) {
+        if(this.view !=null) {
+            this.view.showToast(text);
+        }
+    }
+
+    private void displayNothingToShow() {
+        if(this.view !=null) {
+            this.view.displayNothingToShowHint();
+        }
+    }
+
+    private void renderAdditionalMovieListPage(MoviesEntity moviesEntity) {
+        if (this.view != null) {
+            this.view.renderAdditionalMovieListPage(moviesEntity);
+        }
+
+    }
+
+    private void renderMoviesList(MoviesEntity moviesEntity) {
+        if (this.view != null) {
+            this.view.renderMoviesList(moviesEntity);
+        }
     }
 
     private class GetMoviesObserver extends DisposableObserver<MoviesEntity> {
         @Override
         public void onNext(MoviesEntity moviesEntity) {
-            if(moviesEntity == null) return;;
+            if(moviesEntity == null) return;
             MovieListPresenter.this.moviesEntity = moviesEntity;
-            MovieListPresenter.this.view.renderMoviesList(moviesEntity);
+            MovieListPresenter.this.renderMoviesList(moviesEntity);
             MovieListPresenter.this.isActionAllowed = true;
             MovieListPresenter.this.hideLoading();
             MovieListPresenter.this.scrollToMovieIfPossible(moviesEntity);
-            movieDisposable.dispose();
         }
 
         @Override
         public void onError(@NonNull Throwable e) {
-            MovieListPresenter.this.view.showToast(R.string.main_error);
+            MovieListPresenter.this.showToast(R.string.main_error);
             MovieListPresenter.this.hideLoading();
             MovieListPresenter.this.isActionAllowed = true;
         }
@@ -234,16 +345,15 @@ public class MovieListPresenter extends BasePresenter {
         @Override
         public void onNext(MoviesEntity moviesEntity) {
             MovieListPresenter.this.moviesEntity = moviesEntity;
-            MovieListPresenter.this.view.renderMoviesList(moviesEntity);
+            MovieListPresenter.this.renderMoviesList(moviesEntity);
             MovieListPresenter.this.isActionAllowed = true;
             MovieListPresenter.this.hideLoading();
             MovieListPresenter.this.scrollToMovieIfPossible(moviesEntity);
-            movieListPagesDisposable.dispose();
         }
 
         @Override
         public void onError(@NonNull Throwable e) {
-            MovieListPresenter.this.view.showToast(R.string.main_error);
+            MovieListPresenter.this.showToast(R.string.main_error);
             MovieListPresenter.this.hideLoading();
             MovieListPresenter.this.isActionAllowed = true;
         }
@@ -258,19 +368,17 @@ public class MovieListPresenter extends BasePresenter {
     private class GetMoviesPageObserver extends DisposableObserver<MoviesEntity> {
         @Override
         public void onNext(MoviesEntity moviesEntity) {
-
             MovieListPresenter.this.moviesEntity.setPage(moviesEntity.getPage());
             MovieListPresenter.this.moviesEntity.setTotalPages(moviesEntity.getTotalPages());
             MovieListPresenter.this.moviesEntity.addMovies(moviesEntity.getMovies());
-            MovieListPresenter.this.view.renderAdditionalMovieListPage(MovieListPresenter.this.moviesEntity);
+            MovieListPresenter.this.renderAdditionalMovieListPage(MovieListPresenter.this.moviesEntity);
             MovieListPresenter.this.hideLoading();
             MovieListPresenter.this.isActionAllowed = true;
-            moviePageDisposable.dispose();
         }
 
         @Override
         public void onError(@NonNull Throwable e) {
-            MovieListPresenter.this.view.showToast(R.string.main_error);
+            MovieListPresenter.this.showToast(R.string.main_error);
             MovieListPresenter.this.hideLoading();
             MovieListPresenter.this.isActionAllowed = true;
             Log.e(TAG, e.getLocalizedMessage());
@@ -286,7 +394,7 @@ public class MovieListPresenter extends BasePresenter {
 
         @Override
         public void onComplete() {
-            Log.d(TAG, "onComplete this.userModel.getUser()");
+            Log.d(TAG, "onComplete this.userModel.getUser() GetUserObserver");
         }
 
         @Override
@@ -296,7 +404,41 @@ public class MovieListPresenter extends BasePresenter {
 
         @Override
         public void onError(Throwable e) {
-            MovieListPresenter.this.view.showToast(R.string.main_error);
+            MovieListPresenter.this.showToast(R.string.main_error);
+            Log.d(TAG, e.getLocalizedMessage());
+        }
+    }
+
+    private class GetUserWithFavoriteMoviesObserver extends DisposableObserver<UserEntity> {
+
+        @Override
+        public void onComplete() {
+            Log.d(TAG, "onComplete this.userModel.getUser() GetUserWithFavoriteMoviesObserver");
+        }
+
+        @Override
+        public void onNext(UserEntity userEntity) {
+            MovieListPresenter.this.userEntity = userEntity;
+
+            MovieListPresenter.this.moviesEntity.setMovies(userEntity.getFavoriteMovies());
+            MovieListPresenter.this.moviesEntity.setPage(1);
+            MovieListPresenter.this.moviesEntity.setTotalPages(1);
+
+            if (moviesEntity.getMovies() == null) {
+                displayNothingToShow();
+                moviesEntity.setMovies(new ArrayList<>());
+                MovieListPresenter.this.renderMovieList(moviesEntity);
+            } else {
+                MovieListPresenter.this.renderMovieList(moviesEntity);
+                MovieListPresenter.this.scrollToMovieIfPossible(moviesEntity);
+            }
+            MovieListPresenter.this.hideLoading();
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            MovieListPresenter.this.showToast(R.string.main_error);
+            MovieListPresenter.this.hideLoading();
             Log.d(TAG, e.getLocalizedMessage());
         }
     }
@@ -305,18 +447,37 @@ public class MovieListPresenter extends BasePresenter {
 
         @Override
         public void onSubscribe(Disposable d) {
-            Log.d(TAG, "Subscribed to  this.userModel.updateUser(userEntity)");
+            Log.d(TAG, "Subscribed to this.userModel.updateUser(userEntity) CompletableUpdateUserObserver");
         }
 
         @Override
         public void onComplete() {
-            MovieListPresenter.this.view.showToast(R.string.new_password_saved);
+            Log.d(TAG, "onComplete to this.userModel.updateUser(userEntity)");
         }
 
         @Override
         public void onError(Throwable e) {
             Log.e(TAG, e.getLocalizedMessage());
-            MovieListPresenter.this.view.showToast(R.string.main_error);
+            MovieListPresenter.this.showToast(R.string.main_error);
+        }
+    }
+
+    private class CompletableAddFavoriteMovieObserver implements CompletableObserver {
+
+        @Override
+        public void onSubscribe(Disposable d) {
+            Log.d(TAG, "Subscribed to this.userModel.updateUser CompletableAddFavoriteMovieObserver");
+        }
+
+        @Override
+        public void onComplete() {
+            MovieListPresenter.this.showToast(R.string.movie_added_to_favorite);
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Log.e(TAG, e.getLocalizedMessage());
+            MovieListPresenter.this.showToast(R.string.main_error);
         }
     }
 
@@ -324,19 +485,18 @@ public class MovieListPresenter extends BasePresenter {
 
         @Override
         public void onSubscribe(Disposable d) {
-            Log.d(TAG, "Subscribed to  this.userModel.updateUser(userEntity)");
+            Log.d(TAG, "Subscribed to  this.userModel.updateUser(userEntity) CompletableDeleteMovieFromFavoritesObserver");
         }
 
         @Override
         public void onComplete() {
-            MovieListPresenter.this.view.showToast(R.string.new_password_saved);
+            MovieListPresenter.this.showToast(R.string.movie_removed_from_favorite);
         }
 
         @Override
         public void onError(Throwable e) {
             Log.e(TAG, e.getLocalizedMessage());
-            MovieListPresenter.this.view.showToast(R.string.main_error);
+            MovieListPresenter.this.showToast(R.string.main_error);
         }
     }
 }
-

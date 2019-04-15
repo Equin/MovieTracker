@@ -36,11 +36,27 @@ public class MovieDetailsPresenter extends BasePresenter {
     }
 
     private void showLoading() {
-        this.view.showLoading();
+        if(view != null) {
+            this.view.showLoading();
+        }
     }
 
     private void hideLoading() {
-        this.view.hideLoading();
+        if(view != null) {
+            this.view.hideLoading();
+        }
+    }
+
+    private void showToast(int resourceId) {
+        if(view != null) {
+            this.view.showToast(resourceId);
+        }
+    }
+
+    private void renderMovieDetails(MovieDetailsEntity movieDetailsEntity) {
+        if (this.view != null) {
+            this.view.renderMovieDetails(movieDetailsEntity);
+        }
     }
 
     @Override
@@ -55,12 +71,12 @@ public class MovieDetailsPresenter extends BasePresenter {
         @Override
         public void onNext(MovieDetailsEntity movieDetailsEntity) {
             MovieDetailsPresenter.this.hideLoading();
-            MovieDetailsPresenter.this.view.renderMovieDetails(movieDetailsEntity);
+            MovieDetailsPresenter.this.renderMovieDetails(movieDetailsEntity);
         }
 
         @Override
         public void onError(@NonNull Throwable e) {
-            MovieDetailsPresenter.this.view.showToast(R.string.main_error);
+            MovieDetailsPresenter.this.showToast(R.string.main_error);
             MovieDetailsPresenter.this.hideLoading();
             Log.e(TAG, e.getLocalizedMessage());
         }

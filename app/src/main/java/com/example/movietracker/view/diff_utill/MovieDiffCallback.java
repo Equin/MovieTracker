@@ -7,11 +7,21 @@ import java.util.List;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 
+/**
+ * The type Movie diff callback, finding difference of old and new movie lists for changing  movie
+ * recycler view elements by DiffUtil.
+ */
 public class MovieDiffCallback extends DiffUtil.Callback {
 
     private List<MovieResultEntity> oldMovies;
     private List<MovieResultEntity> newMovies;
 
+    /**
+     * Instantiates a new Movie diff callback.
+     *
+     * @param oldMovies the old movies
+     * @param newMovies the new movies
+     */
     public MovieDiffCallback(List<MovieResultEntity> oldMovies, List<MovieResultEntity> newMovies) {
         this.oldMovies = oldMovies;
         this.newMovies = newMovies;

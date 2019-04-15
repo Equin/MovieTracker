@@ -39,14 +39,15 @@ public class MainActivity extends BaseActivity implements
             addFragment(R.id.container_for_fragment, MainFragment.newInstance());
         }
     }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
 
     @Override
     public void showMovieListScreen(GenresEntity genresEntity) {
-        replaceFragment(R.id.container_for_fragment, MovieListFragment.newInstance(genresEntity));
+        replaceFragment(R.id.container_for_fragment, MovieListFragment.newInstance(genresEntity, false));
+    }
+
+    @Override
+    public void showFavoriteMovieListScreen(GenresEntity genresEntity) {
+        replaceFragment(R.id.container_for_fragment, MovieListFragment.newInstance(genresEntity, true));
     }
 
     @Override

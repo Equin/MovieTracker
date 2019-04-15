@@ -1,6 +1,5 @@
 package com.example.movietracker.data.net.interceptor;
 
-import com.example.movietracker.R;
 import com.example.movietracker.data.net.constant.NetConstant;
 
 import java.io.IOException;
@@ -10,6 +9,9 @@ import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * The type Query parameter interceptor, adding api_key for all retrofit calls.
+ */
 public class QueryParameterInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {

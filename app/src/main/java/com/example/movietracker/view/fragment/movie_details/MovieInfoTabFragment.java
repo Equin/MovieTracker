@@ -60,12 +60,6 @@ public class MovieInfoTabFragment extends BaseFragment  {
     @BindView(R.id.textView_movieStoryline)
     TextView textViewMovieStoryline;
 
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
     @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater,

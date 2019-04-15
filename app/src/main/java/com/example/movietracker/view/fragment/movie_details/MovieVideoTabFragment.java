@@ -50,11 +50,6 @@ public class MovieVideoTabFragment<V extends MovieVideosEntity> extends BaseFrag
     TextView textViewNothingToShow;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater,
             ViewGroup container,

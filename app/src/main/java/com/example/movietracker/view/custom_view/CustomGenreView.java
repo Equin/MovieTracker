@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.ToggleButton;
 
 import com.example.movietracker.R;
-import com.example.movietracker.view.model.Filters;
 import com.example.movietracker.data.entity.genre.GenreEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.google.common.collect.Lists;
@@ -61,7 +60,7 @@ public class CustomGenreView extends ViewGroup {
 
                 toggleButton.setChecked(genres.get(j).get(i).isSelected());
 
-                if(selectedGenresIds.size() == 0) {
+                if(selectedGenresIds.isEmpty()) {
                     toggleButton.setChecked(genres.get(j).get(i).isSelected());
                 } else {
                     if (selectedGenresIds.contains(genres.get(j).get(i).getGenreId())) {

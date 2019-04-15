@@ -5,10 +5,9 @@ public class Option {
     private boolean isSelected;
     private SortBy sortBy;
     private Order sortOrder;
-    private int radioButtonCheckId;
 
     public Option() {
-
+        //intentionally left empty
     }
 
     public Option(boolean isSelected, SortBy sortBy, Order sortOrder) {
@@ -41,11 +40,4 @@ public class Option {
         this.sortOrder = sortOrder;
     }
 
-    public int getRadioButtonCheckId() {
-        return radioButtonCheckId;
-    }
-
-    public void setRadioButtonCheckId(int radioButtonCheckId) {
-        this.radioButtonCheckId = radioButtonCheckId;
-    }
 }

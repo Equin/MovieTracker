@@ -24,6 +24,8 @@
     <string name="cast_name_placeholder">Cast name</string>
 
     <string name="new_password_saved">New password saved</string>
+    <string name="movie_removed_from_favorite">Movie removed from favorites</string>
+    <string name="movie_added_to_favorite">Movie added to favorites</string>
 
     <string name="empty_new_password_field">New password field is empty</string>
     <string name="empty_old_password_field">Old password field is empty</string>
@@ -33,6 +35,7 @@
     <string name="parent_control_state">Parent control is </string>
 
     <string name="hint_to_enable_parent_control">You need to provide password to enable parent controle</string>
+    <string name="filter">filter</string>
 
 
 </resources>

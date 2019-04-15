@@ -1,5 +1,8 @@
 package com.example.movietracker.view.model;
 
+/**
+ * Movie recycler item position for saving offset from top and position of clicked movie item.
+ */
 public class MovieRecyclerItemPosition {
 
     private int movieId;
