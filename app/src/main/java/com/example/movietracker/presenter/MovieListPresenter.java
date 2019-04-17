@@ -107,7 +107,7 @@ public class MovieListPresenter extends BasePresenter {
             this.isActionAllowed = false;
             if (this.moviesEntity.getTotalPages() > this.filters.getPage()) {
                 this.filters.incrementPage();
-                this.getMoviesWithPagination(this.filters);
+                this.getMoviesByPage(this.filters);
             } else {
                 showToast(R.string.movie_list_there_are_no_pages);
                 this.isActionAllowed = true;
@@ -199,10 +199,6 @@ public class MovieListPresenter extends BasePresenter {
         if(this.view !=null) {
             this.view.renderMoviesList(moviesEntity);
         }
-    }
-
-    private void getMoviesWithPagination(Filters filters) {
-        getMoviesByPage(filters);
     }
 
     private void getMovies(Filters filters) {
