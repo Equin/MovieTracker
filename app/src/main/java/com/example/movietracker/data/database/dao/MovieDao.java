@@ -13,7 +13,6 @@ import io.reactivex.Observable;
 
 @Dao
 public interface MovieDao {
-
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT * FROM MovieResultEntity " +
             "INNER JOIN MovieWithGenres " +
@@ -22,21 +21,9 @@ public interface MovieDao {
             "AND (isAdult = 0 OR isAdult = (:isAdult))" +
             "GROUP BY movieId " +
             "ORDER BY moviePopularity DESC " +
-            "LIMIT (:limit)"
+            "LIMIT (:limit) OFFSET (:offsetForPreviousPage)"
     )
-    Observable<List<MovieResultEntity>> getMoviesForPages(List<Integer> genresId, int limit, boolean isAdult);
-
-    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
-    @Query("SELECT * FROM MovieResultEntity " +
-            "INNER JOIN MovieWithGenres " +
-            "ON MovieResultEntity.movieId = MovieWithGenres.movie_id " +
-            "WHERE MovieWithGenres.genre_id in (:genresId) " +
-            "AND (isAdult = 0 OR isAdult = (:isAdult))" +
-            "GROUP BY movieId " +
-            "ORDER BY moviePopularity DESC " +
-            "LIMIT (:limit) OFFSET (:offset)"
-    )
-    Observable<List<MovieResultEntity>> getMovies(List<Integer> genresId, int limit, int offset, boolean isAdult);
+    Observable<List<MovieResultEntity>> getMovies(List<Integer> genresId, int limit, int offsetForPreviousPage, boolean isAdult);
 
     @Query("SELECT count(movieId) FROM MovieResultEntity " +
             "INNER JOIN MovieWithGenres " +
@@ -64,9 +51,10 @@ public interface MovieDao {
     void saveRelation(MovieWithGenres movieWithGenres);
 
     default void addMovieGenreRelation(List<MovieResultEntity> movieResultEntities) {
-        for(MovieResultEntity movieResultEntity : movieResultEntities)
-        for(int genreId : movieResultEntity.getGenreIds()) {
-            saveRelation(new MovieWithGenres(movieResultEntity.getMovieId(), genreId));
+        for(MovieResultEntity movieResultEntity : movieResultEntities) {
+            for(int genreId : movieResultEntity.getGenreIds()) {
+                saveRelation(new MovieWithGenres(movieResultEntity.getMovieId(), genreId));
+            }
         }
     }
 }

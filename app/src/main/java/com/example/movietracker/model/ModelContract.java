@@ -21,10 +21,7 @@ public class ModelContract {
     }
 
     public interface MovieModel {
-        Observable<MoviesEntity> getMovies(Filters filters);
         Observable<MoviesEntity> getMoviesWithFavorites(Filters filters);
-
-        Observable<MoviesEntity> getMovieListForPages(Filters filters);
         Observable<MoviesEntity> getMovieListForPagesWithFavorites(Filters filters);
     }
 
@@ -41,7 +38,7 @@ public class ModelContract {
     public interface UserModel {
         Observable<UserEntity> getUser();
         Observable<UserEntity> getUserWithFavorites();
-        void saveUser(UserEntity userEntity);
+        void addUser(UserEntity userEntity);
         Completable updateUser(UserEntity userEntity);
         Completable deleteUserFromFavorites(UserWithFavoriteMovies userWithFavoriteMovies);
     }

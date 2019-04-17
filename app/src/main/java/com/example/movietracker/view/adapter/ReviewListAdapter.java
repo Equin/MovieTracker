@@ -33,10 +33,7 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Re
 
     @Override
     public void onBindViewHolder(@NonNull ReviewListViewHolder holder, int position) {
-        MovieReviewResultEntity review =  this.reviewsEntity.get(position);
-
-        holder.reviewerName.setText(review.getReviewAuthor());
-        holder.reviewContent.setText(review.getReviewContent());
+        holder.bindMovieReview(this.reviewsEntity.get(position));
     }
 
     @Override
@@ -49,11 +46,15 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Re
         private TextView reviewerName;
         private TextView reviewContent;
 
-
         ReviewListViewHolder(@NonNull View itemView) {
             super(itemView);
             this.reviewerName = itemView.findViewById(R.id.textView_reviewerName);
             this.reviewContent = itemView.findViewById(R.id.textView_reviewContent);
+        }
+
+        void bindMovieReview(MovieReviewResultEntity review) {
+            this.reviewerName.setText(review.getReviewAuthor());
+            this.reviewContent.setText(review.getReviewContent());
         }
     }
 }

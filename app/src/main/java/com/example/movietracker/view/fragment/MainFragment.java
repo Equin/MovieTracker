@@ -93,10 +93,7 @@ public class MainFragment extends BaseFragment
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        setSupportActionBar();
-        setTransparentToolbar();
-        setToolbarTitle(getString(R.string.main_fragment_toolbar_title));
-        this.setupMenuDrawer();
+        setupActionToolbar();
 
         this.mainPresenter = new MainPresenter(
                 this,
@@ -110,7 +107,7 @@ public class MainFragment extends BaseFragment
         this.parentalControlSwitch = this.navigationView.getMenu()
                 .findItem(R.id.parent_control).getActionView()
                 .findViewById(R.id.switch_parent_control);
-        this.parentalControlSwitch.setOnCheckedChangeListener(new onMenuSwitchCheckedListener());
+        this.parentalControlSwitch.setOnCheckedChangeListener(new OnMenuSwitchCheckedListener());
     }
 
     @Override
@@ -133,6 +130,13 @@ public class MainFragment extends BaseFragment
         this.mainPresenter.destroy();
     }
 
+    private void setupActionToolbar() {
+        setSupportActionBar();
+        setTransparentToolbar();
+        setToolbarTitle(getString(R.string.main_fragment_toolbar_title));
+        this.setupMenuDrawer();
+    }
+
     private void setupMenuDrawer() {
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -149,8 +153,6 @@ public class MainFragment extends BaseFragment
         return super.onOptionsItemSelected(item);
     }
 
-
-
     @Override
     public void showToast(int resourceId) {
         showToast(getString(resourceId));
@@ -159,7 +161,7 @@ public class MainFragment extends BaseFragment
     @Override
     public void renderGenreView(GenresEntity genreList) {
         this.customGenreView.renderGenreView(genreList,
-                new onCheckedListener(), Filters.getInstance().getSelectedGenresIds());
+                new OnGenreCheckedListener(), Filters.getInstance().getSelectedGenresIds());
     }
 
     @Optional
@@ -188,7 +190,7 @@ public class MainFragment extends BaseFragment
     }
 
     @Override
-    public void openFavoriteMoviesList(GenresEntity genreList) {
+    public void openFavoriteMoviesListView(GenresEntity genreList) {
         this.mainFragmentInteractionListener.showFavoriteMovieListScreen(genreList);
     }
 
@@ -197,6 +199,9 @@ public class MainFragment extends BaseFragment
         ClassProvider.filterAlertDialog.showFilterAlertDialog(this.getContext(), this);
     }
 
+    /**
+     * dismissing selections from customGenreView and filterAlertDialog
+     */
     @Override
     public void dismissAllSelections() {
         this.customGenreView.dismissSelections();
@@ -252,15 +257,25 @@ public class MainFragment extends BaseFragment
         return true;
     }
 
-    private class onCheckedListener implements ToggleButton.OnCheckedChangeListener {
+
+    /**
+     * listener for customGenreView
+     * getting genreId for tag of clicked item and passing it to mainPresenter.onGenreChecked
+     */
+    private class OnGenreCheckedListener implements ToggleButton.OnCheckedChangeListener {
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            MainFragment.this.mainPresenter.onGenreChecked(buttonView.getText().toString(), isChecked);
+            int genreId = (int)buttonView.getTag(R.id.tag_int_genre_id);
+            MainFragment.this.mainPresenter.onGenreChecked(genreId, isChecked);
         }
     }
 
-    private class onMenuSwitchCheckedListener implements Switch.OnCheckedChangeListener {
+    /**
+     * listener for parental control switcher
+     * passing state of switcher to MainPresenter
+     */
+    private class OnMenuSwitchCheckedListener implements Switch.OnCheckedChangeListener {
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

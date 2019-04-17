@@ -52,34 +52,17 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     public MovieListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_list_item, parent, false);
         view.setOnClickListener(this.clickListener);
-        return new MovieListViewHolder(view);
+
+        MovieListViewHolder viewHolder = new MovieListViewHolder(view);
+        viewHolder.favoriteToggleButton.setOnCheckedChangeListener(onCheckedChangeListener);
+
+        return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull MovieListViewHolder holder, int position) {
         MovieResultEntity movie =  this.movieList.get(position);
-        holder.movieTitle.setText(
-                getAppropriateValue(
-                        movie.getMovieTitle()));
-
-        holder.movieReleaseDate.setText(
-                        getYear(movie.getMovieReleaseDate()));
-
-        holder.movieGenres.setText(
-                UtilityHelpers.getPipeDividedGenresFromId(
-                        movie.getGenreIds(), genresEntity.getGenres()));
-
-        holder.movieRating.setText(String.format(Locale.ENGLISH, "%.1f",
-                        movie.getMovieVoteAverage()));
-
-        holder.favoriteToggleButton.setChecked(movie.isFavorite());
-      holder.favoriteToggleButton.postOnAnimation(() -> holder.favoriteToggleButton.setOnCheckedChangeListener(onCheckedChangeListener));
-
-        Glide
-          .with(holder.itemView)
-          .load(NetConstant.IMAGE_BASE_URL + movie.getPosterPath())
-          .centerCrop()
-          .into(holder.moviePoster);
+        holder.bindMovieToView(movie, position);
     }
 
     @Override
@@ -105,9 +88,34 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
             this.movieRating = itemView.findViewById(R.id.textView_movieRating);
             this.favoriteToggleButton = itemView.findViewById(R.id.toggleButton_favorite);
         }
+
+        void bindMovieToView(MovieResultEntity movie, int position) {
+            this.movieTitle.setText(
+                    getAppropriateValue(
+                            movie.getMovieTitle()));
+
+            this.movieReleaseDate.setText(
+                    getYear(movie.getMovieReleaseDate()));
+
+            this.movieGenres.setText(
+                    UtilityHelpers.getPipeDividedGenresFromId(
+                            movie.getGenreIds(), genresEntity.getGenres()));
+
+            this.movieRating.setText(String.format(Locale.ENGLISH, "%.1f",
+                    movie.getMovieVoteAverage()));
+
+            this.favoriteToggleButton.setTag(R.id.tag_int_movie_item_position, position);
+            this.favoriteToggleButton.setChecked(movie.isFavorite());
+
+            Glide
+                    .with(this.itemView)
+                    .load(NetConstant.IMAGE_BASE_URL + movie.getPosterPath())
+                    .centerCrop()
+                    .into(this.moviePoster);
+        }
     }
 
-    public void updateMovieList(MoviesEntity newMovieList) {
+    public void reloadeMovieListWithAdditionalMovies(MoviesEntity newMovieList) {
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new MovieDiffCallback(this.movieList, newMovieList.getMovies()));
         this.movieList.clear();
         this.movieList.addAll(newMovieList.getMovies());

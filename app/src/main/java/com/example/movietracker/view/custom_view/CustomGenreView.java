@@ -44,7 +44,7 @@ public class CustomGenreView extends ViewGroup {
                 ViewGroup.LayoutParams.WRAP_CONTENT);
 
         linearLayoutParams.setMargins(5,5,5,5);
-
+        linearLayoutParams.gravity = Gravity.CENTER;
         for(int j = 0; j < genres.size(); j++ ) {
             LinearLayout linearLayout = new LinearLayout(getContext());
             for(int i = 0; i<genres.get(j).size(); i++) {
@@ -59,6 +59,7 @@ public class CustomGenreView extends ViewGroup {
                 toggleButton.setAllCaps(false);
 
                 toggleButton.setChecked(genres.get(j).get(i).isSelected());
+                toggleButton.setTag(R.id.tag_int_genre_id, genres.get(j).get(i).getGenreId());
 
                 if(selectedGenresIds.isEmpty()) {
                     toggleButton.setChecked(genres.get(j).get(i).isSelected());
@@ -98,7 +99,11 @@ public class CustomGenreView extends ViewGroup {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         final int count = getChildCount();
-        int curWidth, curHeight, curLeft, curTop, maxHeight;
+        int curWidth;
+        int curHeight;
+        int curLeft;
+        int curTop;
+        int maxHeight;
         //get the available size of child view
         final int childLeft = this.getPaddingLeft();
         final int childTop = this.getPaddingTop();
@@ -128,7 +133,11 @@ public class CustomGenreView extends ViewGroup {
             //   child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight);
             child.layout(curLeft, curTop, childWidth, curTop + curHeight);
 
-            child.setPadding(((childRight - curWidth)/10), 0, (childRight - curWidth)/10, 0);
+            int finalCurWidth = curWidth;
+            child.postOnAnimation(()-> {
+                child.setPadding(((childRight - finalCurWidth) / 10), 0, (childRight - finalCurWidth) / 10, 0);
+            });
+
             //store the max height
             if (maxHeight < curHeight)
                 maxHeight = curHeight;

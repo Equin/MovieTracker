@@ -79,9 +79,7 @@ public class MovieReviewTabFragment extends BaseFragment implements TabLayoutVie
         RecyclerView.LayoutManager rowLayoutManager = new LinearLayoutManager(
                 getContext(), RecyclerView.VERTICAL, false);
         this.recyclerViewReview.setLayoutManager(rowLayoutManager);
-        ReviewListAdapter reviewListAdapter = new ReviewListAdapter(someMovieData);
-        this.recyclerViewReview.setAdapter(reviewListAdapter);
-
+        this.recyclerViewReview.setAdapter(new ReviewListAdapter(someMovieData));
         this.recyclerViewReview.addOnScrollListener(new SnapScrollListener(this));
     }
 

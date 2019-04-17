@@ -25,13 +25,12 @@ public interface MovieDetailDao {
     @Query("SELECT * FROM MovieCastResultEntity WHERE movieId = :movieId")
     Observable<List<MovieCastResultEntity>> getCasts(int movieId);
 
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void saveCasts(List<MovieCastResultEntity> movieCastResultEntities);
 
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT * FROM MovieDetailsEntity WHERE movieId = :movieId")
-    Observable<MovieDetailsEntity> getMovieInfo(int movieId);
+    Observable<List<MovieDetailsEntity>> getMovieInfo(int movieId);
 
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT * FROM GenreEntity " +

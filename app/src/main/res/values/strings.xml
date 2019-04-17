@@ -29,6 +29,7 @@
 
     <string name="empty_new_password_field">New password field is empty</string>
     <string name="empty_old_password_field">Old password field is empty</string>
+    <string name="empty_password_field">Password field is empty</string>
     <string name="wrong_old_password">Wrong old password</string>
     <string name="wrong_password">Wrong password</string>
 
@@ -36,6 +37,8 @@
 
     <string name="hint_to_enable_parent_control">You need to provide password to enable parent controle</string>
     <string name="filter">filter</string>
+    <string name="filter_header_title">Sort Movies By</string>
+    <string name="movie_list_favorite_header">Favorites</string>
 
 
 </resources>

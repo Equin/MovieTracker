@@ -29,6 +29,9 @@ public class MovieReviewsDataMapper extends BaseEntityDataMapper<List<MovieRevie
 
     @Override
     public MovieReviewsEntity transformFromList(List<MovieReviewResultEntity> movieReviewResultEntities) {
+        if (movieReviewResultEntities.isEmpty()) {
+            return new MovieReviewsEntity(0, new ArrayList<>());
+        }
         return new MovieReviewsEntity(movieReviewResultEntities.get(0).getMovieId(), movieReviewResultEntities);
     }
 }

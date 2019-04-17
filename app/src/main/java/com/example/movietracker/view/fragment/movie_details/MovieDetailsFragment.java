@@ -67,6 +67,9 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
     @BindView(R.id.textView_MovieGenres_details)
     TextView textViewMovieGenres;
 
+    @BindView(R.id.textView_nothingToShow)
+    TextView textViewNothingToShow;
+
     public MovieDetailsFragment() {
         setRetainInstance(true);
     }
@@ -173,6 +176,11 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
     public void renderMovieDetails(MovieDetailsEntity movieDetailsEntity) {
         setupTabLayout(movieDetailsEntity);
         renderMovieDetailView(movieDetailsEntity);
+    }
+
+    @Override
+    public void displayNothingToShowHint() {
+        this.textViewNothingToShow.setVisibility(View.VISIBLE);
     }
 
     private void renderMovieDetailView(MovieDetailsEntity movieDetailsEntity) {

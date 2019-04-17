@@ -5,33 +5,25 @@ package com.example.movietracker.view.model;
  */
 public class MovieRecyclerItemPosition {
 
-    private int movieId;
+    private int itemPosition;
     private int offset;
 
-    private static class SingletonHelper {
-        private static final MovieRecyclerItemPosition INSTANCE = new MovieRecyclerItemPosition();
-    }
-
-    public static MovieRecyclerItemPosition getInstance(){
-        return SingletonHelper.INSTANCE;
-    }
-
-    private MovieRecyclerItemPosition() {
-        this.movieId = 0;
+    public MovieRecyclerItemPosition() {
+        this.itemPosition = 0;
         this.offset = 0;
     }
 
-    public MovieRecyclerItemPosition(int movieId, int offset) {
-        this.movieId = movieId;
+    public MovieRecyclerItemPosition(int itemPosition, int offset) {
+        this.itemPosition = itemPosition;
         this.offset = offset;
     }
 
-    public int getMovieId() {
-        return movieId;
+    public int getItemPosition() {
+        return itemPosition;
     }
 
-    public void setMovieId(int movieId) {
-        this.movieId = movieId;
+    public void setItemPosition(int itemPosition) {
+        this.itemPosition = itemPosition;
     }
 
     public int getOffset() {
@@ -43,6 +35,7 @@ public class MovieRecyclerItemPosition {
     }
 
     public void setValuesToZero() {
-        new MovieRecyclerItemPosition();
+        this.setOffset(0);
+        this.setItemPosition(0);
     }
 }

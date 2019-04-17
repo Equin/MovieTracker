@@ -37,11 +37,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
 
     @Override
     public void onBindViewHolder(@NonNull VideoListViewHolder viewHolder, int position) {
-        String videoId = movieVideoResultEntity.get(position).getVideoKey();
-
-        viewHolder.loadThumbai(videoId);
-        viewHolder.videoName.setText(
-                movieVideoResultEntity.get(position).getVideoName());
+       viewHolder.bindMovieVideoToView(movieVideoResultEntity.get(position));
     }
 
     @Override
@@ -68,6 +64,11 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                             + NetConstant.YOUTUBE_THUMBAI_IMAGE_SIZE_URL_SUFIX)
                     .centerCrop()
                     .into(videoImage);
+        }
+
+        void bindMovieVideoToView(MovieVideoResultEntity movieVideoResultEntity) {
+            this.loadThumbai(movieVideoResultEntity.getVideoKey());
+            this.videoName.setText(movieVideoResultEntity.getVideoName());
         }
     }
 }

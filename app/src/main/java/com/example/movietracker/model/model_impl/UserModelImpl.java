@@ -2,14 +2,12 @@ package com.example.movietracker.model.model_impl;
 
 import com.example.movietracker.data.entity.UserEntity;
 import com.example.movietracker.data.entity.UserWithFavoriteMovies;
-import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.data.repository.MovieRepository;
 import com.example.movietracker.di.ClassProvider;
 import com.example.movietracker.model.ModelContract;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
-import io.reactivex.Single;
 
 public class UserModelImpl implements ModelContract.UserModel {
 
@@ -31,8 +29,8 @@ public class UserModelImpl implements ModelContract.UserModel {
     }
 
     @Override
-    public void saveUser(UserEntity userEntity) {
-        this.movieRepository.saveUser(userEntity);
+    public void addUser(UserEntity userEntity) {
+        this.movieRepository.addUser(userEntity);
     }
 
     @Override

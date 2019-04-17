@@ -6,7 +6,7 @@ public interface MainView extends View {
     void renderGenreView(GenresEntity genreList);
 
     void openMovieListView(GenresEntity genreList);
-    void openFavoriteMoviesList(GenresEntity genreList);
+    void openFavoriteMoviesListView(GenresEntity genreList);
     void openAlertDialog();
     void openNewPasswordDialog();
     void openCheckPasswordDialog();

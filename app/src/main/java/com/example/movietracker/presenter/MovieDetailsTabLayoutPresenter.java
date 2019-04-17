@@ -9,6 +9,7 @@ import com.example.movietracker.data.entity.movie_details.video.MovieVideosEntit
 import com.example.movietracker.model.ModelContract;
 import com.example.movietracker.model.model_impl.MovieDetailTabsModelImpl;
 import com.example.movietracker.view.contract.TabLayoutView;
+import com.example.movietracker.view.helper.RxDisposeHelper;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
@@ -32,10 +33,6 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
     public MovieDetailsTabLayoutPresenter(TabLayoutView view) {
         this.movieDetailTabsModel = new MovieDetailTabsModelImpl();
         this.view = view;
-
-        this.movieCastsDisposable = new CompositeDisposable();
-        this.movieReviewsDisposable = new CompositeDisposable();
-        this.movieVideosDisposable = new CompositeDisposable();
     }
 
     public void getMovieCasts(int movieId) {
@@ -92,17 +89,9 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
     @Override
     public void destroy() {
         this.view = null;
-        if (!this.movieCastsDisposable.isDisposed()) {
-            this.movieCastsDisposable.dispose();
-        }
-
-        if (!this.movieReviewsDisposable.isDisposed()) {
-            this.movieReviewsDisposable.dispose();
-        }
-
-        if (!this.movieVideosDisposable.isDisposed()) {
-            this.movieVideosDisposable.dispose();
-        }
+        RxDisposeHelper.dispose(this.movieCastsDisposable);
+        RxDisposeHelper.dispose(this.movieReviewsDisposable);
+        RxDisposeHelper.dispose(this.movieVideosDisposable);
     }
 
     private class GetMovieCastObserver extends DisposableObserver<MovieCastsEntity> {

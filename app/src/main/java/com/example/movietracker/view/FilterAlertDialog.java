@@ -69,7 +69,10 @@ public class FilterAlertDialog {
         }
     }
 
-    private void createDialog(View dialogCustomVIew, Context context) {
+    /**
+     *customizing alert dialog, adding custom tittle view and creating dialogBuilder
+     */
+    private void customizeFilterAlertDialog(View dialogCustomVIew, Context context) {
 
         AlertDialog.Builder alertDialogBuilder
                 = new AlertDialog.Builder(context);
@@ -81,7 +84,7 @@ public class FilterAlertDialog {
         customTitleView.setGravity(Gravity.CENTER);
         customTitleView.setBackground(
                 context.getResources().getDrawable(R.color.filter_alert_dialog_header_color));
-        textView.setText("Sort Movies By");
+        textView.setText(context.getString(R.string.filter_header_title));
         textView.setPadding(0, 40, 0, 40);
         textView.setTextSize(24);
         customTitleView.addView(textView);
@@ -96,10 +99,14 @@ public class FilterAlertDialog {
         LayoutInflater li = LayoutInflater.from(context);
         View dialogCustomVIew = li.inflate(R.layout.filter_dialog, null);
 
-        createDialog(dialogCustomVIew, context);
+        customizeFilterAlertDialog(dialogCustomVIew, context);
         initializeFilterDialogContent(dialogCustomVIew, context);
     }
 
+
+    /**
+     *initializing saveScoreButton, radioGroup, switcher in alert dialog and setting listeners to them
+     */
     private void  initializeFilterDialogContent(View dialogCustomVIew, Context context) {
 
         Button saveScoreButton = dialogCustomVIew.findViewById(R.id.button_save_score);
@@ -140,7 +147,7 @@ public class FilterAlertDialog {
     }
 
     /**
-     * Dismiss selection.
+     * Dismiss selection in filter dialog.
      */
     public void dismissSelection() {
         for (Option option: optionList) {

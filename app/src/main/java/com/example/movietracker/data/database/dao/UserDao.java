@@ -12,6 +12,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.RoomWarnings;
 import androidx.room.Update;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
@@ -24,11 +25,12 @@ public interface UserDao {
     @Query("SELECT * FROM UserEntity WHERE userId = 1")
     UserEntity getUserNotObservable();
 
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT * FROM UserEntity INNER JOIN userwithfavoritemovies ON user_id = userId WHERE userId = 1")
     Observable<List<UserEntity>> getUserWithFavorites();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void saveUser(UserEntity user);
+    void addUser(UserEntity user);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     Completable updateUser(UserEntity user);

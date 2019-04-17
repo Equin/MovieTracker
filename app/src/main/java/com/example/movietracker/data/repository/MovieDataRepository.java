@@ -24,16 +24,18 @@ import com.example.movietracker.data.net.api.MovieApi;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class MovieDataRepository implements MovieRepository {
 
     private static final int MOVIE_PER_PAGE = 20;
+    private static final int DB_REQUEST_TIMEOUT = 2;
+
 
     private MovieApi movieApi;
     private GenresDao genresDao;
@@ -100,7 +102,8 @@ public class MovieDataRepository implements MovieRepository {
                                 MOVIE_PER_PAGE,
                                 (filters.getPage()-1)*MOVIE_PER_PAGE,
                                 filters.isIncludeAdult()
-                        ).map(movieResultEntities -> {
+                        )
+                                .map(movieResultEntities -> {
                                     int totalPage = Math.round((float)this.movieDao.getTotalResults(
                                             filters.getSelectedGenresIds(),
                                             filters.isIncludeAdult()) / MOVIE_PER_PAGE);
@@ -111,14 +114,12 @@ public class MovieDataRepository implements MovieRepository {
                                             movieResultEntities
                                     );
                                 }
-                        )//.unsubscribeOn(AndroidSchedulers.mainThread())//.firstOrError().toObservable()
-                        // some problems... when getting from Retrofit
-                        // its Calling OnComplete, but when from DB its not. SO firstOrError().toObservable() added to call onComplete.
+                        )
                 );
     }
 
     @Override
-    public Observable<MoviesEntity>  getMoviesWithFavorites(Filters filters) {
+    public Observable<MoviesEntity> getMoviesWithFavorites(Filters filters) {
         return  getMovieFavorites(getMovies(filters));
     }
 
@@ -158,19 +159,19 @@ public class MovieDataRepository implements MovieRepository {
             requests.add(addRequest(filters, i));
         }
 
-        return Observable.zip(requests, movie -> {
+        return Observable.zip(requests, movies -> {
             MoviesEntity moviesEntity = new MoviesEntity();
 
-            for(int i=0; i < movie.length; i++) {
-                moviesEntity.setPage(((MoviesEntity)movie[i]).getPage());
-                moviesEntity.setTotalPages(((MoviesEntity)movie[i]).getTotalPages());
+            for (Object movie : movies) {
+                moviesEntity.setPage(((MoviesEntity) movie).getPage());
+                moviesEntity.setTotalPages(((MoviesEntity) movie).getTotalPages());
 
                 //removing duplicates of movie pages
-                if(moviesEntity.getMovies().isEmpty()
+                if (moviesEntity.getMovies().isEmpty()
                         || (!moviesEntity.getMovies().isEmpty()
-                            && ((MoviesEntity)movie[i]).getMovies().get(0).getMovieId()
-                                != moviesEntity.getMovies().get(0).getMovieId())) {
-                    moviesEntity.addMovies(((MoviesEntity)movie[i]).getMovies());
+                        && ((MoviesEntity) movie).getMovies().get(0).getMovieId()
+                        != moviesEntity.getMovies().get(0).getMovieId())) {
+                    moviesEntity.addMovies(((MoviesEntity) movie).getMovies());
                 }
             }
 
@@ -179,7 +180,7 @@ public class MovieDataRepository implements MovieRepository {
     }
 
     private Observable<MoviesEntity> addRequest(Filters filters, int page) {
-        return this.movieApi.getMoviesForPages(
+        return this.movieApi.getMovies(
                 filters.getCommaSeparatedGenres(),
                 filters.getSortBy()
                         .concat(".").concat(
@@ -191,9 +192,10 @@ public class MovieDataRepository implements MovieRepository {
                     this.movieDao.addMovieGenreRelation(moviesEntity.getMovies());
                 })
                 .onExceptionResumeNext(
-                        this.movieDao.getMoviesForPages(
+                        this.movieDao.getMovies(
                                 filters.getSelectedGenresIds(),
                                 filters.getPage() * MOVIE_PER_PAGE,
+                                0,
                                 filters.isIncludeAdult()
                         )
                                 .map(movieResultEntities -> {
@@ -201,14 +203,12 @@ public class MovieDataRepository implements MovieRepository {
                                             filters.getSelectedGenresIds(),
                                             filters.isIncludeAdult()) / MOVIE_PER_PAGE);
 
-                                      return  new MoviesEntity(
+                                      return new MoviesEntity(
                                               filters.getPage(),
                                                 totalPage,
                                                 movieResultEntities
                                         );
-                                })//.unsubscribeOn(AndroidSchedulers.mainThread()) //.firstOrError().toObservable()
-                        // some problems... when getting from Retrofit
-                        // its Calling OnComplete, but when from DB its not. SO firstOrError().toObservable() added to call onComplete.
+                                })
                 );
     }
 
@@ -219,10 +219,16 @@ public class MovieDataRepository implements MovieRepository {
                         movieDetailDao.saveInfo(movieDetailsEntity)
                 )
                 .onExceptionResumeNext(
-                        movieDetailDao.getMovieInfo(movieId).map(movieDetailsEntity -> {
-                            List<GenreEntity> genreEntities = movieDetailDao.getGenres(movieId).blockingFirst();
-                            movieDetailsEntity.setGenres(genreEntities);
-                            return movieDetailsEntity;
+                        movieDetailDao.getMovieInfo(movieId)
+                                .map(movieDetailsEntity -> {
+                                    if (!movieDetailsEntity.isEmpty()) {
+                                        List<GenreEntity> genreEntities = movieDetailDao.getGenres(movieId).blockingFirst();
+                                        movieDetailsEntity.get(0).setGenres(genreEntities);
+                                        return movieDetailsEntity.get(0);
+                                    }
+                                    else  {
+                                        return new MovieDetailsEntity();
+                                    }
                         }));
     }
 
@@ -259,11 +265,27 @@ public class MovieDataRepository implements MovieRepository {
                 );
     }
 
+    /**
+     * getting user from UserEntity table, with 2 seconds timeout, if no emit by that time it
+     * throws TimeoutException, and in onErrorReturn returns default User
+     * @return UserEntity
+     */
     @Override
     public Observable<UserEntity> getUser() {
-        return this.userDao.getUser();
+        return this.userDao.getUser().timeout(DB_REQUEST_TIMEOUT, TimeUnit.SECONDS)
+                .onErrorReturn(throwable -> {
+                    UserEntity userEntity =  UserEntity.initialUser();
+                    userEntity.setParentalControlEnabled(true);
+                    this.userDao.addUser(userEntity);
+                    return userEntity;
+                });
     }
 
+    /**
+     * getting user with favorites from DB, if there is no favorites in UserWithFavoritesEntity table
+     * -> gets user and checking his movieId field by getting movie from MovieResultEntity table
+     * @return userEntity with favorite movies
+     */
     @Override
     public Observable<UserEntity> getUserWithFavorites() {
         return this.userDao.getUserWithFavorites().map(userEntities -> {
@@ -284,13 +306,14 @@ public class MovieDataRepository implements MovieRepository {
                     userEntity.addToFavorites(movieResultEntity);
                 }
             }
+
             return userEntity;
         });
     }
 
     @Override
-    public void saveUser(UserEntity userEntity) {
-        this.userDao.saveUser(userEntity);
+    public void addUser(UserEntity userEntity) {
+        this.userDao.addUser(userEntity);
     }
 
     @Override

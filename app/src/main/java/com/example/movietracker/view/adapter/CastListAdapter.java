@@ -37,16 +37,7 @@ public class CastListAdapter extends RecyclerView.Adapter<CastListAdapter.CastLi
 
     @Override
     public void onBindViewHolder(@NonNull CastListViewHolder holder, int position) {
-        MovieCastResultEntity cast =  this.castResultEntity.get(position);
-
-        holder.castName.setText(cast.getCastName());
-
-        Glide
-          .with(AndroidApplication.getRunningActivity().getApplicationContext())
-          .load(NetConstant.IMAGE_BASE_URL +cast.getCastImagePath())
-          .circleCrop()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-          .into(holder.castPhoto);
+        holder.bindMovieCastToView(this.castResultEntity.get(position));
     }
 
     @Override
@@ -59,11 +50,21 @@ public class CastListAdapter extends RecyclerView.Adapter<CastListAdapter.CastLi
         private ImageView castPhoto;
         private TextView castName;
 
-
         CastListViewHolder(@NonNull View itemView) {
             super(itemView);
             this.castPhoto = itemView.findViewById(R.id.imageView_castPhoto);
             this.castName = itemView.findViewById(R.id.textView_castName);
+        }
+
+        void bindMovieCastToView(MovieCastResultEntity cast) {
+            this.castName.setText(cast.getCastName());
+
+            Glide
+                    .with(AndroidApplication.getRunningActivity().getApplicationContext())
+                    .load(NetConstant.IMAGE_BASE_URL +cast.getCastImagePath())
+                    .circleCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(this.castPhoto);
         }
     }
 }

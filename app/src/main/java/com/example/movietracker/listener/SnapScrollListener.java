@@ -10,6 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public  class SnapScrollListener extends RecyclerView.OnScrollListener {
 
+    private static final int TOP_OFFSET = 50;
+    private static final int BOTTOM_OFFSET = 70;
+
     private Fragment fragment;
     private boolean isActionAllowed = true;
 
@@ -59,6 +62,6 @@ public  class SnapScrollListener extends RecyclerView.OnScrollListener {
             return 0;
         }
 
-        return (absoluteTop <= (rowHeight / 2)) ? top - 50 : (rowHeight - absoluteTop) - 50;
+        return (absoluteTop <= (rowHeight / 2)) ? top - BOTTOM_OFFSET: (rowHeight - absoluteTop) - TOP_OFFSET;
     }
 }

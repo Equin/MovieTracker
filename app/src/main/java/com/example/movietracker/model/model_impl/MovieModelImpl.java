@@ -17,18 +17,8 @@ public class MovieModelImpl implements ModelContract.MovieModel {
     }
 
     @Override
-    public Observable<MoviesEntity> getMovies(Filters filters) {
-        return this.movieRepository.getMovies(filters);
-    }
-
-    @Override
     public Observable<MoviesEntity> getMoviesWithFavorites(Filters filters) {
         return this.movieRepository.getMoviesWithFavorites(filters);
-    }
-
-    @Override
-    public Observable<MoviesEntity> getMovieListForPages(Filters filters) {
-        return this.movieRepository.getMovieListForPages(filters);
     }
 
     @Override

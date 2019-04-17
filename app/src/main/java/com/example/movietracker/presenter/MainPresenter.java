@@ -5,21 +5,17 @@ import android.util.Log;
 import com.example.movietracker.AndroidApplication;
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.UserEntity;
+import com.example.movietracker.view.helper.RxDisposeHelper;
 import com.example.movietracker.view.model.Filters;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.model.ModelContract;
 import com.example.movietracker.view.contract.MainView;
 import com.example.movietracker.view.model.Option;
-
-import java.io.IOException;
+import com.example.movietracker.view.model.UserWithGenresEntity;
 
 import io.reactivex.CompletableObserver;
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.Observer;
-import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -39,12 +35,12 @@ public class MainPresenter extends BasePresenter {
 
     private GenresEntity genresEntity;
     private UserEntity userEntity;
-    private Disposable userDisposable = new CompositeDisposable();
+    private Disposable userDisposable;
 
     /**
      * Instantiates a new Main presenter.
      *
-     * @param mainView   the main view implemented by MainFragment
+     * @param mainView the main view implemented by MainFragment
      */
     public MainPresenter(MainView mainView, ModelContract.GenreModel genreModel, ModelContract.UserModel userModel, Filters filters) {
         this.mainView = mainView;
@@ -56,22 +52,15 @@ public class MainPresenter extends BasePresenter {
     /**
      * Gets user with genres
      */
-//TODO Need to check getUser() with getGenres chain
     public void getUser() {
         showLoading();
-        this.userDisposable = this.userModel.getUser()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .map(userEntity1 -> {this.userEntity = userEntity1;
-                    MainPresenter.this.setParentalControlEnabled(
-                            userEntity1.isParentalControlEnabled());
-                    return userEntity1;
-                })
-                .observeOn(Schedulers.io())
-                .flatMapSingle(userEntity1 ->
-                        this.genreModel.getGenres())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(getGenresObserver);
+       this.userDisposable = Observable.zip(
+               this.userModel.getUser(),
+               this.genreModel.getGenres().toObservable(),
+               (userEntity, genresEntity) -> new UserWithGenresEntity(genresEntity, userEntity))
+               .subscribeOn(Schedulers.io())
+               .observeOn(AndroidSchedulers.mainThread())
+               .subscribeWith(getUserWithGenresObserver);
     }
 
     @Override
@@ -80,12 +69,13 @@ public class MainPresenter extends BasePresenter {
         this.filters = null;
         this.genresEntity = null;
         this.genreModel = null;
-
-        if (!this.userDisposable.isDisposed()) {
-            this.userDisposable.dispose();
-        }
+        RxDisposeHelper.dispose(this.userDisposable);
     }
 
+    /**
+     * setting up filters with options and opening movieListView
+     * @param option - options from filterAlertDialog
+     */
     public void onSearchButtonClicked(Option option) {
         this.filters.setPage(1);
         this.filters.setIncludeAdult(!this.userEntity.isParentalControlEnabled());
@@ -96,7 +86,7 @@ public class MainPresenter extends BasePresenter {
 
     public void onFavoriteMenuItemClicked() {
         if (this.mainView != null) {
-            this.mainView.openFavoriteMoviesList(this.genresEntity);
+            this.mainView.openFavoriteMoviesListView(this.genresEntity);
         }
     }
 
@@ -112,10 +102,15 @@ public class MainPresenter extends BasePresenter {
         }
     }
 
-    public void onGenreChecked(String text, boolean isChecked) {
+    /**
+     * changing list of selected genres according to state and genreId
+     * @param genreId - id of clicked genre
+     * @param isChecked - new state
+     */
+    public void onGenreChecked(int genreId, boolean isChecked) {
         for (int i = 0; i < this.genresEntity.getGenres().size(); i++) {
-            if (this.genresEntity.getGenres().get(i).getGenreName()
-                    .equals(text)) {
+            if (this.genresEntity.getGenres().get(i).getGenreId()
+                     == genreId) {
                 this.genresEntity.getGenres().get(i).setSelected(isChecked);
 
                 if (isChecked) {
@@ -129,10 +124,13 @@ public class MainPresenter extends BasePresenter {
         }
     }
 
+    /**
+     * saving newPasswordValue if oldPasswordValue equals to current password
+     */
     public void onSaveResetedPasswordButtonClicked(String oldPasswordValue, String newPasswordValue) {
-        if (!oldPasswordValue.equals("") && !newPasswordValue.equals("")) {
-            if(this.userEntity.getPassword().equals(oldPasswordValue)
-                    || this.userEntity.getMasterPassword().equals(oldPasswordValue)) {
+        if (!("").equals(oldPasswordValue) && !("").equals(newPasswordValue)) {
+            if (oldPasswordValue.equals(this.userEntity.getPassword())
+                    || oldPasswordValue.equals(this.userEntity.getMasterPassword())) {
                 savePassword(newPasswordValue);
             } else {
                 MainPresenter.this.showToast(R.string.wrong_old_password);
@@ -147,13 +145,17 @@ public class MainPresenter extends BasePresenter {
     }
 
     public void onSaveNewPasswordButtonClicked(String newPasswordValue) {
-        if (!newPasswordValue.equals("")) {
+        if (!("").equals(newPasswordValue)) {
             savePassword(newPasswordValue);
         } else {
-            MainPresenter.this.showToast(R.string.main_error);
+            MainPresenter.this.showToast(R.string.empty_password_field);
         }
     }
 
+    /**
+     * on password reset menu item clicked
+     * opening reset password dialog if current password exists else open new password dialog
+     */
     public void onPasswordResetMenuItemClicked() {
         if (this.userEntity.getPassword() == null) {
             this.openNewPasswordDialog();
@@ -162,20 +164,23 @@ public class MainPresenter extends BasePresenter {
         }
     }
 
+    /**
+     * changing parent control state according to state only if there is a password,
+     * if not open dialog for saving new password
+     * @param isChecked - state of parentControlSwitcher
+     */
     public void onParentalControlSwitchChanged(boolean isChecked) {
-        if (this.userEntity == null) return;
-        if(isChecked && this.userEntity.isParentalControlEnabled()) {
-            return;
-        }
-        if (!isChecked && !this.userEntity.isParentalControlEnabled()) {
+        if (this.userEntity == null
+                || (isChecked && this.userEntity.isParentalControlEnabled())
+                || (!isChecked && !this.userEntity.isParentalControlEnabled())) {
             return;
         }
 
-        if(this.userEntity.getPassword() == null) {
+        if (this.userEntity.getPassword() == null && isChecked) {
             this.showToast(R.string.hint_to_enable_parent_control);
             this.openNewPasswordDialog();
-        } else  {
-            if(isChecked) {
+        } else {
+            if (isChecked) {
                 this.updateParentalControlState(true);
             } else {
                 this.openCheckPasswordDialog();
@@ -184,11 +189,12 @@ public class MainPresenter extends BasePresenter {
     }
 
     /**
-     * On check password button clicked, when switching off parental control
+     * On check password button clicked, showing when switching off parental control.
+     * if password is correct -> switching off parent control else not
      */
     public void onCheckPasswordButtonClicked(String passwordValue) {
-        if (this.userEntity.getPassword().equals(passwordValue)
-                || this.userEntity.getMasterPassword().equals(passwordValue) ) {
+        if (passwordValue.equals(this.userEntity.getPassword())
+                || passwordValue.equals(this.userEntity.getMasterPassword())) {
             updateParentalControlState(false);
             this.mainView.dismissPasswordDialog();
         } else {
@@ -269,11 +275,21 @@ public class MainPresenter extends BasePresenter {
         }
     }
 
+    private void dismissPasswordDialog() {
+        if (this.mainView != null) {
+            this.mainView.dismissPasswordDialog();
+        }
+    }
+
+    /**
+     * saving password to db
+     * onComplete: closing passwordDialog on successful save.
+     */
     private CompletableObserver completableSavePasswordObserver = new CompletableObserver() {
 
         @Override
         public void onSubscribe(Disposable d) {
-            Log.d(TAG, "Subscribed to  this.userModel.saveUser(userEntity)");
+            Log.d(TAG, "Subscribed to  this.userModel.addUser(userEntity)");
         }
 
         @Override
@@ -289,22 +305,23 @@ public class MainPresenter extends BasePresenter {
         }
     };
 
-    private void dismissPasswordDialog() {
-        if (this.mainView != null) {
-            this.mainView.dismissPasswordDialog();
-        }
-    }
-
-    private DisposableObserver<GenresEntity> getGenresObserver = new DisposableObserver<GenresEntity>() {
+    /**
+     * getting userEntity and genreEntity from network/db
+     * onNext: setting state of parentControlSwitcher and rendering genresEntity to customGenreView
+     */
+    private DisposableObserver<UserWithGenresEntity> getUserWithGenresObserver = new DisposableObserver<UserWithGenresEntity>() {
         @Override
         public void onComplete() {
-            Log.d(TAG, "Subscribed to this.genreModel.getGenres()");
+            Log.d(TAG, "Subscribed to this.userModel.getUser() with genres");
         }
 
         @Override
-        public void onNext(GenresEntity genreList) {
-            genresEntity = genreList;
-            MainPresenter.this.renderGenreView(genreList);
+        public void onNext(UserWithGenresEntity userWithGenresEntity) {
+            genresEntity = userWithGenresEntity.getGenresEntity();
+            userEntity = userWithGenresEntity.getUserEntity();
+            MainPresenter.this.setParentalControlEnabled(
+                    userEntity.isParentalControlEnabled());
+            MainPresenter.this.renderGenreView(genresEntity);
             MainPresenter.this.hideLoading();
         }
 
@@ -316,11 +333,15 @@ public class MainPresenter extends BasePresenter {
         }
     };
 
-    private CompletableObserver completableSetParentalControlStateObserver = new  CompletableObserver() {
+    /**
+     * saving new parentalControl state to db
+     * onComplete: showing toast with new state
+     */
+    private CompletableObserver completableSetParentalControlStateObserver = new CompletableObserver() {
 
         @Override
         public void onSubscribe(Disposable d) {
-            Log.d(TAG, "Subscribed to this.userModel.saveUser(userEntity) to update parent control state");
+            Log.d(TAG, "Subscribed to this.userModel.addUser(userEntity) to update parent control state");
         }
 
         @Override
@@ -338,60 +359,6 @@ public class MainPresenter extends BasePresenter {
         }
     };
 }
-
-
-
-
-/*    private class GetUserObserver extends DisposableObserver<UserEntity> {
-
-        @Override
-        public void onComplete() {
-            Log.d(TAG, "onComplete this.userModel.getUser()");
-        }
-
-        @Override
-        public void onNext(UserEntity userEntity) {
-            MainPresenter.this.userEntity = userEntity;
-       //     MainPresenter.this.getGenres();
-            MainPresenter.this.mainView.setParentalControlEnabled(
-                    MainPresenter.this.userEntity.isParentalControlEnabled());
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            MainPresenter.this.mainView.showToast(R.string.main_error);
-            Log.d(TAG, e.getLocalizedMessage());
-        }
-    }*/
-
-/*    private class SingleGetGenresObserver implements SingleObserver<GenresEntity> {
-        @Override
-        public void onSubscribe(Disposable d) {
-            Log.d(TAG, "Subscribed to this.genreModel.getGenres()");
-        }
-
-        @Override
-        public void onSuccess(GenresEntity genreList) {
-            genresEntity = genreList;
-            MainPresenter.this.mainView.renderGenreView(genreList);
-            MainPresenter.this.hideLoading();
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            Log.e(TAG, e.getLocalizedMessage());
-            MainPresenter.this.mainView.showToast(R.string.main_error);
-            MainPresenter.this.hideLoading();
-        }
-    }*/
-
-/*    public void getGenres() {
-        showLoading();
-        this.genreModel.getGenres()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new SingleGetGenresObserver());
-    }*/
 
 
 

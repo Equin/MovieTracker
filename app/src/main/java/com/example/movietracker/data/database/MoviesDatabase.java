@@ -55,7 +55,7 @@ public abstract class MoviesDatabase extends RoomDatabase {
                                 public void onCreate(@NonNull SupportSQLiteDatabase db) {
                                     super.onCreate(db);
                                     Executors.newSingleThreadScheduledExecutor().execute(
-                                            () -> INSTANCE.getUserDao().saveUser(UserEntity.initialUser()));
+                                            () -> INSTANCE.getUserDao().addUser(UserEntity.initialUser()));
                                 }
                             })
                             .build();

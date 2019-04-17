@@ -31,7 +31,7 @@ public interface MovieRepository {
     Observable<MovieReviewsEntity> getMovieReviews(int movieId);
     Observable<UserEntity> getUser();
     Observable<UserEntity> getUserWithFavorites();
-    void saveUser(UserEntity userEntity);
+    void addUser(UserEntity userEntity);
     Completable updateUser(UserEntity userEntity);
     Completable deleteMovieFromFavorites(UserWithFavoriteMovies userWithFavoriteMovies);
     void init(RestClient restClient, MoviesDatabase moviesDatabase);

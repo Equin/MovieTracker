@@ -7,6 +7,7 @@ import com.example.movietracker.data.entity.MovieResultEntity;
 import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.data.entity.UserEntity;
 import com.example.movietracker.data.entity.UserWithFavoriteMovies;
+import com.example.movietracker.view.helper.RxDisposeHelper;
 import com.example.movietracker.view.model.Filters;
 import com.example.movietracker.model.ModelContract;
 import com.example.movietracker.view.contract.MovieListView;
@@ -17,7 +18,6 @@ import java.util.ArrayList;
 import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -42,17 +42,17 @@ public class MovieListPresenter extends BasePresenter {
     private boolean isActionAllowed;
     private boolean shouldShowFavoriteMoviesList;
 
-    private Disposable userDisposable = new CompositeDisposable();
-    private Disposable userWithFavoriteMoviesDisposable = new CompositeDisposable();
-    private Disposable movieDisposable = new CompositeDisposable();
-    private Disposable moviePageDisposable = new CompositeDisposable();
-    private Disposable movieListPagesDisposable = new CompositeDisposable();
+    private Disposable userDisposable;
+    private Disposable userWithFavoriteMoviesDisposable;
+    private Disposable movieDisposable;
+    private Disposable moviePageDisposable;
+    private Disposable movieListPagesDisposable;
 
     /**
      * Instantiates a new Movie list presenter.
      *
      * @param view                 the view that implements fragment
-     * @param recyclerItemPosition  postion and offset of clicked movie, for scrolling purpose on return.
+     * @param recyclerItemPosition  position and offset of clicked movie, for scrolling purpose on return.
      */
     public MovieListPresenter(
             MovieListView view,
@@ -84,12 +84,18 @@ public class MovieListPresenter extends BasePresenter {
 
     /**
      * On movie item clicked.
-     * saving position and offset of clicked movie
+     * opens movie details fragment
      */
-    public void onMovieItemClicked(int itemPosition, int itemOffset) {
+    public void onMovieItemClicked(int itemPosition) {
         int movieId = this.moviesEntity.getMovies().get(itemPosition).getMovieId();
         this.view.showMovieDetailScreen(movieId);
-        this.setRecyclerItemPosition(movieId, itemOffset);
+    }
+
+    /**
+     * saving position and offset of clicked movie
+     */
+    public void  saveRecyclerPosition(int itemPosition, int itemOffset) {
+        this.setRecyclerItemPosition(itemPosition, itemOffset);
     }
 
     /**
@@ -109,7 +115,7 @@ public class MovieListPresenter extends BasePresenter {
     }
 
     public void getMoviesByFilters(Filters filters) {
-        if(this.recyclerItemPosition.getMovieId() == 0) {
+        if(this.recyclerItemPosition.getItemPosition() == 0) {
             getMovies(filters);
         } else {
             getMovieListForAllPages(filters);
@@ -119,28 +125,12 @@ public class MovieListPresenter extends BasePresenter {
     @Override
     public void destroy() {
         this.view = null;
-        this.recyclerItemPosition.setOffset(0);
-        this.recyclerItemPosition.setMovieId(0);
-
-        if (!this.moviePageDisposable.isDisposed()) {
-            this.moviePageDisposable.dispose();
-        }
-
-        if (!this.movieDisposable.isDisposed()) {
-            this.movieDisposable.dispose();
-        }
-
-        if (!this.movieListPagesDisposable.isDisposed()) {
-            this.movieListPagesDisposable.dispose();
-        }
-
-        if (!this.userDisposable.isDisposed()) {
-            this.userDisposable.dispose();
-        }
-
-        if (!this.userWithFavoriteMoviesDisposable.isDisposed()) {
-            this.userWithFavoriteMoviesDisposable.dispose();
-        }
+        this.recyclerItemPosition.setValuesToZero();
+        RxDisposeHelper.dispose(this.userDisposable);
+        RxDisposeHelper.dispose(this.userWithFavoriteMoviesDisposable);
+        RxDisposeHelper.dispose(this.movieDisposable);
+        RxDisposeHelper.dispose(this.moviePageDisposable);
+        RxDisposeHelper.dispose(this.movieListPagesDisposable);
     }
 
     /**
@@ -184,21 +174,19 @@ public class MovieListPresenter extends BasePresenter {
     }
 
     private void setRecyclerItemPosition(int movieId, int offset) {
-        this.recyclerItemPosition.setMovieId(movieId);
+        this.recyclerItemPosition.setItemPosition(movieId);
         this.recyclerItemPosition.setOffset(offset);
     }
 
-    private void scrollToMovieWithId(int itemPosition, int itemOffset) {
+    private void scrollToPosition(int itemPosition, int itemOffset) {
         if (this.view != null) {
-            this.view.scrollToMovie(itemPosition, itemOffset);
+            this.view.scrollToPositionWithOffset(itemPosition, itemOffset);
         }
     }
 
     private void scrollToMovieIfPossible(MoviesEntity moviesEntity) {
-        for(int i = 0; i < moviesEntity.getMovies().size(); i++) {
-            if (moviesEntity.getMovies().get(i).getMovieId() == recyclerItemPosition.getMovieId()) {
-                this.scrollToMovieWithId(i, recyclerItemPosition.getOffset());
-            }
+        if (!moviesEntity.getMovies().isEmpty() && moviesEntity.getMovies().get(recyclerItemPosition.getItemPosition()).getMovieId() != 0) {
+            this.scrollToPosition(recyclerItemPosition.getItemPosition(), recyclerItemPosition.getOffset());
         }
     }
 
@@ -320,7 +308,11 @@ public class MovieListPresenter extends BasePresenter {
     private class GetMoviesObserver extends DisposableObserver<MoviesEntity> {
         @Override
         public void onNext(MoviesEntity moviesEntity) {
-            if(moviesEntity == null) return;
+            if(moviesEntity == null || moviesEntity.getMovies().isEmpty()) {
+                displayNothingToShow();
+                MovieListPresenter.this.hideLoading();
+                return;
+            }
             MovieListPresenter.this.moviesEntity = moviesEntity;
             MovieListPresenter.this.renderMoviesList(moviesEntity);
             MovieListPresenter.this.isActionAllowed = true;

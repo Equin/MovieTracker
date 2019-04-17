@@ -25,6 +25,10 @@ public class MovieCastResultEntity {
     private int movieId;
 
     @Ignore
+    public MovieCastResultEntity() {
+    }
+
+    @Ignore
     public MovieCastResultEntity(int castId, String castName, String castImagePath, int castOrder) {
         this.castId = castId;
         this.castName = castName;

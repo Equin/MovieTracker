@@ -27,7 +27,7 @@ public class MovieCastsDataMapper extends BaseEntityDataMapper<List<MovieCastRes
 
     @Override
     public MovieCastsEntity transformFromList(List<MovieCastResultEntity> movieCastResultEntities) {
-        if (movieCastResultEntities == null || movieCastResultEntities.size() == 0) {
+        if (movieCastResultEntities == null || movieCastResultEntities.isEmpty()) {
             return new MovieCastsEntity(-1, new ArrayList<>());
         }
         return new MovieCastsEntity(movieCastResultEntities.get(0).getMovieId(), movieCastResultEntities);

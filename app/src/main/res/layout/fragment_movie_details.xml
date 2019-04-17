@@ -12,7 +12,7 @@
         android:layout_height="wrap_content">
 
         <RelativeLayout
-            android:id="@+id/container_for_youtube_player"
+            android:id="@+id/container_for_general_movie_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -100,6 +100,23 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <TextView
+                android:id="@+id/textView_nothingToShow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/linearLayout_movieRating"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="-42dp"
+                android:text="@string/movie_details_nothing_to_show"
+                android:textAlignment="center"
+                android:textColor="@color/colorTextWhite"
+                android:textSize="18sp"
+                android:visibility="gone" />
+
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabLayout_movieDetails"
                 android:layout_width="match_parent"
@@ -116,7 +133,7 @@
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/container_for_youtube_player">
+            android:layout_below="@+id/container_for_general_movie_details">
 
         </RelativeLayout>
 

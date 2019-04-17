@@ -33,6 +33,9 @@ public class MovieVideosDataMapper extends BaseEntityDataMapper<List<MovieVideoR
 
     @Override
     public MovieVideosEntity transformFromList(List<MovieVideoResultEntity> movieVideoResultEntity) {
+        if (movieVideoResultEntity.isEmpty()) {
+            return new MovieVideosEntity(0, new ArrayList<>());
+        }
         return new MovieVideosEntity(movieVideoResultEntity.get(0).getMovieId(), movieVideoResultEntity);
     }
 }
