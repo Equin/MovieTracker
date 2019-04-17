@@ -99,7 +99,8 @@ public class MovieListPresenter extends BasePresenter {
     }
 
     /**
-     * Last movie of page reached, calls when last element of recycler view is completely visible.
+     * calls when last element of recycler view is completely visible.
+     * if isActionAllowed is true then its getting from network/db more 20 movies
      */
     public void lastMovieOfPageReached() {
         if(this.isActionAllowed) {
@@ -114,6 +115,10 @@ public class MovieListPresenter extends BasePresenter {
         }
     }
 
+    /**
+     * getting movies by filters
+     * if there are saved recycler position it gets list of movies for all scrolled pages
+     */
     public void getMoviesByFilters(Filters filters) {
         if(this.recyclerItemPosition.getItemPosition() == 0) {
             getMovies(filters);
@@ -134,10 +139,10 @@ public class MovieListPresenter extends BasePresenter {
     }
 
     /**
-     * On favorite icon clicked.
+     * On favorite icon clicked. adding or removing movies to/from favorites according to state of isChecked
      *
      * @param itemClickPosition the item click position
-     * @param isChecked         the is checked
+     * @param isChecked         state of favoriteToggleButton
      */
     public void onFavoriteChecked(int itemClickPosition, boolean isChecked) {
         MovieResultEntity movie = this.moviesEntity.getMovies().get(itemClickPosition);
@@ -158,7 +163,7 @@ public class MovieListPresenter extends BasePresenter {
     }
 
     /**
-     * On swipe to refresh.
+     * making new call to get movies
      */
     public void onSwipeToRefresh() {
         if (this.userEntity.getFavoriteMovies() == null || this.userEntity.getFavoriteMovies().isEmpty()) {

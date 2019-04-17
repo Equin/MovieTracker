@@ -84,18 +84,27 @@ public class MainPresenter extends BasePresenter {
         this.openMovieListView(this.genresEntity);
     }
 
+    /**
+     * opens favorite movie list view  by openFavoriteMoviesListView(this.genresEntity);
+     */
     public void onFavoriteMenuItemClicked() {
         if (this.mainView != null) {
             this.mainView.openFavoriteMoviesListView(this.genresEntity);
         }
     }
 
+    /**
+     * dismiss all selections from genre view and filter alert dialog
+     */
     public void onCancelButtonClicked() {
         if (this.mainView != null) {
             this.mainView.dismissAllSelections();
         }
     }
 
+    /**
+     * open filter alert dialog
+     */
     public void onFilterButtonClicked() {
         if (this.mainView != null) {
             this.mainView.openAlertDialog();
@@ -144,6 +153,10 @@ public class MainPresenter extends BasePresenter {
         }
     }
 
+    /**
+     * saving new password to db
+     * @param newPasswordValue
+     */
     public void onSaveNewPasswordButtonClicked(String newPasswordValue) {
         if (!("").equals(newPasswordValue)) {
             savePassword(newPasswordValue);
@@ -189,7 +202,7 @@ public class MainPresenter extends BasePresenter {
     }
 
     /**
-     * On check password button clicked, showing when switching off parental control.
+     * checking provided password to current and master password
      * if password is correct -> switching off parent control else not
      */
     public void onCheckPasswordButtonClicked(String passwordValue) {
