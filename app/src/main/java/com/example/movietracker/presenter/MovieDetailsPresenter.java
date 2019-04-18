@@ -22,6 +22,7 @@ public class MovieDetailsPresenter extends BasePresenter {
 
     private MovieDetailsView view;
     private Disposable disposable;
+    private MovieDetailsEntity movieDetailsEntity;
 
     public MovieDetailsPresenter(MovieDetailsView movieDetailsView, ModelContract.MovieInfoModel movieInfoModel) {
         this.movieInfoModel = movieInfoModel;
@@ -34,6 +35,10 @@ public class MovieDetailsPresenter extends BasePresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribeWith(new GetMovieDetailObserver());
+    }
+
+    public String getPosterImagePath() {
+        return this.movieDetailsEntity.getMoviePosterPath();
     }
 
     private void showLoading() {
@@ -80,7 +85,7 @@ public class MovieDetailsPresenter extends BasePresenter {
                 displayNothingToShow();
                 return;
             }
-
+            MovieDetailsPresenter.this.movieDetailsEntity = movieDetailsEntity;
             MovieDetailsPresenter.this.renderMovieDetails(movieDetailsEntity);
         }
 
