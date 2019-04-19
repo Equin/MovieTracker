@@ -126,7 +126,7 @@ public abstract class BaseFragment extends Fragment {
 
     public void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) {
+        if (imm != null && getView() != null)  {
             imm.hideSoftInputFromWindow(getView().getWindowToken(),0);
         }
     }
@@ -160,6 +160,7 @@ public abstract class BaseFragment extends Fragment {
     public void dismissDialog() {
         if (alertDialog != null) {
             alertDialog.dismiss();
+            alertDialog = null;
         }
     }
 

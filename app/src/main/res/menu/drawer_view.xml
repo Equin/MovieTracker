@@ -15,4 +15,8 @@
         android:id="@+id/parent_control"
         android:title="Parental Control"
         app:actionLayout="@layout/switch_item" />
+    <item
+        android:id="@+id/background_sync"
+        android:title="Background sync"
+        app:actionLayout="@layout/switch_item" />
 </menu>

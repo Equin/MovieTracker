@@ -265,6 +265,11 @@ public class MovieDataRepository implements MovieRepository {
                 );
     }
 
+    @Override
+    public Observable<List<Integer>> getMoviesIdList() {
+        return this.movieDao.getMoviesIdList();
+    }
+
     /**
      * getting user from UserEntity table, with 2 seconds timeout, if no emit by that time it
      * throws TimeoutException, and in onErrorReturn returns default User

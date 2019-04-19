@@ -3,7 +3,14 @@ package com.example.movietracker;
 import android.app.Activity;
 import android.app.Application;
 
+import com.example.movietracker.service.UpdateMoviesFromServerWorker;
 import com.squareup.leakcanary.LeakCanary;
+
+import java.util.concurrent.TimeUnit;
+
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
 
 public class AndroidApplication extends Application {
 

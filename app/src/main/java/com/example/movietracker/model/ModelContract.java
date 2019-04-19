@@ -10,6 +10,8 @@ import com.example.movietracker.data.entity.movie_details.cast.MovieCastsEntity;
 import com.example.movietracker.data.entity.movie_details.review.MovieReviewsEntity;
 import com.example.movietracker.data.entity.movie_details.video.MovieVideosEntity;
 
+import java.util.List;
+
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -23,6 +25,7 @@ public class ModelContract {
     public interface MovieModel {
         Observable<MoviesEntity> getMoviesWithFavorites(Filters filters);
         Observable<MoviesEntity> getMovieListForPagesWithFavorites(Filters filters);
+        Observable<List<Integer>> getMoviesIdList();
     }
 
     public interface MovieInfoModel {

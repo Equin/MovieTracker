@@ -11,16 +11,19 @@ import android.widget.Switch;
 import android.widget.ToggleButton;
 
 import com.example.movietracker.R;
-import com.example.movietracker.model.model_impl.UserModelImpl;
-import com.example.movietracker.view.model.Filters;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.di.ClassProvider;
 import com.example.movietracker.model.model_impl.GenreModelImpl;
+import com.example.movietracker.model.model_impl.UserModelImpl;
 import com.example.movietracker.presenter.MainPresenter;
+import com.example.movietracker.service.UpdateMoviesFromServerWorker;
+import com.example.movietracker.view.FilterAlertDialog;
 import com.example.movietracker.view.contract.MainView;
 import com.example.movietracker.view.custom_view.CustomGenreView;
-import com.example.movietracker.view.FilterAlertDialog;
+import com.example.movietracker.view.model.Filters;
 import com.google.android.material.navigation.NavigationView;
+
+import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,6 +31,11 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -41,11 +49,14 @@ public class MainFragment extends BaseFragment
         FilterAlertDialog.OnDoneButtonClickedListener,
         NavigationView.OnNavigationItemSelectedListener {
 
+    private static final String TAG = MainFragment.class.getCanonicalName();
+
     /**
      * The interface Main fragment interaction listener.
      */
     public interface MainFragmentInteractionListener {
         void showMovieListScreen(GenresEntity genresEntity);
+
         void showFavoriteMovieListScreen(GenresEntity genresEntity);
     }
 
@@ -66,6 +77,7 @@ public class MainFragment extends BaseFragment
     NavigationView navigationView;
 
     private Switch parentalControlSwitch;
+    private Switch backgroundSyncSwitch;
 
     public MainFragment() {
         setRetainInstance(true);
@@ -106,8 +118,13 @@ public class MainFragment extends BaseFragment
         this.navigationView.setNavigationItemSelectedListener(this);
         this.parentalControlSwitch = this.navigationView.getMenu()
                 .findItem(R.id.parent_control).getActionView()
-                .findViewById(R.id.switch_parent_control);
+                .findViewById(R.id.menu_switcher);
+        this.backgroundSyncSwitch = this.navigationView.getMenu()
+                .findItem(R.id.background_sync).getActionView()
+                .findViewById(R.id.menu_switcher);
+
         this.parentalControlSwitch.setOnCheckedChangeListener(new OnMenuSwitchCheckedListener());
+        this.backgroundSyncSwitch.setOnCheckedChangeListener(new OnMenuBackgroundSyncSwitchCheckedListener ());
     }
 
     @Override
@@ -122,6 +139,15 @@ public class MainFragment extends BaseFragment
     public void onDetach() {
         super.onDetach();
         this.mainFragmentInteractionListener = null;
+        this.parentalControlSwitch = null;
+        this.backgroundSyncSwitch = null;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        hideKeyboard();
+        dismissDialog();
     }
 
     @Override
@@ -166,7 +192,7 @@ public class MainFragment extends BaseFragment
 
     @Optional
     @OnClick(R.id.main_button_search)
-    public void onSearchButtonClicked(){
+    public void onSearchButtonClicked() {
         this.mainPresenter.onSearchButtonClicked(
                 ClassProvider.filterAlertDialog.getFilterOptions()
         );
@@ -174,13 +200,13 @@ public class MainFragment extends BaseFragment
 
     @Optional
     @OnClick(R.id.main_button_filter)
-    public void onFilterButtonClicked(){
+    public void onFilterButtonClicked() {
         this.mainPresenter.onFilterButtonClicked();
     }
 
     @Optional
     @OnClick(R.id.main_button_cancel)
-    public void onCancelButtonClicked(){
+    public void onCancelButtonClicked() {
         this.mainPresenter.onCancelButtonClicked();
     }
 
@@ -230,9 +256,43 @@ public class MainFragment extends BaseFragment
 
     @Override
     public void setParentalControlEnabled(boolean parentalControlEnabled) {
-        if(this.parentalControlSwitch != null) {
+        if (this.parentalControlSwitch != null) {
             this.parentalControlSwitch.setChecked(parentalControlEnabled);
         }
+    }
+
+    @Override
+    public void setBackgroundSyncEnabled(boolean backgroundSyncEnabled) {
+        if (this.backgroundSyncSwitch != null) {
+            this.backgroundSyncSwitch.setChecked(backgroundSyncEnabled);
+        }
+    }
+
+    @Override
+    public void stopBackgroundSync() {
+        WorkManager.getInstance().cancelUniqueWork(TAG);
+    }
+
+    @Override
+    public void startBackgroundSync() {
+        Constraints.Builder constraintsBuilder = new Constraints.Builder()
+                .setRequiresBatteryNotLow(true)
+                .setRequiredNetworkType(NetworkType.NOT_ROAMING);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            constraintsBuilder.setRequiresDeviceIdle(true);
+        }
+
+        PeriodicWorkRequest myWorkRequest = new PeriodicWorkRequest.Builder(
+                UpdateMoviesFromServerWorker.class,
+                16,
+                TimeUnit.MINUTES,
+                15,
+                TimeUnit.MINUTES)
+             //   .setConstraints(constraintsBuilder.build())
+                .build();
+
+        WorkManager.getInstance().enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.KEEP, myWorkRequest);
     }
 
     @Override
@@ -243,7 +303,7 @@ public class MainFragment extends BaseFragment
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
-        switch(menuItem.getItemId()) {
+        switch (menuItem.getItemId()) {
             case R.id.password_reset:
                 this.mainPresenter.onPasswordResetMenuItemClicked();
                 this.drawerLayout.closeDrawers();
@@ -266,7 +326,7 @@ public class MainFragment extends BaseFragment
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            int genreId = (int)buttonView.getTag(R.id.tag_int_genre_id);
+            int genreId = (int) buttonView.getTag(R.id.tag_int_genre_id);
             MainFragment.this.mainPresenter.onGenreChecked(genreId, isChecked);
         }
     }
@@ -280,6 +340,14 @@ public class MainFragment extends BaseFragment
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             MainFragment.this.mainPresenter.onParentalControlSwitchChanged(isChecked);
+        }
+    }
+
+    private class OnMenuBackgroundSyncSwitchCheckedListener implements Switch.OnCheckedChangeListener {
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            MainFragment.this.mainPresenter.onBackgroundSyncSwitchChanged(isChecked);
         }
     }
 }

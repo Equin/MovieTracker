@@ -16,4 +16,8 @@ public interface MainView extends View {
     void dismissPasswordDialog();
 
     void setParentalControlEnabled(boolean parentalControlEnabled);
+
+    void stopBackgroundSync();
+    void startBackgroundSync();
+    void setBackgroundSyncEnabled(boolean backgroundSyncEnabled);
 }

@@ -1,5 +1,6 @@
 package com.example.movietracker.di;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.example.movietracker.AndroidApplication;
@@ -23,12 +24,12 @@ public class ClassProvider {
     public static MovieRepository movieRepository;
     public static FilterAlertDialog filterAlertDialog;
 
-    public static void initialize() {
+    public static void initialize(Context context) {
 
         restClient = RestClientImpl.getInstance();
         restClient.init(NetConstant.BASE_URL);
 
-        moviesDatabase = MoviesDatabase.getDatabase(AndroidApplication.getRunningActivity().getBaseContext());
+        moviesDatabase = MoviesDatabase.getDatabase(context);
 
         movieRepository = MovieDataRepository.getInstance();
         movieRepository.init(restClient, moviesDatabase);

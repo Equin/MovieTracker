@@ -85,33 +85,6 @@ public class MainPresenter extends BasePresenter {
     }
 
     /**
-     * opens favorite movie list view  by openFavoriteMoviesListView(this.genresEntity);
-     */
-    public void onFavoriteMenuItemClicked() {
-        if (this.mainView != null) {
-            this.mainView.openFavoriteMoviesListView(this.genresEntity);
-        }
-    }
-
-    /**
-     * dismiss all selections from genre view and filter alert dialog
-     */
-    public void onCancelButtonClicked() {
-        if (this.mainView != null) {
-            this.mainView.dismissAllSelections();
-        }
-    }
-
-    /**
-     * open filter alert dialog
-     */
-    public void onFilterButtonClicked() {
-        if (this.mainView != null) {
-            this.mainView.openAlertDialog();
-        }
-    }
-
-    /**
      * changing list of selected genres according to state and genreId
      * @param genreId - id of clicked genre
      * @param isChecked - new state
@@ -119,7 +92,7 @@ public class MainPresenter extends BasePresenter {
     public void onGenreChecked(int genreId, boolean isChecked) {
         for (int i = 0; i < this.genresEntity.getGenres().size(); i++) {
             if (this.genresEntity.getGenres().get(i).getGenreId()
-                     == genreId) {
+                    == genreId) {
                 this.genresEntity.getGenres().get(i).setSelected(isChecked);
 
                 if (isChecked) {
@@ -198,6 +171,74 @@ public class MainPresenter extends BasePresenter {
             } else {
                 this.openCheckPasswordDialog();
             }
+        }
+    }
+
+    /**
+     * Start or stop background sync according to isChecked params
+     *
+     * @param isChecked
+     */
+    public void onBackgroundSyncSwitchChanged(boolean isChecked) {
+        if (this.userEntity == null
+                || (isChecked && this.userEntity.isBackgroundSyncEnabled())
+                || (!isChecked && !this.userEntity.isBackgroundSyncEnabled())) {
+            return;
+        }
+
+        this.changeBackgroundSyncState(isChecked);
+        this.updateBackgroundSyncState(isChecked);
+    }
+
+    /**
+     * opens favorite movie list view  by openFavoriteMoviesListView(this.genresEntity);
+     */
+    public void onFavoriteMenuItemClicked() {
+        if (this.mainView != null) {
+            this.mainView.openFavoriteMoviesListView(this.genresEntity);
+        }
+    }
+
+    /**
+     * dismiss all selections from genre view and filter alert dialog
+     */
+    public void onCancelButtonClicked() {
+        if (this.mainView != null) {
+            this.mainView.dismissAllSelections();
+        }
+    }
+
+    /**
+     * open filter alert dialog
+     */
+    public void onFilterButtonClicked() {
+        if (this.mainView != null) {
+            this.mainView.openAlertDialog();
+        }
+    }
+
+    private void stopBackgroundSync() {
+        if (this.mainView != null) {
+            this.mainView.stopBackgroundSync();
+        }
+    }
+
+    private void startBackgroundSync() {
+        if (this.mainView != null) {
+            this.mainView.startBackgroundSync();
+        }
+    }
+
+    /**
+     * Start or stop background sync according to isChecked params
+     *
+     * @param isChecked
+     */
+    private void changeBackgroundSyncState(boolean isChecked) {
+        if (isChecked) {
+            this.startBackgroundSync();
+        } else {
+            this.stopBackgroundSync();
         }
     }
 
@@ -282,9 +323,23 @@ public class MainPresenter extends BasePresenter {
                 .subscribe(completableSetParentalControlStateObserver);
     }
 
+    private void updateBackgroundSyncState(boolean isChecked) {
+        this.userEntity.setBackgroundSyncEnabled(isChecked);
+        this.userModel.updateUser(userEntity)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(completableSetBackgroundSyncStateObserver);
+    }
+
     private void setParentalControlEnabled(boolean parentalControlEnabled) {
         if (this.mainView != null) {
             this.mainView.setParentalControlEnabled(parentalControlEnabled);
+        }
+    }
+
+    private void setBackgroundSyncEnabled(boolean backgroundSyncEnabled) {
+        if (this.mainView != null) {
+            this.mainView.setBackgroundSyncEnabled(backgroundSyncEnabled);
         }
     }
 
@@ -302,7 +357,7 @@ public class MainPresenter extends BasePresenter {
 
         @Override
         public void onSubscribe(Disposable d) {
-            Log.d(TAG, "Subscribed to  this.userModel.addUser(userEntity)");
+            Log.d(TAG, "Subscribed to  this.userModel.updateUser(userEntity) to save new password");
         }
 
         @Override
@@ -332,8 +387,14 @@ public class MainPresenter extends BasePresenter {
         public void onNext(UserWithGenresEntity userWithGenresEntity) {
             genresEntity = userWithGenresEntity.getGenresEntity();
             userEntity = userWithGenresEntity.getUserEntity();
+
             MainPresenter.this.setParentalControlEnabled(
                     userEntity.isParentalControlEnabled());
+
+            MainPresenter.this.setBackgroundSyncEnabled(
+                    userEntity.isBackgroundSyncEnabled());
+
+            MainPresenter.this.changeBackgroundSyncState(userEntity.isBackgroundSyncEnabled());
             MainPresenter.this.renderGenreView(genresEntity);
             MainPresenter.this.hideLoading();
         }
@@ -354,7 +415,7 @@ public class MainPresenter extends BasePresenter {
 
         @Override
         public void onSubscribe(Disposable d) {
-            Log.d(TAG, "Subscribed to this.userModel.addUser(userEntity) to update parent control state");
+            Log.d(TAG, "Subscribed to this.userModel.updateUser(userEntity) to update parent control state");
         }
 
         @Override
@@ -363,6 +424,28 @@ public class MainPresenter extends BasePresenter {
                     AndroidApplication.getRunningActivity().getApplicationContext().getResources()
                             .getString(R.string.parent_control_state) + " "
                             + userEntity.isParentalControlEnabled());
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Log.e(TAG, e.getLocalizedMessage());
+            MainPresenter.this.mainView.showToast(R.string.main_error);
+        }
+    };
+
+    private CompletableObserver completableSetBackgroundSyncStateObserver = new CompletableObserver() {
+
+        @Override
+        public void onSubscribe(Disposable d) {
+            Log.d(TAG, "Subscribed to this.userModel.updateUser(userEntity) to update background sync state");
+        }
+
+        @Override
+        public void onComplete() {
+            MainPresenter.this.mainView.showToast(
+                    AndroidApplication.getRunningActivity().getApplicationContext().getResources()
+                            .getString(R.string.background_sync_state) + " "
+                            + userEntity.isBackgroundSyncEnabled());
         }
 
         @Override

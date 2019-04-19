@@ -42,7 +42,9 @@ public interface MovieDao {
     )
     MovieResultEntity getMovieById(int movieId, boolean isAdult);
 
-
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
+    @Query("SELECT movieId FROM MovieResultEntity GROUP BY movieId")
+    Observable<List<Integer>> getMoviesIdList();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void saveMovies(List<MovieResultEntity> moviesEntity);

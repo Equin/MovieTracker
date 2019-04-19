@@ -34,6 +34,7 @@
     <string name="wrong_password">Wrong password</string>
 
     <string name="parent_control_state">Parent control is </string>
+    <string name="background_sync_state">Background sync is </string>
 
     <string name="hint_to_enable_parent_control">You need to provide password to enable parent controle</string>
     <string name="filter">filter</string>

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "00a1c62326c601213ebb8376dadcca62",
+    "identityHash": "9eecd7487b2f569d5291fac00e0423ec",
     "entities": [
       {
         "tableName": "GenreEntity",
@@ -403,7 +403,7 @@
       },
       {
         "tableName": "UserEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` INTEGER NOT NULL, `password` TEXT, `isParentalControlEnabled` INTEGER NOT NULL, `masterPassword` TEXT, `movie_id` INTEGER NOT NULL, PRIMARY KEY(`userId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` INTEGER NOT NULL, `password` TEXT, `isParentalControlEnabled` INTEGER NOT NULL, `masterPassword` TEXT, `isBackgroundSyncEnabled` INTEGER NOT NULL, `movie_id` INTEGER NOT NULL, PRIMARY KEY(`userId`))",
         "fields": [
           {
             "fieldPath": "userId",
@@ -428,6 +428,12 @@
             "columnName": "masterPassword",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "isBackgroundSyncEnabled",
+            "columnName": "isBackgroundSyncEnabled",
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "movieId",
@@ -516,7 +522,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"00a1c62326c601213ebb8376dadcca62\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"9eecd7487b2f569d5291fac00e0423ec\")"
     ]
   }
 }

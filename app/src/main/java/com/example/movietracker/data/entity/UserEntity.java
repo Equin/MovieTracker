@@ -18,6 +18,7 @@ public class UserEntity {
     @Ignore
     private List<MovieResultEntity> favoriteMovies;
     private String masterPassword;
+    private boolean isBackgroundSyncEnabled;
 
     @ColumnInfo(name = "movie_id")
     private int movieId;
@@ -25,12 +26,13 @@ public class UserEntity {
     public UserEntity() {
     }
 
-    public UserEntity(int userId, String password, boolean isParentalControlEnabled, List<MovieResultEntity> favoriteMovies, String masterPassword, int movieId) {
+    public UserEntity(int userId, String password, boolean isParentalControlEnabled, List<MovieResultEntity> favoriteMovies, String masterPassword, boolean isBackgroundSyncEnabled, int movieId) {
         this.userId = userId;
         this.password = password;
         this.isParentalControlEnabled = isParentalControlEnabled;
         this.favoriteMovies = favoriteMovies;
         this.masterPassword = masterPassword;
+        this.isBackgroundSyncEnabled = isBackgroundSyncEnabled;
         this.movieId = movieId;
     }
 
@@ -82,7 +84,7 @@ public class UserEntity {
     }
 
     public static UserEntity initialUser() {
-        return new UserEntity(1, null, false, new ArrayList<>(), "4546", -1);
+        return new UserEntity(1, null, false, new ArrayList<>(), "4546", true, -1);
     }
 
     public int getUserId() {
@@ -99,5 +101,13 @@ public class UserEntity {
 
     public void setMovieId(int movieId) {
         this.movieId = movieId;
+    }
+
+    public boolean isBackgroundSyncEnabled() {
+        return isBackgroundSyncEnabled;
+    }
+
+    public void setBackgroundSyncEnabled(boolean backgroundSyncEnabled) {
+        isBackgroundSyncEnabled = backgroundSyncEnabled;
     }
 }

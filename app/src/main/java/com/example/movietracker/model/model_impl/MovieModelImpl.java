@@ -6,7 +6,11 @@ import com.example.movietracker.data.repository.MovieRepository;
 import com.example.movietracker.di.ClassProvider;
 import com.example.movietracker.model.ModelContract;
 
+import java.util.List;
+
 import io.reactivex.Observable;
+import io.reactivex.Scheduler;
+import io.reactivex.schedulers.Schedulers;
 
 public class MovieModelImpl implements ModelContract.MovieModel {
 
@@ -24,5 +28,10 @@ public class MovieModelImpl implements ModelContract.MovieModel {
     @Override
     public Observable<MoviesEntity> getMovieListForPagesWithFavorites(Filters filters) {
         return this.movieRepository.getMovieListForPagesWithFavorites(filters);
+    }
+
+    @Override
+    public Observable<List<Integer>> getMoviesIdList() {
+        return this.movieRepository.getMoviesIdList();
     }
 }
