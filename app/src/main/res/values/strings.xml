@@ -38,6 +38,7 @@
 
     <string name="hint_to_enable_parent_control">You need to provide password to enable parent controle</string>
     <string name="filter">filter</string>
+    <string name="search">search</string>
     <string name="filter_header_title">Sort Movies By</string>
     <string name="movie_list_favorite_header">Favorites</string>
 

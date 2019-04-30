@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="tag_int_genre_id" type="id"/>
-    <item name="tag_int_movie_item_position" type="id" />
+    <item name="tag_int_movie_id" type="id"/>
+    <item name="tag_movieResultEntity_movie_object" type="id" />
 </resources>

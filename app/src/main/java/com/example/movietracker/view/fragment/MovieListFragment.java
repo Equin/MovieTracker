@@ -13,6 +13,7 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.example.movietracker.R;
+import com.example.movietracker.data.entity.MovieResultEntity;
 import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.di.ClassProvider;
@@ -34,6 +35,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -67,6 +69,7 @@ public class MovieListFragment extends BaseFragment
     private MovieListFragmentInteractionListener movieListFragmentInteractionListener;
     private MovieListAdapter movieListAdapter;
     private MovieRecyclerItemPosition movieRecyclerItemPosition;
+    private MenuItem filterMenuItem;
 
     @BindView(R.id.recyclerView_movies)
     RecyclerView movieRecyclerView;
@@ -210,7 +213,7 @@ public class MovieListFragment extends BaseFragment
      */
     @Override
     public void renderAdditionalMovieListPage(MoviesEntity moviesEntity) {
-        this.movieListAdapter.reloadeMovieListWithAdditionalMovies(moviesEntity);
+        this.movieListAdapter.reloadMovieListWithAdditionalMovies(moviesEntity);
     }
 
     /**
@@ -224,11 +227,42 @@ public class MovieListFragment extends BaseFragment
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.toolbar_actions, menu);
+        filterMenuItem = menu.findItem(R.id.action_filter);
 
         if(shouldShowFavoriteMoviesList()) {
-           MenuItem filterMenuItem = menu.findItem(R.id.action_filter);
             filterMenuItem.setVisible(false);
         }
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+
+            @Override
+            public boolean onMenuItemActionExpand(final MenuItem item) {
+                filterMenuItem.setVisible(false);
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(final MenuItem item) {
+                filterMenuItem.setVisible(true);
+                return true;
+            }
+        });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                movieListAdapter.getFilter().filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                movieListAdapter.getFilter().filter(newText);
+                return false;
+            }
+        });
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -308,14 +342,16 @@ public class MovieListFragment extends BaseFragment
 
     /**
      * listener for movieRecyclerView items
-     * getting position of clicked item and passing it to movieListPresenter
+     * getting movieId of clicked item and passing it to movieListPresenter
      */
     private class ClickListener implements RecyclerView.OnClickListener {
 
         @Override
-        public void onClick(View v) {
-            int itemPosition = MovieListFragment.this.movieRecyclerView.getChildAdapterPosition(v);
-            MovieListFragment.this.movieListPresenter.onMovieItemClicked(itemPosition);
+        public void onClick(View view) {
+            if(view.getTag(R.id.tag_int_movie_id) != null) {
+                int movieId = (int)view.getTag(R.id.tag_int_movie_id);
+                MovieListFragment.this.movieListPresenter.onMovieItemClicked(movieId);
+            }
         }
     }
 
@@ -330,15 +366,15 @@ public class MovieListFragment extends BaseFragment
 
     /**
      * listener for movieRecyclerView favorite toggleButton
-     * getting position from tag of clicked item and passing it to movieListPresenter
+     * getting movie object from tag of clicked item and passing it to movieListPresenter
      */
     private class OnFavoriteCheckedListener implements CompoundButton.OnCheckedChangeListener {
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if(buttonView.getTag(R.id.tag_int_movie_item_position) != null) {
-                int position = (int)buttonView.getTag(R.id.tag_int_movie_item_position) ;
-                MovieListFragment.this.movieListPresenter.onFavoriteChecked(position, isChecked);
+            if(buttonView.getTag(R.id.tag_movieResultEntity_movie_object) != null) {
+                MovieResultEntity movieResultEntity = (MovieResultEntity)buttonView.getTag(R.id.tag_movieResultEntity_movie_object) ;
+                MovieListFragment.this.movieListPresenter.onFavoriteChecked(movieResultEntity, isChecked);
             }
         }
     }

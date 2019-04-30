@@ -3,6 +3,8 @@ package com.example.movietracker.view.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -170,12 +172,30 @@ public class MainFragment extends BaseFragment
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
     }
 
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.toolbar_actions, menu);
+
+        MenuItem filterMenuItem = menu.findItem(R.id.action_filter);
+        filterMenuItem.setVisible(false);
+
+        // TODO hidden while not implemented search functionality
+        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+        searchMenuItem.setVisible(false);
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 this.drawerLayout.openDrawer(GravityCompat.START);
                 return true;
+          /*  case R.id.action_search:
+                this.drawerLayout.openDrawer(GravityCompat.START);
+                return true;*/
         }
         return super.onOptionsItemSelected(item);
     }

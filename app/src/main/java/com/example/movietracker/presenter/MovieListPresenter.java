@@ -51,7 +51,7 @@ public class MovieListPresenter extends BasePresenter {
     /**
      * Instantiates a new Movie list presenter.
      *
-     * @param view                 the view that implements fragment
+     * @param view                  the view that implements fragment
      * @param recyclerItemPosition  position and offset of clicked movie, for scrolling purpose on return.
      */
     public MovieListPresenter(
@@ -86,8 +86,7 @@ public class MovieListPresenter extends BasePresenter {
      * On movie item clicked.
      * opens movie details fragment
      */
-    public void onMovieItemClicked(int itemPosition) {
-        int movieId = this.moviesEntity.getMovies().get(itemPosition).getMovieId();
+    public void onMovieItemClicked(int movieId) {
         this.view.showMovieDetailScreen(movieId);
     }
 
@@ -141,11 +140,10 @@ public class MovieListPresenter extends BasePresenter {
     /**
      * On favorite icon clicked. adding or removing movies to/from favorites according to state of isChecked
      *
-     * @param itemClickPosition the item click position
-     * @param isChecked         state of favoriteToggleButton
+     * @param movie
+     * @param isChecked   state of favoriteToggleButton
      */
-    public void onFavoriteChecked(int itemClickPosition, boolean isChecked) {
-        MovieResultEntity movie = this.moviesEntity.getMovies().get(itemClickPosition);
+    public void onFavoriteChecked(MovieResultEntity movie, boolean isChecked) {
         if (movie.isFavorite() != isChecked) {
             movie.setFavorite(isChecked);
             if (isChecked) {

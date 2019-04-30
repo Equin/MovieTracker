@@ -12,9 +12,9 @@ public  class SnapScrollListener extends RecyclerView.OnScrollListener {
 
     private static final int TOP_OFFSET = 50;
     private static final int BOTTOM_OFFSET = 70;
+    private static final int MAXIMUM_COUNT_OF_MOVIES_PER_PAGE = 20;
 
     private Fragment fragment;
-    private boolean isActionAllowed = true;
 
     public SnapScrollListener(Fragment fragment) {
         this.fragment = fragment;
@@ -30,7 +30,7 @@ public  class SnapScrollListener extends RecyclerView.OnScrollListener {
 
             if(isLastElement(recyclerView)
                     && (recyclerView.getAdapter() instanceof MovieListAdapter)
-                    && (fragment instanceof OnLastElementReachedListener) && isActionAllowed) {
+                    && (fragment instanceof OnLastElementReachedListener) && isActionAllowed(recyclerView)) {
 
                 ((OnLastElementReachedListener)fragment).lastElementReached();
             }
@@ -40,6 +40,10 @@ public  class SnapScrollListener extends RecyclerView.OnScrollListener {
     private boolean isLastElement(RecyclerView recyclerView) {
         final LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
         return (recyclerView.getAdapter().getItemCount() - 1) == manager.findLastVisibleItemPosition();
+    }
+
+    private boolean isActionAllowed(RecyclerView recyclerView) {
+        return (recyclerView.getAdapter().getItemCount() == MAXIMUM_COUNT_OF_MOVIES_PER_PAGE);
     }
 
     private int getScrollDistanceOfColumnClosestToTop(final RecyclerView recyclerView) {
