@@ -17,8 +17,14 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 import io.reactivex.Observable;
 
+/**
+ * The type Update movies from server worker.
+ */
 public class UpdateMoviesFromServerWorker extends Worker {
 
+    private static final String TAG = UpdateMoviesFromServerWorker.class.getCanonicalName();
+    private static final int MOVIE_COUNT_FOR_REQUEST = 2;
+    private static final int DELAY_BETWEEN_REQUEST_MILLISECONDS = 10000;
     private  Context context;
 
     public UpdateMoviesFromServerWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
@@ -29,37 +35,44 @@ public class UpdateMoviesFromServerWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        updateMoviesFromServer();
         ClassProvider.initialize(context);
-      //  ClassProvider.onDestroy();
+        updateMoviesFromServer();
 
         return Result.success();
     }
 
+    /**
+     * getting all movies ids from DB, placing 2 id into list, making request for both ids and clean list after request for new emit of ids.
+     */
     private void updateMoviesFromServer() {
         ModelContract.MovieModel movieModel = new MovieModelImpl();
 
-        List<Integer> phraseIDs = new ArrayList<>();
-        movieModel.getMoviesIdList().flatMapIterable(x -> x).collect(() -> phraseIDs, (listWithTwoIds, p) -> {
+        List<Integer> moviesIds = new ArrayList<>();
+        movieModel.getMoviesIdList().flatMapIterable(x -> x).collect(() -> moviesIds, (listWithTwoIds, p) -> {
             listWithTwoIds.add(p);
-            if(listWithTwoIds.size() == 2) {
-                Thread.sleep(10000);
-                Observable.fromIterable(listWithTwoIds).doOnNext(integer -> makeRequests(integer).subscribe()).subscribe();
-                Log.e("UPDATE_SERVICE", "---------------------- ");
+            if(listWithTwoIds.size() == MOVIE_COUNT_FOR_REQUEST) {
+                Thread.sleep(DELAY_BETWEEN_REQUEST_MILLISECONDS); // pausing each next request for 10 seconds... need to replace with RxJava but haven`t found how to do it
+                Observable.fromIterable(listWithTwoIds).doOnNext(this::makeRequests).subscribe();
+                Log.e(TAG, "---------------------- ");
                 listWithTwoIds.clear();
             } }).subscribe();
     }
 
-    private Observable<Object> makeRequests(int movieId) {
-        ClassProvider.initialize(context);
+    /**
+     * getting details for each movie, each movie details request getting info from Server and saving it to Room DB
+     *
+     * @param movieId
+     */
+    private void makeRequests(int movieId) {
         ModelContract.MovieInfoModel movieInfoModel= new MovieInfoModelImpl();
         ModelContract.MovieDetailTabsModel movieDetailTabsModel = new MovieDetailTabsModelImpl();
-        Log.e("UPDATE_SERVICE", "runs " + movieId);
 
-       return Observable.zip(
+        Log.e(TAG, "updating movie with id " + movieId);
+
+        Observable.zip(
                 movieInfoModel.getMovieInfo(movieId),
                 movieDetailTabsModel.getMovieCasts(movieId),
                 movieDetailTabsModel.getMovieReviews(movieId),
-                movieDetailTabsModel.getMovieVideos(movieId), (o, b,c, d)-> o);
+                movieDetailTabsModel.getMovieVideos(movieId), (movieInfo, movieCasts, movieReviews, movieVideos) -> movieInfo).subscribe();
     }
 }

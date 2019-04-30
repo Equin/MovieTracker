@@ -3,7 +3,6 @@ package com.example.movietracker.di;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.movietracker.AndroidApplication;
 import com.example.movietracker.data.database.MoviesDatabase;
 import com.example.movietracker.data.net.RestClient;
 import com.example.movietracker.data.net.RestClientImpl;

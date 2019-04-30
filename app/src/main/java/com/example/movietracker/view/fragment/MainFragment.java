@@ -50,6 +50,7 @@ public class MainFragment extends BaseFragment
         NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = MainFragment.class.getCanonicalName();
+    private static final int BACKGROUND_SYNC_REPEAT_INTERVAL_MINUTES = 120;
 
     /**
      * The interface Main fragment interaction listener.
@@ -283,16 +284,16 @@ public class MainFragment extends BaseFragment
             constraintsBuilder.setRequiresDeviceIdle(true);
         }
 
-        PeriodicWorkRequest myWorkRequest = new PeriodicWorkRequest.Builder(
+        PeriodicWorkRequest backgroundSyncWorkRequest = new PeriodicWorkRequest.Builder(
                 UpdateMoviesFromServerWorker.class,
-                16,
+                BACKGROUND_SYNC_REPEAT_INTERVAL_MINUTES,
                 TimeUnit.MINUTES,
-                15,
+                BACKGROUND_SYNC_REPEAT_INTERVAL_MINUTES + 2,
                 TimeUnit.MINUTES)
-             //   .setConstraints(constraintsBuilder.build())
+                .setConstraints(constraintsBuilder.build())
                 .build();
 
-        WorkManager.getInstance().enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.KEEP, myWorkRequest);
+        WorkManager.getInstance().enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.KEEP, backgroundSyncWorkRequest);
     }
 
     @Override
@@ -316,7 +317,6 @@ public class MainFragment extends BaseFragment
         }
         return true;
     }
-
 
     /**
      * listener for customGenreView
@@ -343,6 +343,10 @@ public class MainFragment extends BaseFragment
         }
     }
 
+    /**
+     * listener for background sync switcher
+     * passing state of switcher to MainPresenter
+     */
     private class OnMenuBackgroundSyncSwitchCheckedListener implements Switch.OnCheckedChangeListener {
 
         @Override

@@ -9,8 +9,6 @@ import com.example.movietracker.model.ModelContract;
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.Scheduler;
-import io.reactivex.schedulers.Schedulers;
 
 public class MovieModelImpl implements ModelContract.MovieModel {
 
