@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.movietracker.AndroidApplication;
 import com.example.movietracker.R;
+import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.data.entity.UserEntity;
 import com.example.movietracker.view.helper.RxDisposeHelper;
 import com.example.movietracker.view.model.Filters;
@@ -29,6 +30,7 @@ public class MainPresenter extends BasePresenter {
 
     private ModelContract.GenreModel genreModel;
     private ModelContract.UserModel userModel;
+    private ModelContract.MovieModel movieModel;
 
     private MainView mainView;
     private Filters filters;
@@ -36,15 +38,17 @@ public class MainPresenter extends BasePresenter {
     private GenresEntity genresEntity;
     private UserEntity userEntity;
     private Disposable userDisposable;
+    private Disposable movieDisposable;
 
     /**
      * Instantiates a new Main presenter.
      *
      * @param mainView the main view implemented by MainFragment
      */
-    public MainPresenter(MainView mainView, ModelContract.GenreModel genreModel, ModelContract.UserModel userModel, Filters filters) {
+    public MainPresenter(MainView mainView, ModelContract.GenreModel genreModel, ModelContract.UserModel userModel, ModelContract.MovieModel movieModel, Filters filters) {
         this.mainView = mainView;
         this.genreModel = genreModel;
+        this.movieModel = movieModel;
         this.filters = filters;
         this.userModel = userModel;
     }
@@ -54,13 +58,13 @@ public class MainPresenter extends BasePresenter {
      */
     public void getUser() {
         showLoading();
-       this.userDisposable = Observable.zip(
-               this.userModel.getUser(),
-               this.genreModel.getGenres().toObservable(),
-               (userEntity, genresEntity) -> new UserWithGenresEntity(genresEntity, userEntity))
-               .subscribeOn(Schedulers.io())
-               .observeOn(AndroidSchedulers.mainThread())
-               .subscribeWith(getUserWithGenresObserver);
+        this.userDisposable = Observable.zip(
+                this.userModel.getUser(),
+                this.genreModel.getGenres().toObservable(),
+                (userEntity, genresEntity) -> new UserWithGenresEntity(genresEntity, userEntity))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new GetUserWithGenresObserver());
     }
 
     @Override
@@ -70,6 +74,7 @@ public class MainPresenter extends BasePresenter {
         this.genresEntity = null;
         this.genreModel = null;
         RxDisposeHelper.dispose(this.userDisposable);
+        RxDisposeHelper.dispose(this.movieDisposable);
     }
 
     /**
@@ -82,6 +87,28 @@ public class MainPresenter extends BasePresenter {
         this.filters.setSortBy(option.getSortBy().getSearchName());
         this.filters.setOrder(option.getSortOrder());
         this.openMovieListView(this.genresEntity);
+    }
+
+    public void onSearchQueryTextChange(String newText) {
+        if ("".equals(newText)) {
+            this.showSearchResult(new MoviesEntity());
+            return;
+        }
+        filters.setIncludeAdult(!this.userEntity.isParentalControlEnabled());
+        filters.setSearchQueryByTitle(newText);
+        this.movieDisposable = this.movieModel.getMoviesByTitle(filters).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new GetMovieByTitleObserver());
+    }
+
+    public void onSearchQueryTextSubmit(String query) {
+        if ("".equals(query)) {
+            this.showSearchResult(new MoviesEntity());
+            return;
+        }
+        filters.setSearchQueryByTitle(query);
+        filters.setIncludeAdult(!this.userEntity.isParentalControlEnabled());
+        this.movieModel.getMoviesByTitle(filters);
     }
 
     /**
@@ -305,6 +332,12 @@ public class MainPresenter extends BasePresenter {
         }
     }
 
+    private void showSearchResult(MoviesEntity moviesEntity) {
+        if (this.mainView != null) {
+            this.mainView.showSearchResult(moviesEntity);
+        }
+    }
+
     private void savePassword(String newPassword) {
         this.userEntity.setPassword(newPassword);
         this.userEntity.setParentalControlEnabled(true);
@@ -312,7 +345,7 @@ public class MainPresenter extends BasePresenter {
         this.userModel.updateUser(userEntity)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(completableSavePasswordObserver);
+                .subscribe(new CompletableSavePasswordObserver());
     }
 
     private void updateParentalControlState(boolean isChecked) {
@@ -320,7 +353,7 @@ public class MainPresenter extends BasePresenter {
         this.userModel.updateUser(userEntity)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(completableSetParentalControlStateObserver);
+                .subscribe(new CompletableSetParentalControlStateObserver());
     }
 
     private void updateBackgroundSyncState(boolean isChecked) {
@@ -328,7 +361,7 @@ public class MainPresenter extends BasePresenter {
         this.userModel.updateUser(userEntity)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(completableSetBackgroundSyncStateObserver);
+                .subscribe(new CompletableSetBackgroundSyncStateObserver());
     }
 
     private void setParentalControlEnabled(boolean parentalControlEnabled) {
@@ -349,11 +382,15 @@ public class MainPresenter extends BasePresenter {
         }
     }
 
+    public void onMovieItemClicked(int movieId) {
+        this.mainView.openMovieDetailScreen(movieId);
+    }
+
     /**
      * saving password to db
      * onComplete: closing passwordDialog on successful save.
      */
-    private CompletableObserver completableSavePasswordObserver = new CompletableObserver() {
+    private class CompletableSavePasswordObserver implements CompletableObserver {
 
         @Override
         public void onSubscribe(Disposable d) {
@@ -377,7 +414,7 @@ public class MainPresenter extends BasePresenter {
      * getting userEntity and genreEntity from network/db
      * onNext: setting state of parentControlSwitcher and rendering genresEntity to customGenreView
      */
-    private DisposableObserver<UserWithGenresEntity> getUserWithGenresObserver = new DisposableObserver<UserWithGenresEntity>() {
+    private class GetUserWithGenresObserver extends DisposableObserver<UserWithGenresEntity> {
         @Override
         public void onComplete() {
             Log.d(TAG, "Subscribed to this.userModel.getUser() with genres");
@@ -408,10 +445,34 @@ public class MainPresenter extends BasePresenter {
     };
 
     /**
+     * getting userEntity and genreEntity from network/db
+     * onNext: setting state of parentControlSwitcher and rendering genresEntity to customGenreView
+     */
+    private class GetMovieByTitleObserver extends DisposableObserver<MoviesEntity> {
+        @Override
+        public void onComplete() {
+            Log.d(TAG, "Subscribed to getMovieByTitle");
+        }
+
+        @Override
+        public void onNext(MoviesEntity moviesEntity) {
+            MainPresenter.this.showSearchResult(moviesEntity);
+            MainPresenter.this.hideLoading();
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Log.e(TAG, e.getLocalizedMessage());
+            MainPresenter.this.showToast(R.string.main_error);
+            MainPresenter.this.hideLoading();
+        }
+    };
+
+    /**
      * saving new parentalControl state to db
      * onComplete: showing toast with new state
      */
-    private CompletableObserver completableSetParentalControlStateObserver = new CompletableObserver() {
+    private  class  CompletableSetParentalControlStateObserver implements CompletableObserver {
 
         @Override
         public void onSubscribe(Disposable d) {
@@ -433,7 +494,7 @@ public class MainPresenter extends BasePresenter {
         }
     };
 
-    private CompletableObserver completableSetBackgroundSyncStateObserver = new CompletableObserver() {
+    private class CompletableSetBackgroundSyncStateObserver implements CompletableObserver {
 
         @Override
         public void onSubscribe(Disposable d) {

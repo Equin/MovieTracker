@@ -3,4 +3,5 @@
     <item name="tag_int_genre_id" type="id"/>
     <item name="tag_int_movie_id" type="id"/>
     <item name="tag_movieResultEntity_movie_object" type="id" />
+    <item name="recycler_view_search_results" type="id" />
 </resources>

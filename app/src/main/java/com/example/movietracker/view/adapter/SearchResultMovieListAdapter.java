@@ -10,6 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.MovieResultEntity;
@@ -23,45 +27,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView;
-
 import static com.example.movietracker.view.helper.UtilityHelpers.getAppropriateValue;
 import static com.example.movietracker.view.helper.UtilityHelpers.getYear;
 
-public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MovieListViewHolder>
-implements Filterable {
+public class SearchResultMovieListAdapter extends RecyclerView.Adapter<SearchResultMovieListAdapter.MovieListViewHolder> {
 
     private List<MovieResultEntity> movieList;
-    private List<MovieResultEntity> movieListFull;
-    private GenresEntity genresEntity;
     private View.OnClickListener clickListener;
-    private CompoundButton.OnCheckedChangeListener onCheckedChangeListener;
 
-    public MovieListAdapter(
+    public SearchResultMovieListAdapter(
             MoviesEntity movieList,
-            View.OnClickListener clickListener,
-            GenresEntity genresEntity,
-            CompoundButton.OnCheckedChangeListener onCheckedChangeListener) {
-        this.movieList = new ArrayList<>();
-        this.movieList.addAll(movieList.getMovies());
-        this.movieListFull = new ArrayList<>(this.movieList);
-        this.genresEntity = genresEntity;
+            View.OnClickListener clickListener) {
+        this.movieList = movieList.getMovies();
         this.clickListener = clickListener;
-        this.onCheckedChangeListener = onCheckedChangeListener;
     }
 
     @NonNull
     @Override
     public MovieListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_list_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_search_list_item, parent, false);
         view.setOnClickListener(this.clickListener);
 
-        MovieListViewHolder viewHolder = new MovieListViewHolder(view);
-        viewHolder.favoriteToggleButton.setOnCheckedChangeListener(onCheckedChangeListener);
-
-        return viewHolder;
+        return  new MovieListViewHolder(view);
     }
 
     @Override
@@ -75,57 +62,19 @@ implements Filterable {
         return this.movieList.size();
     }
 
-    @Override
-    public Filter getFilter() {
-        return movieFilter;
-    }
-
-    private Filter movieFilter = new Filter() {
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-            List<MovieResultEntity> filteredList = new ArrayList<>();
-
-            if (constraint == null || constraint.length() == 0) {
-                filteredList.addAll(movieListFull);
-            } else {
-                String filterPattern = constraint.toString().toLowerCase().trim();
-
-                for (MovieResultEntity item : movieListFull) {
-                    if (item.getMovieTitle().toLowerCase().contains(filterPattern)) {
-                        filteredList.add(item);
-                    }
-                }
-            }
-
-            FilterResults results = new FilterResults();
-            results.values = filteredList;
-
-            return results;
-        }
-
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-          notifyDiffUtilAboutChanges(((List<MovieResultEntity>) results.values));
-        }
-    };
-
     class MovieListViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView moviePoster;
         private TextView movieReleaseDate;
         private TextView movieTitle;
-        private TextView movieGenres;
         private TextView movieRating;
-        private ToggleButton favoriteToggleButton;
 
         MovieListViewHolder(@NonNull View itemView) {
             super(itemView);
             this.moviePoster = itemView.findViewById(R.id.imageView_moviePoster);
             this.movieReleaseDate = itemView.findViewById(R.id.textView_movieReleaseDate);
             this.movieTitle = itemView.findViewById(R.id.textView_movieTitle);
-            this.movieGenres = itemView.findViewById(R.id.textView_MovieGenres);
             this.movieRating = itemView.findViewById(R.id.textView_movieRating);
-            this.favoriteToggleButton = itemView.findViewById(R.id.toggleButton_favorite);
         }
 
         void bindMovieToView(MovieResultEntity movie) {
@@ -136,16 +85,10 @@ implements Filterable {
             this.movieReleaseDate.setText(
                     getYear(movie.getMovieReleaseDate()));
 
-            this.movieGenres.setText(
-                    UtilityHelpers.getPipeDividedGenresFromId(
-                            movie.getGenreIds(), genresEntity.getGenres()));
-
             this.movieRating.setText(String.format(Locale.ENGLISH, "%.1f",
                     movie.getMovieVoteAverage()));
 
             this.itemView.setTag(R.id.tag_int_movie_id, movie.getMovieId());
-            this.favoriteToggleButton.setTag(R.id.tag_movieResultEntity_movie_object, movie);
-            this.favoriteToggleButton.setChecked(movie.isFavorite());
 
             Glide
                     .with(this.itemView)
@@ -155,7 +98,7 @@ implements Filterable {
         }
     }
 
-    public void reloadMovieListWithAdditionalMovies(MoviesEntity newMovieList) {
+    public void reloadWithNewResults(MoviesEntity newMovieList) {
         notifyDiffUtilAboutChanges(newMovieList.getMovies());
     }
 

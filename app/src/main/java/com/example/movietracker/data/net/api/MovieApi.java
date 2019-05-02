@@ -38,4 +38,7 @@ public interface MovieApi {
     @GET("movie/{movie_id}/reviews")
     Observable<MovieReviewsEntity> getMovieReviews(@Path("movie_id") int movieId);
 
+    @GET("search/movie/")
+    Observable<MoviesEntity> getMoviesByTitle(@Query("query") String query, @Query("include_adult")boolean isIncludeAdult);
+
 }

@@ -17,6 +17,7 @@ public class Filters implements Serializable {
     private boolean includeAdult;
     private String sortBy;
     private Order order;
+    private String searchQueryByTitle;
 
     private static class SingletonHelper {
         private static final Filters INSTANCE = new Filters();
@@ -34,12 +35,13 @@ public class Filters implements Serializable {
         order = Order.DESC;
     }
 
-    public Filters(int page, @NonNull List<GenreEntity> selectedGenres, boolean includeAdult, @NonNull String sortBy, @NonNull Order order) {
+    public Filters(int page, @NonNull List<GenreEntity> selectedGenres, boolean includeAdult, @NonNull String sortBy, @NonNull Order order, @NonNull String searchQueryByTitle ) {
         this.page = page;
         this.selectedGenres = selectedGenres;
         this.includeAdult = includeAdult;
         this.sortBy = sortBy;
         this.order = order;
+        this.searchQueryByTitle = searchQueryByTitle;
     }
 
     public int getPage() {
@@ -73,6 +75,14 @@ public class Filters implements Serializable {
 
     public void setOrder(@NonNull Order order) {
         this.order = order;
+    }
+
+    public String getSearchQueryByTitle() {
+        return searchQueryByTitle;
+    }
+
+    public void setSearchQueryByTitle(String searchQueryByTitle) {
+        this.searchQueryByTitle = searchQueryByTitle;
     }
 
     public void addSelectedGenre(@NonNull GenreEntity genreEntity) {

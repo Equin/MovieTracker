@@ -13,15 +13,19 @@ import android.widget.Switch;
 import android.widget.ToggleButton;
 
 import com.example.movietracker.R;
+import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.di.ClassProvider;
 import com.example.movietracker.model.model_impl.GenreModelImpl;
+import com.example.movietracker.model.model_impl.MovieModelImpl;
 import com.example.movietracker.model.model_impl.UserModelImpl;
 import com.example.movietracker.presenter.MainPresenter;
 import com.example.movietracker.service.UpdateMoviesFromServerWorker;
 import com.example.movietracker.view.FilterAlertDialog;
+import com.example.movietracker.view.adapter.SearchResultMovieListAdapter;
 import com.example.movietracker.view.contract.MainView;
 import com.example.movietracker.view.custom_view.CustomGenreView;
+import com.example.movietracker.view.custom_view.CustomSearchView;
 import com.example.movietracker.view.model.Filters;
 import com.google.android.material.navigation.NavigationView;
 
@@ -31,8 +35,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
@@ -49,7 +55,8 @@ import butterknife.Optional;
 public class MainFragment extends BaseFragment
         implements MainView,
         FilterAlertDialog.OnDoneButtonClickedListener,
-        NavigationView.OnNavigationItemSelectedListener {
+        NavigationView.OnNavigationItemSelectedListener,
+        SearchView.OnQueryTextListener {
 
     private static final String TAG = MainFragment.class.getCanonicalName();
     private static final int BACKGROUND_SYNC_REPEAT_INTERVAL_MINUTES = 120;
@@ -59,7 +66,7 @@ public class MainFragment extends BaseFragment
      */
     public interface MainFragmentInteractionListener {
         void showMovieListScreen(GenresEntity genresEntity);
-
+        void showMovieDetailScreen(int movieId);
         void showFavoriteMovieListScreen(GenresEntity genresEntity);
     }
 
@@ -81,6 +88,9 @@ public class MainFragment extends BaseFragment
 
     private Switch parentalControlSwitch;
     private Switch backgroundSyncSwitch;
+    private CustomSearchView customSearchView;
+    private SearchResultMovieListAdapter searchResultMovieListAdapter;
+    private MenuItem searchMenuItem;
 
     public MainFragment() {
         setRetainInstance(true);
@@ -114,6 +124,7 @@ public class MainFragment extends BaseFragment
                 this,
                 new GenreModelImpl(),
                 new UserModelImpl(),
+                new MovieModelImpl(),
                 Filters.getInstance());
 
         this.mainPresenter.getUser();
@@ -151,6 +162,7 @@ public class MainFragment extends BaseFragment
         super.onStop();
         hideKeyboard();
         dismissDialog();
+        this.searchMenuItem.collapseActionView();
     }
 
     @Override
@@ -172,7 +184,6 @@ public class MainFragment extends BaseFragment
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
     }
 
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.toolbar_actions, menu);
@@ -180,9 +191,14 @@ public class MainFragment extends BaseFragment
         MenuItem filterMenuItem = menu.findItem(R.id.action_filter);
         filterMenuItem.setVisible(false);
 
-        // TODO hidden while not implemented search functionality
-        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
-        searchMenuItem.setVisible(false);
+        this.searchMenuItem = menu.findItem(R.id.action_search);
+        this.customSearchView = (CustomSearchView) this.searchMenuItem.getActionView();
+
+        this.searchResultMovieListAdapter
+                = new SearchResultMovieListAdapter(new MoviesEntity(), new ClickListener());
+
+        this.customSearchView.setRecyclerViewAdapter(this.searchResultMovieListAdapter);
+        this.customSearchView.setOnQueryTextListener(this);
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -193,9 +209,6 @@ public class MainFragment extends BaseFragment
             case android.R.id.home:
                 this.drawerLayout.openDrawer(GravityCompat.START);
                 return true;
-          /*  case R.id.action_search:
-                this.drawerLayout.openDrawer(GravityCompat.START);
-                return true;*/
         }
         return super.onOptionsItemSelected(item);
     }
@@ -234,6 +247,11 @@ public class MainFragment extends BaseFragment
     @Override
     public void openMovieListView(GenresEntity genresEntity) {
         this.mainFragmentInteractionListener.showMovieListScreen(genresEntity);
+    }
+
+    @Override
+    public void openMovieDetailScreen(int movieId) {
+        this.mainFragmentInteractionListener.showMovieDetailScreen(movieId);
     }
 
     @Override
@@ -287,6 +305,30 @@ public class MainFragment extends BaseFragment
         if (this.backgroundSyncSwitch != null) {
             this.backgroundSyncSwitch.setChecked(backgroundSyncEnabled);
         }
+    }
+
+    @Override
+    public void showSearchResult(MoviesEntity moviesEntity) {
+        if (moviesEntity.getMovies().isEmpty()) {
+            this.customSearchView.setVisibilityOfSearchResultBox(View.GONE);
+        } else {
+            this.customSearchView.setVisibilityOfSearchResultBox(View.VISIBLE);
+        }
+
+        //this.customSearchView.changeHeightAccordingToResults(moviesEntity);
+        this.searchResultMovieListAdapter.reloadWithNewResults(moviesEntity);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        this.mainPresenter.onSearchQueryTextSubmit(query);
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        this.mainPresenter.onSearchQueryTextChange(newText);
+        return false;
     }
 
     @Override
@@ -372,6 +414,21 @@ public class MainFragment extends BaseFragment
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             MainFragment.this.mainPresenter.onBackgroundSyncSwitchChanged(isChecked);
+        }
+    }
+
+    /**
+     * listener for movieRecyclerView items
+     * getting movieId of clicked item and passing it to movieListPresenter
+     */
+    private class ClickListener implements RecyclerView.OnClickListener {
+
+        @Override
+        public void onClick(View view) {
+            if(view.getTag(R.id.tag_int_movie_id) != null) {
+                int movieId = (int)view.getTag(R.id.tag_int_movie_id);
+                MainFragment.this.mainPresenter.onMovieItemClicked(movieId);
+            }
         }
     }
 }

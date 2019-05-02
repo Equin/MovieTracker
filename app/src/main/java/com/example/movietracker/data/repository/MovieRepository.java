@@ -29,6 +29,7 @@ public interface MovieRepository {
     Observable<MovieCastsEntity> getMovieCasts(int movieId);
     Observable<MovieVideosEntity> getMovieVideos(int movieId);
     Observable<MovieReviewsEntity> getMovieReviews(int movieId);
+    Observable<MoviesEntity> getMoviesByTitle(Filters filters);
 
     Observable<List<Integer>> getMoviesIdList();
 

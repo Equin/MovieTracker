@@ -26,6 +26,7 @@ public class ModelContract {
         Observable<MoviesEntity> getMoviesWithFavorites(Filters filters);
         Observable<MoviesEntity> getMovieListForPagesWithFavorites(Filters filters);
         Observable<List<Integer>> getMoviesIdList();
+        Observable<MoviesEntity> getMoviesByTitle(Filters filters);
     }
 
     public interface MovieInfoModel {

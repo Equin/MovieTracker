@@ -45,7 +45,9 @@ import butterknife.ButterKnife;
 public class MovieListFragment extends BaseFragment
         implements MovieListView,
         OnLastElementReachedListener,
-        FilterAlertDialog.OnDoneButtonClickedListener {
+        FilterAlertDialog.OnDoneButtonClickedListener,
+        SearchView.OnQueryTextListener,
+        MenuItem.OnActionExpandListener {
 
     private static final String ARG_GENRES_ENTITY = "args_genres_entity";
     private static final String ARG_SHOW_FAVORITE_MOVIES = "args_show_favorite_movies";
@@ -146,6 +148,8 @@ public class MovieListFragment extends BaseFragment
         }
     }
 
+    SearchView customSearchView;
+
     /**
      * saving position and offset of currently first completely visible recycler view item
      */
@@ -162,8 +166,11 @@ public class MovieListFragment extends BaseFragment
             itemOffset = view != null ? view.getTop() : 0;
         }
 
+        searchItem.collapseActionView();
         this.movieListPresenter.saveRecyclerPosition(itemPosition, itemOffset);
     }
+
+    MenuItem searchItem;
 
     @Override
     public void onDetach() {
@@ -233,36 +240,16 @@ public class MovieListFragment extends BaseFragment
             filterMenuItem.setVisible(false);
         }
 
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchItem = menu.findItem(R.id.action_search);
+        customSearchView = (SearchView) searchItem.getActionView();
 
-        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+        searchItem.setOnActionExpandListener(this);
 
-            @Override
-            public boolean onMenuItemActionExpand(final MenuItem item) {
-                filterMenuItem.setVisible(false);
-                return true;
-            }
+      /*  SearchResultMovieListAdapter searchResultMovieListAdapter
+                = new SearchResultMovieListAdapter(new MoviesEntity(), new ClickListener());*/
 
-            @Override
-            public boolean onMenuItemActionCollapse(final MenuItem item) {
-                filterMenuItem.setVisible(true);
-                return true;
-            }
-        });
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                movieListAdapter.getFilter().filter(query);
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                movieListAdapter.getFilter().filter(newText);
-                return false;
-            }
-        });
+      //  customSearchView.createSearchResultRecyclerViewBox(searchResultMovieListAdapter);
+        customSearchView.setOnQueryTextListener(this);
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -280,6 +267,30 @@ public class MovieListFragment extends BaseFragment
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        movieListAdapter.getFilter().filter(query);
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        movieListAdapter.getFilter().filter(newText);
+        return false;
+    }
+
+    @Override
+    public boolean onMenuItemActionExpand(final MenuItem item) {
+        filterMenuItem.setVisible(false);
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemActionCollapse(final MenuItem item) {
+        filterMenuItem.setVisible(true);
+        return true;
     }
 
     @Override

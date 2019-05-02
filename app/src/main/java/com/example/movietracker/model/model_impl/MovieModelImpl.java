@@ -32,4 +32,9 @@ public class MovieModelImpl implements ModelContract.MovieModel {
     public Observable<List<Integer>> getMoviesIdList() {
         return this.movieRepository.getMoviesIdList();
     }
+
+    @Override
+    public Observable<MoviesEntity> getMoviesByTitle(Filters filters) {
+        return this.movieRepository.getMoviesByTitle(filters);
+    }
 }

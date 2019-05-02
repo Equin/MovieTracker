@@ -266,6 +266,11 @@ public class MovieDataRepository implements MovieRepository {
     }
 
     @Override
+    public Observable<MoviesEntity> getMoviesByTitle(Filters filters) {
+        return this.movieApi.getMoviesByTitle(filters.getSearchQueryByTitle(), filters.isIncludeAdult());
+    }
+
+    @Override
     public Observable<List<Integer>> getMoviesIdList() {
         return this.movieDao.getMoviesIdList();
     }
