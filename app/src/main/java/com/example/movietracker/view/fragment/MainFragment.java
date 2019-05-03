@@ -59,7 +59,7 @@ public class MainFragment extends BaseFragment
         SearchView.OnQueryTextListener {
 
     private static final String TAG = MainFragment.class.getCanonicalName();
-    private static final int BACKGROUND_SYNC_REPEAT_INTERVAL_MINUTES = 120;
+    private static final int BACKGROUND_SYNC_REPEAT_INTERVAL_MINUTES = 240;
 
     /**
      * The interface Main fragment interaction listener.
@@ -155,6 +155,7 @@ public class MainFragment extends BaseFragment
         this.mainFragmentInteractionListener = null;
         this.parentalControlSwitch = null;
         this.backgroundSyncSwitch = null;
+        this.customSearchView = null;
     }
 
     @Override
@@ -186,10 +187,7 @@ public class MainFragment extends BaseFragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.toolbar_actions, menu);
-
-        MenuItem filterMenuItem = menu.findItem(R.id.action_filter);
-        filterMenuItem.setVisible(false);
+        inflater.inflate(R.menu.toolbar_actions_main_screen, menu);
 
         this.searchMenuItem = menu.findItem(R.id.action_search);
         this.customSearchView = (CustomSearchView) this.searchMenuItem.getActionView();
@@ -315,27 +313,40 @@ public class MainFragment extends BaseFragment
             this.customSearchView.setVisibilityOfSearchResultBox(View.VISIBLE);
         }
 
-        //this.customSearchView.changeHeightAccordingToResults(moviesEntity);
         this.searchResultMovieListAdapter.reloadWithNewResults(moviesEntity);
     }
 
+    /**
+     * filtering movies by title on text submit in searchView
+     * @param query - submitted query
+     */
     @Override
     public boolean onQueryTextSubmit(String query) {
-        this.mainPresenter.onSearchQueryTextSubmit(query);
+        this.mainPresenter.onSearchQueryTextChange(query);
         return false;
     }
 
+    /**
+     * filtering movies by title on text change in searchView
+     * @param newText
+     */
     @Override
     public boolean onQueryTextChange(String newText) {
         this.mainPresenter.onSearchQueryTextChange(newText);
         return false;
     }
 
+    /**
+     * canceling background syncing
+     */
     @Override
     public void stopBackgroundSync() {
         WorkManager.getInstance().cancelUniqueWork(TAG);
     }
 
+    /**
+     * starting background sync of movies every 4h
+     */
     @Override
     public void startBackgroundSync() {
         Constraints.Builder constraintsBuilder = new Constraints.Builder()

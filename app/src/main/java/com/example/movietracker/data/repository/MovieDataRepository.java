@@ -119,6 +119,18 @@ public class MovieDataRepository implements MovieRepository {
     }
 
     @Override
+    public Observable<MoviesEntity> getMoviesByTitle(Filters filters) {
+        return this.movieApi.getMoviesByTitle(filters.getSearchQueryByTitle(), filters.isIncludeAdult())
+                .doOnNext(moviesEntity -> {
+                    this.movieDao.saveMovies(moviesEntity.getMovies());
+                    this.movieDao.addMovieGenreRelation(moviesEntity.getMovies());
+                })
+                .onExceptionResumeNext(
+                        this.movieDao.getMovieByTitle(filters.getSearchQueryByTitle(), filters.isIncludeAdult()).map(movieResultEntities ->
+                                new MoviesEntity(1,1, movieResultEntities)));
+    }
+
+    @Override
     public Observable<MoviesEntity> getMoviesWithFavorites(Filters filters) {
         return  getMovieFavorites(getMovies(filters));
     }
@@ -263,11 +275,6 @@ public class MovieDataRepository implements MovieRepository {
                         this.movieDetailDao.getMovieReviews(movieId)
                                 .map(this.movieReviewsDataMapper::transformFromList)
                 );
-    }
-
-    @Override
-    public Observable<MoviesEntity> getMoviesByTitle(Filters filters) {
-        return this.movieApi.getMoviesByTitle(filters.getSearchQueryByTitle(), filters.isIncludeAdult());
     }
 
     @Override

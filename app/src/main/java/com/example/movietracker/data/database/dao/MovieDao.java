@@ -43,6 +43,13 @@ public interface MovieDao {
     MovieResultEntity getMovieById(int movieId, boolean isAdult);
 
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
+    @Query("SELECT * FROM MovieResultEntity " +
+            "WHERE movieTitle like '%' || :title || '%' " +
+            "AND (isAdult = 0 or isAdult = (:isAdult))"
+    )
+    Observable<List<MovieResultEntity>> getMovieByTitle(String title, boolean isAdult);
+
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT movieId FROM MovieResultEntity GROUP BY movieId")
     Observable<List<Integer>> getMoviesIdList();
 

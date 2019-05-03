@@ -5,14 +5,9 @@
     <!-- "Mark Favorite", should appear as action button if possible -->
     <item
         android:id="@+id/action_search"
-        android:icon="@drawable/ic_search"
+        android:icon="@drawable/ic_search_white"
         android:title="@string/search"
         app:actionViewClass="com.example.movietracker.view.custom_view.CustomSearchView"
         app:showAsAction="always|collapseActionView"/>
 
-    <item
-        android:id="@+id/action_filter"
-        android:icon="@drawable/ic_sort"
-        android:title="@string/filter"
-        app:showAsAction="always"/>
 </menu>

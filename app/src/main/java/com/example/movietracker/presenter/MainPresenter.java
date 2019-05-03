@@ -13,7 +13,9 @@ import com.example.movietracker.model.ModelContract;
 import com.example.movietracker.view.contract.MainView;
 import com.example.movietracker.view.model.Option;
 import com.example.movietracker.view.model.UserWithGenresEntity;
+import com.jakewharton.rxrelay2.PublishRelay;
 
+import java.util.concurrent.TimeUnit;
 import io.reactivex.CompletableObserver;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -40,6 +42,8 @@ public class MainPresenter extends BasePresenter {
     private Disposable userDisposable;
     private Disposable movieDisposable;
 
+    private PublishRelay<String> searchQueryPublishSubject = PublishRelay.create();
+
     /**
      * Instantiates a new Main presenter.
      *
@@ -51,6 +55,7 @@ public class MainPresenter extends BasePresenter {
         this.movieModel = movieModel;
         this.filters = filters;
         this.userModel = userModel;
+        configureSearch();
     }
 
     /**
@@ -75,6 +80,7 @@ public class MainPresenter extends BasePresenter {
         this.genreModel = null;
         RxDisposeHelper.dispose(this.userDisposable);
         RxDisposeHelper.dispose(this.movieDisposable);
+        RxDisposeHelper.dispose(this.movieDisposable);
     }
 
     /**
@@ -89,26 +95,17 @@ public class MainPresenter extends BasePresenter {
         this.openMovieListView(this.genresEntity);
     }
 
+    /**
+     * making request to server and db on search query of searchView text changed.
+     *
+     * @param newText the new text
+     */
     public void onSearchQueryTextChange(String newText) {
         if ("".equals(newText)) {
             this.showSearchResult(new MoviesEntity());
             return;
         }
-        filters.setIncludeAdult(!this.userEntity.isParentalControlEnabled());
-        filters.setSearchQueryByTitle(newText);
-        this.movieDisposable = this.movieModel.getMoviesByTitle(filters).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new GetMovieByTitleObserver());
-    }
-
-    public void onSearchQueryTextSubmit(String query) {
-        if ("".equals(query)) {
-            this.showSearchResult(new MoviesEntity());
-            return;
-        }
-        filters.setSearchQueryByTitle(query);
-        filters.setIncludeAdult(!this.userEntity.isParentalControlEnabled());
-        this.movieModel.getMoviesByTitle(filters);
+        newSearchQuery(newText);
     }
 
     /**
@@ -244,6 +241,25 @@ public class MainPresenter extends BasePresenter {
         }
     }
 
+    /**
+     * checking provided password to current and master password
+     * if password is correct -> switching off parent control else not
+     */
+    public void onCheckPasswordButtonClicked(String passwordValue) {
+        if (passwordValue.equals(this.userEntity.getPassword())
+                || passwordValue.equals(this.userEntity.getMasterPassword())) {
+            updateParentalControlState(false);
+            this.mainView.dismissPasswordDialog();
+        } else {
+            this.mainView.showToast(R.string.wrong_password);
+            this.mainView.setParentalControlEnabled(userEntity.isParentalControlEnabled());
+        }
+    }
+
+    public void onMovieItemClicked(int movieId) {
+        this.mainView.openMovieDetailScreen(movieId);
+    }
+
     private void stopBackgroundSync() {
         if (this.mainView != null) {
             this.mainView.stopBackgroundSync();
@@ -266,21 +282,6 @@ public class MainPresenter extends BasePresenter {
             this.startBackgroundSync();
         } else {
             this.stopBackgroundSync();
-        }
-    }
-
-    /**
-     * checking provided password to current and master password
-     * if password is correct -> switching off parent control else not
-     */
-    public void onCheckPasswordButtonClicked(String passwordValue) {
-        if (passwordValue.equals(this.userEntity.getPassword())
-                || passwordValue.equals(this.userEntity.getMasterPassword())) {
-            updateParentalControlState(false);
-            this.mainView.dismissPasswordDialog();
-        } else {
-            this.mainView.showToast(R.string.wrong_password);
-            this.mainView.setParentalControlEnabled(userEntity.isParentalControlEnabled());
         }
     }
 
@@ -382,9 +383,39 @@ public class MainPresenter extends BasePresenter {
         }
     }
 
-    public void onMovieItemClicked(int movieId) {
-        this.mainView.openMovieDetailScreen(movieId);
+    private void newSearchQuery(String query) {
+        filters.setIncludeAdult(!this.userEntity.isParentalControlEnabled());
+        filters.setSearchQueryByTitle(query);
+        searchQueryPublishSubject.accept(query);
     }
+
+    /**
+     * Observer that subscribed to searchQueryPublishSubject(searchQuery),
+     * waits 300 milliseconds to get emit,
+     * triggers only unique emits
+     * and taking only new results from server and forgets the old ones (breaking old requests to server/db)
+     */
+    private void configureSearch() {
+        this.movieDisposable = searchQueryPublishSubject
+                .debounce(500, TimeUnit.MILLISECONDS)
+                .distinctUntilChanged()
+                .switchMap(s -> this.movieModel.getMoviesByTitle(filters))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new GetMovieByTitleObserver());
+    }
+
+    //  private Observable<String> searchQueryPublishSubject = Observable.just(filters.getSearchQueryByTitle());
+
+    /*private void configureSearch() {
+        this.movieDisposable = searchQueryPublishSubject
+                .debounce(3000, TimeUnit.MILLISECONDS)
+                .distinctUntilChanged()
+                .switchMap(s -> this.movieModel.getMoviesByTitle(filters))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new GetMovieByTitleObserver());
+    }*/
 
     /**
      * saving password to db
@@ -408,7 +439,7 @@ public class MainPresenter extends BasePresenter {
             Log.e(TAG, e.getLocalizedMessage());
             MainPresenter.this.showToast(R.string.main_error);
         }
-    };
+    }
 
     /**
      * getting userEntity and genreEntity from network/db
@@ -442,13 +473,14 @@ public class MainPresenter extends BasePresenter {
             MainPresenter.this.showToast(R.string.main_error);
             MainPresenter.this.hideLoading();
         }
-    };
+    }
 
     /**
      * getting userEntity and genreEntity from network/db
      * onNext: setting state of parentControlSwitcher and rendering genresEntity to customGenreView
      */
     private class GetMovieByTitleObserver extends DisposableObserver<MoviesEntity> {
+
         @Override
         public void onComplete() {
             Log.d(TAG, "Subscribed to getMovieByTitle");
@@ -466,7 +498,7 @@ public class MainPresenter extends BasePresenter {
             MainPresenter.this.showToast(R.string.main_error);
             MainPresenter.this.hideLoading();
         }
-    };
+    }
 
     /**
      * saving new parentalControl state to db
@@ -492,7 +524,7 @@ public class MainPresenter extends BasePresenter {
             Log.e(TAG, e.getLocalizedMessage());
             MainPresenter.this.mainView.showToast(R.string.main_error);
         }
-    };
+    }
 
     private class CompletableSetBackgroundSyncStateObserver implements CompletableObserver {
 
@@ -514,7 +546,7 @@ public class MainPresenter extends BasePresenter {
             Log.e(TAG, e.getLocalizedMessage());
             MainPresenter.this.mainView.showToast(R.string.main_error);
         }
-    };
+    }
 }
 
 

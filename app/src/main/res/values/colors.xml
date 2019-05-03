@@ -7,6 +7,7 @@
     <color name="colorTextWhite">#ffffff</color>
     <color name="colorTextGrey">#b6b6b6</color>
 
+
     <color name="color_card_view_dark">#272727</color>
     <color name="fragment_movie_details_info_background">#4F8B8B8B</color>
     <color name="tab_text_color">#AD000000</color>
@@ -20,5 +21,9 @@
     <color name="switch_thumb">#F5F5F5</color>
     <color name="switch_track">#DF8B8B8B</color>
 
-
+    <color name="custom_search_view_result_box_background">#4F8B8B8B</color>
+    <color name="custom_search_view_close_button_color">#ffffff</color>
+    <color name="custom_search_view_text_color">#ffffff</color>
+    <color name="custom_search_view_hint_color">#ffffff</color>
+    <color name="custom_search_view_go_button_color">#ffffff</color>
 </resources>

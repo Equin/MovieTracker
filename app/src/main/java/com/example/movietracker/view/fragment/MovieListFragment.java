@@ -72,6 +72,7 @@ public class MovieListFragment extends BaseFragment
     private MovieListAdapter movieListAdapter;
     private MovieRecyclerItemPosition movieRecyclerItemPosition;
     private MenuItem filterMenuItem;
+    private MenuItem searchItem;
 
     @BindView(R.id.recyclerView_movies)
     RecyclerView movieRecyclerView;
@@ -139,7 +140,6 @@ public class MovieListFragment extends BaseFragment
         this.setupMenuDrawer();
     }
 
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -147,8 +147,6 @@ public class MovieListFragment extends BaseFragment
             this.movieListFragmentInteractionListener = (MovieListFragmentInteractionListener) context;
         }
     }
-
-    SearchView customSearchView;
 
     /**
      * saving position and offset of currently first completely visible recycler view item
@@ -169,8 +167,6 @@ public class MovieListFragment extends BaseFragment
         searchItem.collapseActionView();
         this.movieListPresenter.saveRecyclerPosition(itemPosition, itemOffset);
     }
-
-    MenuItem searchItem;
 
     @Override
     public void onDetach() {
@@ -233,7 +229,7 @@ public class MovieListFragment extends BaseFragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.toolbar_actions, menu);
+        inflater.inflate(R.menu.toolbar_actions_movie_list, menu);
         filterMenuItem = menu.findItem(R.id.action_filter);
 
         if(shouldShowFavoriteMoviesList()) {
@@ -241,15 +237,10 @@ public class MovieListFragment extends BaseFragment
         }
 
         searchItem = menu.findItem(R.id.action_search);
-        customSearchView = (SearchView) searchItem.getActionView();
+        SearchView searchView = (SearchView) searchItem.getActionView();
 
         searchItem.setOnActionExpandListener(this);
-
-      /*  SearchResultMovieListAdapter searchResultMovieListAdapter
-                = new SearchResultMovieListAdapter(new MoviesEntity(), new ClickListener());*/
-
-      //  customSearchView.createSearchResultRecyclerViewBox(searchResultMovieListAdapter);
-        customSearchView.setOnQueryTextListener(this);
+        searchView.setOnQueryTextListener(this);
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -269,24 +260,38 @@ public class MovieListFragment extends BaseFragment
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * filtering movies by title on text submit in searchView
+     * @param query - submitted query
+     */
     @Override
     public boolean onQueryTextSubmit(String query) {
         movieListAdapter.getFilter().filter(query);
         return false;
     }
 
+    /**
+     * filtering movies by title on text change in searchView
+     * @param newText
+     */
     @Override
     public boolean onQueryTextChange(String newText) {
         movieListAdapter.getFilter().filter(newText);
         return false;
     }
 
+    /**
+     * hiding filterIcon from action bar on searchView expanded
+     */
     @Override
     public boolean onMenuItemActionExpand(final MenuItem item) {
         filterMenuItem.setVisible(false);
         return true;
     }
 
+    /**
+     * showing filterIcon on searchView Collapsed
+     */
     @Override
     public boolean onMenuItemActionCollapse(final MenuItem item) {
         filterMenuItem.setVisible(true);

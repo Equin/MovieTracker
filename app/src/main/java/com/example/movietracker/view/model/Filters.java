@@ -33,6 +33,7 @@ public class Filters implements Serializable {
         selectedGenresIds = new ArrayList<>();
         selectedGenres = new ArrayList<>();
         order = Order.DESC;
+        searchQueryByTitle = "";
     }
 
     public Filters(int page, @NonNull List<GenreEntity> selectedGenres, boolean includeAdult, @NonNull String sortBy, @NonNull Order order, @NonNull String searchQueryByTitle ) {
