@@ -36,7 +36,6 @@ public class MovieDataRepository implements MovieRepository {
     private static final int MOVIE_PER_PAGE = 20;
     private static final int DB_REQUEST_TIMEOUT = 2;
 
-
     private MovieApi movieApi;
     private GenresDao genresDao;
     private MovieDao movieDao;

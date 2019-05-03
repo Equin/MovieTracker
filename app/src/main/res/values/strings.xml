@@ -29,7 +29,7 @@
 
     <string name="empty_new_password_field">New password field is empty</string>
     <string name="empty_old_password_field">Old password field is empty</string>
-    <string name="empty_password_field">Password field is empty</string>
+    <string name="empty_password_field">Password field is`nt full</string>
     <string name="wrong_old_password">Wrong old password</string>
     <string name="wrong_password">Wrong password</string>
 

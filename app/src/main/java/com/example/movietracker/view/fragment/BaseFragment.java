@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.example.movietracker.AndroidApplication;
 import com.example.movietracker.R;
 import com.example.movietracker.presenter.MainPresenter;
+import com.example.movietracker.view.custom_view.CustomPasswordPinEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import androidx.annotation.Nullable;
@@ -145,7 +146,8 @@ public abstract class BaseFragment extends Fragment {
 
     public void createNewPasswordDialog(MainPresenter mainPresenter) {
         LayoutInflater li = LayoutInflater.from(getContext());
-        View dialogView =  li.inflate(R.layout.password_new_dialog, null);
+//        View dialogView =  li.inflate(R.layout.password_new_dialog, null);
+        View dialogView =  li.inflate(R.layout.password_new_dialog_pins, null);
         initializeNewPasswordDialogContent(dialogView, mainPresenter);
         createDialog(dialogView);
     }
@@ -185,10 +187,10 @@ public abstract class BaseFragment extends Fragment {
     private void initializeNewPasswordDialogContent(View dialogCustomVIew, MainPresenter mainPresenter) {
         Button savePassword = dialogCustomVIew.findViewById(R.id.button_save_password);
 
-        EditText newPasswordEditText = dialogCustomVIew.findViewById(R.id.textInputEditText_new_password);
+        CustomPasswordPinEditText newPasswordEditText = dialogCustomVIew.findViewById(R.id.customPasswordPinEditText_new_password);
 
         savePassword.setOnClickListener((click)->{
-            String newPasswordValue = newPasswordEditText.getText().toString();
+            String newPasswordValue = newPasswordEditText.getPasswordValue();
 
             mainPresenter.onSaveNewPasswordButtonClicked(
                     newPasswordValue);
