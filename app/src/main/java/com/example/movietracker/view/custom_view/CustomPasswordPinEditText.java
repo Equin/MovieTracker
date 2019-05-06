@@ -1,6 +1,7 @@
 package com.example.movietracker.view.custom_view;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -26,28 +27,35 @@ public class CustomPasswordPinEditText extends LinearLayout {
             getIntegerFromResource(R.integer.phone_number_verification_code_length);
 
     private EditText invisibleCodeEditText;
+    private boolean shouldRequestFocus;
 
     public CustomPasswordPinEditText(Context context) {
         super(context);
-        initialize();
+        initialize(null);
     }
 
     public CustomPasswordPinEditText(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        initialize();
+        initialize(attrs);
     }
 
     public CustomPasswordPinEditText(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initialize();
+        initialize(attrs);
     }
 
-    private void initialize() {
+    private void initialize(@Nullable AttributeSet set) {
+
+        if(set != null) {
+            TypedArray ta = getContext().obtainStyledAttributes(set, R.styleable.CustomPasswordPinEditText);
+            shouldRequestFocus = ta.getBoolean(R.styleable.CustomPasswordPinEditText_should_request_focus, false);
+            ta.recycle();
+        }
+
         setOrientation(HORIZONTAL);
         setGravity(Gravity.CENTER);
         setSize(this, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         setOnClickListener(view -> requestCodeEditTextFocus());
-        setFocusableInTouchMode(true);
 
         setupInvisibleEditText();
         createDigitEditTexts();
@@ -68,11 +76,8 @@ public class CustomPasswordPinEditText extends LinearLayout {
     }
 
     private void requestCodeEditTextFocus() {
-        if(this.invisibleCodeEditText.hasFocus()) {
-            this.invisibleCodeEditText.clearFocus();
-        }
         this.invisibleCodeEditText.requestFocus();
-        showKeyboard();
+        showKeyboard(this.invisibleCodeEditText);
     }
 
     private void setupInvisibleEditText() {
@@ -87,18 +92,20 @@ public class CustomPasswordPinEditText extends LinearLayout {
         addView(this.invisibleCodeEditText);
         setupEditTextCodeListener(this.invisibleCodeEditText);
         this.invisibleCodeEditText.setId(R.id.invisibleCodeEditText);
-        this.invisibleCodeEditText.setShowSoftInputOnFocus(true);
-        requestCodeEditTextFocus();
+
+        if(shouldRequestFocus) {
+            requestCodeEditTextFocus();
+        }
     }
 
     private void setSize(View v, int width, int height) {
         v.setLayoutParams(new LayoutParams(width, height));
     }
 
-    public void showKeyboard() {
+    private void showKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         if(imm!=null) {
-            imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT,0);
+            imm.showSoftInput(view,0);
         }
     }
 

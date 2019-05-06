@@ -249,6 +249,7 @@ public class MainPresenter extends BasePresenter {
         if (passwordValue.equals(this.userEntity.getPassword())
                 || passwordValue.equals(this.userEntity.getMasterPassword())) {
             updateParentalControlState(false);
+            this.mainView.setParentalControlEnabled(userEntity.isParentalControlEnabled());
             this.mainView.dismissPasswordDialog();
         } else {
             this.mainView.showToast(R.string.wrong_password);

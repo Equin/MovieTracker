@@ -109,7 +109,7 @@ public class FilterAlertDialog {
      */
     private void  initializeFilterDialogContent(View dialogCustomVIew, Context context) {
 
-        Button saveScoreButton = dialogCustomVIew.findViewById(R.id.button_save_score);
+        Button saveScoreButton = dialogCustomVIew.findViewById(R.id.button_save_filter);
         RadioGroup radioGroup = dialogCustomVIew.findViewById(R.id.radioButtonsGroup);
         Switch switcher = dialogCustomVIew.findViewById(R.id.switch1);
         radioGroup.removeAllViews();

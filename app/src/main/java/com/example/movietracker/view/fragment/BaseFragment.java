@@ -6,14 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.movietracker.AndroidApplication;
 import com.example.movietracker.R;
 import com.example.movietracker.presenter.MainPresenter;
 import com.example.movietracker.view.custom_view.CustomPasswordPinEditText;
-import com.google.android.material.textfield.TextInputLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -118,14 +116,14 @@ public abstract class BaseFragment extends Fragment {
         this.showToast(getString(resourceId));
     }
 
-    public void showKeyboard() {
+    protected void showKeyboard() {
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         if(imm!=null) {
             imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT,0);
         }
     }
 
-    public void hideKeyboard() {
+    protected void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null && getView() != null)  {
             imm.hideSoftInputFromWindow(getView().getWindowToken(),0);
@@ -136,47 +134,44 @@ public abstract class BaseFragment extends Fragment {
         return this.progressView == null;
     }
 
-
-    public void createPasswordResetDialog(MainPresenter mainPresenter) {
+    protected void createPasswordResetDialog(MainPresenter mainPresenter) {
         LayoutInflater li = LayoutInflater.from(getContext());
-        View dialogView =  li.inflate(R.layout.password_reset_dialog, null);
+        View dialogView =  li.inflate(R.layout.password_reset_dialog_pins, null);
         initializeResetPasswordDialogContent(dialogView, mainPresenter);
         createDialog(dialogView);
     }
 
-    public void createNewPasswordDialog(MainPresenter mainPresenter) {
+    protected void createNewPasswordDialog(MainPresenter mainPresenter) {
         LayoutInflater li = LayoutInflater.from(getContext());
-//        View dialogView =  li.inflate(R.layout.password_new_dialog, null);
         View dialogView =  li.inflate(R.layout.password_new_dialog_pins, null);
         initializeNewPasswordDialogContent(dialogView, mainPresenter);
         createDialog(dialogView);
     }
 
-    public void createCheckPasswordDialog(MainPresenter mainPresenter) {
+    protected void createCheckPasswordDialog(MainPresenter mainPresenter) {
         LayoutInflater li = LayoutInflater.from(getContext());
-        View dialogView =  li.inflate(R.layout.password_new_dialog, null);
+        View dialogView =  li.inflate(R.layout.password_new_dialog_pins, null);
         initializeCheckPasswordDialogContent(dialogView, mainPresenter);
         createDialog(dialogView);
     }
 
-    public void dismissDialog() {
+    protected void dismissDialog() {
         if (alertDialog != null) {
             alertDialog.dismiss();
             alertDialog = null;
         }
     }
 
-
     private void initializeResetPasswordDialogContent(View dialogCustomVIew, MainPresenter mainPresenter) {
         Button savePassword = dialogCustomVIew.findViewById(R.id.button_save_password);
 
-        EditText oldPasswordEditText = dialogCustomVIew.findViewById(R.id.textInputEditText_old_password);
-        EditText newPasswordEditText = dialogCustomVIew.findViewById(R.id.textInputEditText_new_password);
+        CustomPasswordPinEditText oldPasswordEditText = dialogCustomVIew.findViewById(R.id.customPasswordPinEditText_old_password);
+        CustomPasswordPinEditText newPasswordEditText = dialogCustomVIew.findViewById(R.id.customPasswordPinEditText_new_password);
 
         savePassword.setOnClickListener((click)-> {
-            String oldPasswordValue = oldPasswordEditText.getText().toString();
+            String oldPasswordValue = oldPasswordEditText.getPasswordValue();
 
-            String newPasswordValue = newPasswordEditText.getText().toString();
+            String newPasswordValue = newPasswordEditText.getPasswordValue();
 
             mainPresenter.onSaveResetedPasswordButtonClicked(
                     oldPasswordValue,
@@ -199,14 +194,12 @@ public abstract class BaseFragment extends Fragment {
 
     private void initializeCheckPasswordDialogContent(View dialogCustomVIew, MainPresenter mainPresenter) {
         Button checkPassword = dialogCustomVIew.findViewById(R.id.button_save_password);
-        checkPassword.setText("CHECK");
+        checkPassword.setText(getText(R.string.password_reset_dialog_button_check));
 
-        EditText passwordEditText = dialogCustomVIew.findViewById(R.id.textInputEditText_new_password);
-        TextInputLayout textInputLayout = dialogCustomVIew.findViewById(R.id.textInputLayout_new_password);
-        textInputLayout.setHint("Enter your password");
+        CustomPasswordPinEditText passwordEditText = dialogCustomVIew.findViewById(R.id.customPasswordPinEditText_new_password);
 
-        checkPassword.setOnClickListener((click)->{
-            String passwordValue = passwordEditText.getText().toString();
+        checkPassword.setOnClickListener(click -> {
+            String passwordValue = passwordEditText.getPasswordValue();
 
             mainPresenter.onCheckPasswordButtonClicked(
                     passwordValue);

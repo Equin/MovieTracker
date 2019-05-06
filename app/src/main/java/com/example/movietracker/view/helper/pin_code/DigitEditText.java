@@ -7,10 +7,12 @@ import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import androidx.appcompat.widget.AppCompatEditText;
+
 import com.example.movietracker.R;
 
 @SuppressLint("ViewConstructor")
-public class DigitEditText extends CutCopyPasteEditText {
+public class DigitEditText extends AppCompatEditText {
 
     private final boolean isLastDigit;
 
@@ -64,6 +66,8 @@ public class DigitEditText extends CutCopyPasteEditText {
                 getDimensionPixelSize(R.dimen.phone_number_verification_code_edit_text_margins);
 
         setFocusable(false);
+        setFocusableInTouchMode(false);
+        setClickable(false);
         setGravity(Gravity.CENTER);
 
         setLayoutParams(new LinearLayout.LayoutParams(width, height));
