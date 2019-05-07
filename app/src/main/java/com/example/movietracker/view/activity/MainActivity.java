@@ -25,9 +25,12 @@ public class MainActivity extends BaseActivity implements
         return new Intent(context, MainActivity.class);
     }
 
+    MovieDetailsFragment movieDetailsFragment;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_for_fragment);
 
         if (savedInstanceState == null) {
@@ -37,17 +40,17 @@ public class MainActivity extends BaseActivity implements
 
     @Override
     public void showMovieListScreen(GenresEntity genresEntity) {
-        replaceFragment(R.id.container_for_fragment, MovieListFragment.newInstance(genresEntity, false));
+        replaceFragment(R.id.container_for_fragment, MovieListFragment.newInstance(genresEntity, false), "MovieListFragment");
     }
 
     @Override
     public void showFavoriteMovieListScreen(GenresEntity genresEntity) {
-        replaceFragment(R.id.container_for_fragment, MovieListFragment.newInstance(genresEntity, true));
+        replaceFragment(R.id.container_for_fragment, MovieListFragment.newInstance(genresEntity, true), "MovieListFavoritesFragment");
     }
 
     @Override
     public void showMovieDetailScreen(int movieId) {
-        replaceFragment(R.id.container_for_fragment, MovieDetailsFragment.newInstance(movieId));
+        replaceFragment(R.id.container_for_fragment, MovieDetailsFragment.newInstance(movieId), "MovieDetailsFragment");
     }
 
     @Override
@@ -56,7 +59,7 @@ public class MainActivity extends BaseActivity implements
     }
 
     @Override
-    public void openNewFragmentInTab(Fragment fragment) {
-        replaceFragmentWithoutStack(R.id.fragment_container, fragment);
+    public void openNewFragmentInTab(Fragment fragment, String fragmentName) {
+            replaceFragment(R.id.fragment_container, fragment, fragmentName);
     }
 }

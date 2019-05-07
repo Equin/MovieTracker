@@ -1,223 +1,241 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/relativeLayout_infoTab"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:id="@+id/constraintLayout_movieRating"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="1dp"
-        android:layout_marginBottom="1dp"
-        android:background="@color/fragment_movie_details_info_background"
-        android:baselineAligned="false"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:weightSum="6">
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_weight="1.5">
-
-            <ImageView
-                android:id="@+id/imageView_imdb"
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="0dp"
-                android:src="@drawable/ic_imdb" />
-
-            <TextView
-                android:id="@+id/textView_imdbRating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/imageView_imdb"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="0dp"
-                android:layout_marginEnd="0dp"
-                android:text="@string/detail_n_a_title"
-                android:textAlignment="center"
-                android:textColor="@color/colorTextWhite" />
-
-            <TextView
-                android:id="@+id/textView_imdbVoteCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/textView_imdbRating"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="4dp"
-                android:text="@string/detail_imdb_title"
-                android:textAlignment="center"
-                android:textColor="@color/colorTextWhite"
-                android:textSize="10sp" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_weight="1.5">
-
-            <ImageView
-                android:id="@+id/imageView_tmdb"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="0dp"
-                android:src="@drawable/ic_tmdb" />
-
-            <TextView
-                android:id="@+id/textView_tmdbVoteCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/textView_tmdbRating"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="4dp"
-                android:text="@string/detail_tmdb_title"
-                android:textAlignment="center"
-                android:textColor="@color/colorTextWhite"
-                android:textSize="10sp" />
-
-            <TextView
-                android:id="@+id/textView_tmdbRating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/imageView_tmdb"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
-                android:text="@string/detail_n_a_title"
-                android:textAlignment="center"
-                android:textColor="@color/colorTextWhite" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_weight="1.5">
-
-            <ImageView
-                android:id="@+id/imageView_metascore"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:src="@drawable/ic_metascore" />
-
-            <TextView
-                android:id="@+id/textView_metascoreVoreCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/textView_metascoreRating"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="4dp"
-                android:text="@string/detail_metascore_title"
-                android:textAlignment="center"
-                android:textColor="@color/colorTextWhite"
-                android:textSize="10sp" />
-
-            <TextView
-                android:id="@+id/textView_metascoreRating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/imageView_metascore"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
-                android:text="@string/detail_n_a_title"
-                android:textAlignment="center"
-                android:textColor="@color/colorTextWhite" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_weight="1.5">
-
-            <ImageView
-                android:id="@+id/imageView_someasle"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="0dp"
-                android:src="@mipmap/ic_launcher" />
-
-            <TextView
-                android:id="@+id/textView_somealseVoteCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/textView_someelseRating"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="4dp"
-                android:text="@string/detail_custom"
-                android:textAlignment="center"
-                android:textColor="@color/colorTextWhite"
-                android:textSize="10sp" />
-
-            <TextView
-                android:id="@+id/textView_someelseRating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/imageView_someasle"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
-                android:text="@string/detail_n_a_title"
-                android:textAlignment="center"
-                android:textColor="@color/colorTextWhite" />
-        </RelativeLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/constraintLayout_movieRating"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="8dp"
-        android:background="@color/fragment_movie_details_info_background"
-        android:orientation="vertical"
-        android:padding="8dp">
+        android:layout_alignStart="@+id/relativeLayout_container_movieInfo"
+        android:layout_alignTop="@+id/constraintLayout_movieRating"
+        android:layout_alignEnd="@+id/relativeLayout_container_movieInfo"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="-1dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="-7dp">
 
-        <TextView
-            android:id="@+id/textView6"
+        <RelativeLayout
+            android:id="@+id/relativeLayout_container_movieInfo"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Storyline"
-            android:textColor="@color/colorTextWhite"
-            android:textSize="18sp"
-            android:textStyle="bold|italic" />
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/textView_movieStoryline"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            android:textColor="@color/text_color_white_dark"
-            android:textSize="14sp" />
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/constraintLayout_movieRating"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="1dp"
+                android:background="@color/fragment_movie_details_info_background"
+                android:baselineAligned="false"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:weightSum="6">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1.5">
+
+                    <ImageView
+                        android:id="@+id/imageView_imdb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="100dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginTop="0dp"
+                        android:layout_marginEnd="0dp"
+                        android:src="@drawable/ic_imdb" />
+
+                    <TextView
+                        android:id="@+id/textView_imdbRating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/imageView_imdb"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginEnd="0dp"
+                        android:text="@string/detail_n_a_title"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorTextWhite" />
+
+                    <TextView
+                        android:id="@+id/textView_imdbVoteCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/textView_imdbRating"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/detail_imdb_title"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorTextWhite"
+                        android:textSize="10sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1.5">
+
+                    <ImageView
+                        android:id="@+id/imageView_tmdb"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginTop="0dp"
+                        android:layout_marginEnd="0dp"
+                        android:src="@drawable/ic_tmdb" />
+
+                    <TextView
+                        android:id="@+id/textView_tmdbVoteCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/textView_tmdbRating"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/detail_tmdb_title"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorTextWhite"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:id="@+id/textView_tmdbRating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/imageView_tmdb"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentEnd="true"
+                        android:text="@string/detail_n_a_title"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorTextWhite" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1.5">
+
+                    <ImageView
+                        android:id="@+id/imageView_metascore"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/ic_metascore" />
+
+                    <TextView
+                        android:id="@+id/textView_metascoreVoreCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/textView_metascoreRating"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/detail_metascore_title"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorTextWhite"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:id="@+id/textView_metascoreRating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/imageView_metascore"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentEnd="true"
+                        android:text="@string/detail_n_a_title"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorTextWhite" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1.5">
+
+                    <ImageView
+                        android:id="@+id/imageView_someasle"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginTop="0dp"
+                        android:layout_marginEnd="0dp"
+                        android:src="@mipmap/ic_launcher" />
+
+                    <TextView
+                        android:id="@+id/textView_somealseVoteCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/textView_someelseRating"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/detail_custom"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorTextWhite"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:id="@+id/textView_someelseRating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/imageView_someasle"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentEnd="true"
+                        android:text="@string/detail_n_a_title"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorTextWhite" />
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/constraintLayout_movieRating"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="8dp"
+                android:background="@color/fragment_movie_details_info_background"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/textView6"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Storyline"
+                    android:textColor="@color/colorTextWhite"
+                    android:textSize="18sp"
+                    android:textStyle="bold|italic" />
+
+                <TextView
+                    android:id="@+id/textView_movieStoryline"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="TextView"
+                    android:textColor="@color/text_color_white_dark"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </RelativeLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <include
         layout="@layout/view_progress"

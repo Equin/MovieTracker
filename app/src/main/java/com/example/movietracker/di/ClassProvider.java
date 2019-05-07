@@ -43,6 +43,7 @@ public class ClassProvider {
         restClient = null;
         movieRepository = null;
         moviesDatabase = null;
+        filterAlertDialog.deleteFilterAlertDialog();
         filterAlertDialog = null;
 
         Log.d(TAG, "destroyed");

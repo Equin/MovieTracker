@@ -172,6 +172,15 @@ public class MovieListFragment extends BaseFragment
     public void onDetach() {
         super.onDetach();
         this.movieListFragmentInteractionListener = null;
+        this.movieRecyclerView = null;
+        this.swipeRefreshLayout = null;
+        this.searchItem = null;
+        this.filterMenuItem = null;
+        this.textViewNothingToShow = null;
+        this.movieListAdapter = null;
+        this.toolbar = null;
+        this.backPlateConstraintLayout = null;
+        this.progressView = null;
     }
 
     @Override
@@ -200,12 +209,18 @@ public class MovieListFragment extends BaseFragment
 
         LinearLayoutManager rowLayoutManager = new LinearLayoutManager(
                 getContext(), RecyclerView.VERTICAL, false);
-        this.movieRecyclerView.setLayoutManager(rowLayoutManager);
-        this.movieRecyclerView.setHasFixedSize(true);
 
-        this.movieRecyclerView.setAdapter(movieListAdapter);
-        this.movieRecyclerView.addOnScrollListener(new SnapScrollListener(this));
-        this.swipeRefreshLayout.setRefreshing(false);
+        if (movieRecyclerView != null) {
+            this.movieRecyclerView.setLayoutManager(rowLayoutManager);
+            this.movieRecyclerView.setHasFixedSize(true);
+
+            this.movieRecyclerView.setAdapter(movieListAdapter);
+            this.movieRecyclerView.addOnScrollListener(new SnapScrollListener(this));
+        }
+
+        if (this.swipeRefreshLayout != null) {
+            this.swipeRefreshLayout.setRefreshing(false);
+        }
     }
 
     /**
@@ -238,6 +253,7 @@ public class MovieListFragment extends BaseFragment
 
         searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setMaxWidth(Integer.MAX_VALUE);
 
         searchItem.setOnActionExpandListener(this);
         searchView.setOnQueryTextListener(this);

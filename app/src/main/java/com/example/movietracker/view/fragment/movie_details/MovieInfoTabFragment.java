@@ -99,4 +99,18 @@ public class MovieInfoTabFragment extends BaseFragment  {
 
         return new MovieDetailsEntity();
     }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        this.textViewImdbRating = null;
+        this.textViewImdbVoteCount = null;
+        this.textViewMetascoreRating = null;
+        this.textViewMetascoreVoteCount = null;
+        this.textViewMovieStoryline = null;
+        this.textViewTmdbRating = null;
+        this.textViewSomeElseRating = null;
+        this.textViewTmdbVoteCount = null;
+        this.textViewSomeElseVoteCount = null;
+    }
 }

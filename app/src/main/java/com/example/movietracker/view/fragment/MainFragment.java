@@ -25,7 +25,7 @@ import com.example.movietracker.view.FilterAlertDialog;
 import com.example.movietracker.view.adapter.SearchResultMovieListAdapter;
 import com.example.movietracker.view.contract.MainView;
 import com.example.movietracker.view.custom_view.CustomGenreView;
-import com.example.movietracker.view.custom_view.CustomSearchView;
+import com.example.movietracker.view.custom_view.CustomToolbarSearchView;
 import com.example.movietracker.view.model.Filters;
 import com.google.android.material.navigation.NavigationView;
 
@@ -88,7 +88,7 @@ public class MainFragment extends BaseFragment
 
     private Switch parentalControlSwitch;
     private Switch backgroundSyncSwitch;
-    private CustomSearchView customSearchView;
+    private CustomToolbarSearchView customToolbarSearchView;
     private SearchResultMovieListAdapter searchResultMovieListAdapter;
     private MenuItem searchMenuItem;
 
@@ -155,7 +155,14 @@ public class MainFragment extends BaseFragment
         this.mainFragmentInteractionListener = null;
         this.parentalControlSwitch = null;
         this.backgroundSyncSwitch = null;
-        this.customSearchView = null;
+        this.customToolbarSearchView = null;
+        this.customGenreView = null;
+        this.drawerLayout = null;
+        this.navigationView = null;
+        this.searchMenuItem = null;
+        this.toolbar = null;
+        this.backPlateConstraintLayout = null;
+        this.progressView = null;
     }
 
     @Override
@@ -190,13 +197,13 @@ public class MainFragment extends BaseFragment
         inflater.inflate(R.menu.toolbar_actions_main_screen, menu);
 
         this.searchMenuItem = menu.findItem(R.id.action_search);
-        this.customSearchView = (CustomSearchView) this.searchMenuItem.getActionView();
+        this.customToolbarSearchView = (CustomToolbarSearchView) this.searchMenuItem.getActionView();
 
         this.searchResultMovieListAdapter
                 = new SearchResultMovieListAdapter(new MoviesEntity(), new ClickListener());
 
-        this.customSearchView.setRecyclerViewAdapter(this.searchResultMovieListAdapter);
-        this.customSearchView.setOnQueryTextListener(this);
+        this.customToolbarSearchView.setRecyclerViewAdapter(this.searchResultMovieListAdapter);
+        this.customToolbarSearchView.setOnQueryTextListener(this);
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -308,9 +315,9 @@ public class MainFragment extends BaseFragment
     @Override
     public void showSearchResult(MoviesEntity moviesEntity) {
         if (moviesEntity.getMovies().isEmpty()) {
-            this.customSearchView.setVisibilityOfSearchResultBox(View.GONE);
+            this.customToolbarSearchView.setVisibilityOfSearchResultBox(View.GONE);
         } else {
-            this.customSearchView.setVisibilityOfSearchResultBox(View.VISIBLE);
+            this.customToolbarSearchView.setVisibilityOfSearchResultBox(View.VISIBLE);
         }
 
         this.searchResultMovieListAdapter.reloadWithNewResults(moviesEntity);

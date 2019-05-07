@@ -41,6 +41,12 @@ public class FilterAlertDialog {
     private FilterAlertDialog() {
     }
 
+    public void deleteFilterAlertDialog() {
+        alertDialog = null;
+        onClickListener = null;
+        optionList = null;
+    }
+
     /**
      * Init.
      */

@@ -20,7 +20,7 @@ import com.example.movietracker.R;
 import com.example.movietracker.view.MovieCardItemDecorator;
 
 
-public class CustomSearchView extends SearchView {
+public class CustomToolbarSearchView extends SearchView {
 
     private static final int RECYCLER_VIEW_CARD_ITEM_OFFSET_DPI = 8;
 
@@ -36,22 +36,22 @@ public class CustomSearchView extends SearchView {
     private int oldScreenHeight;
     private int newScreenHeight;
 
-    public CustomSearchView(Context context) {
+    public CustomToolbarSearchView(Context context) {
         super(context);
-        init();
+        initialize();
     }
 
-    public CustomSearchView(Context context, AttributeSet attrs) {
+    public CustomToolbarSearchView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        initialize();
     }
 
-    public CustomSearchView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public CustomToolbarSearchView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        initialize();
     }
 
-    private void init() {
+    private void initialize() {
         closeButton = findViewById(R.id.search_close_btn);
         searchEditText = findViewById(R.id.search_src_text);
         searchGoButton = findViewById(R.id.search_go_btn);
@@ -81,7 +81,7 @@ public class CustomSearchView extends SearchView {
     }
 
     public void setCloseIconColor(int color) {
-            closeButton.setColorFilter(getColor(color));
+        closeButton.setColorFilter(getColor(color));
     }
 
     public void setGoIconColor(int color) {
@@ -134,12 +134,13 @@ public class CustomSearchView extends SearchView {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addItemDecoration(new MovieCardItemDecorator(RECYCLER_VIEW_CARD_ITEM_OFFSET_DPI));
 
-        linearLayoutParams.setMargins(convertDpToPixel(14, getContext()), visibleSearchViewRect.bottom, convertDpToPixel(14, getContext()),0);
+        linearLayoutParams.width = ((View)this.getParent()).getWidth() - (convertDpToPixel(14, getContext()) * 2);
+        linearLayoutParams.setMargins(convertDpToPixel(14, getContext()), convertDpToPixel(visibleSearchViewRect.top, getContext()), convertDpToPixel(14, getContext()),0);
 
         relativeLayoutResultBox.setBackgroundColor(getColor(R.color.custom_search_view_result_box_background));
         relativeLayoutResultBox.setLayoutParams(linearLayoutParams);
 
-        ViewGroup rootView = (ViewGroup) this.getRootView();
+        ViewGroup rootView = this.getRootView().findViewById(android.R.id.content);
         rootView.addView(relativeLayoutResultBox);
 
         closeButton.setOnClickListener(v -> {
@@ -151,20 +152,27 @@ public class CustomSearchView extends SearchView {
         adjustSearchResultBoxToVisibleScreen();
     }
 
-public void adjustSearchResultBoxToVisibleScreen() {
-    this.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-        Rect visibleWindowRect = new Rect();
-        getWindowVisibleDisplayFrame(visibleWindowRect);
-        newScreenHeight = visibleWindowRect.bottom - visibleSearchViewRect.bottom;
+    public void adjustSearchResultBoxToVisibleScreen() {
+        this.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            Rect visibleWindowRect = new Rect();
+            getWindowVisibleDisplayFrame(visibleWindowRect);
+            newScreenHeight = visibleWindowRect.bottom - visibleSearchViewRect.bottom;
 
-        if (oldScreenHeight != newScreenHeight) {
-            oldScreenHeight = newScreenHeight;
-            linearLayoutParams.height = oldScreenHeight;
-            relativeLayoutResultBox.setLayoutParams(linearLayoutParams);
-            relativeLayoutResultBox.requestLayout();
-        }
-    });
-}
+            if (oldScreenHeight != newScreenHeight) {
+                oldScreenHeight = newScreenHeight;
+                linearLayoutParams.height = oldScreenHeight;
+                relativeLayoutResultBox.setLayoutParams(linearLayoutParams);
+                relativeLayoutResultBox.requestLayout();
+            }
+        });
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        linearLayoutParams.width = ((View)getParent()).getWidth() - (convertDpToPixel(14, getContext()) * 2);
+        relativeLayoutResultBox.requestLayout();
+    }
 
     private int convertDpToPixel(int dp, Context context){
         return dp * (context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
@@ -180,5 +188,11 @@ public void adjustSearchResultBoxToVisibleScreen() {
         }
 
         return elementColor;
+    }
+
+    @Override
+    public void setLayoutParams(final ViewGroup.LayoutParams params) {
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        super.setLayoutParams(params);
     }
 }

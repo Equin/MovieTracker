@@ -17,6 +17,7 @@ import com.example.movietracker.listener.SnapScrollListener;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -46,8 +47,8 @@ public class MovieVideoTabFragment<V extends MovieVideosEntity> extends BaseFrag
     @BindView(R.id.recyclerView_videoList)
     RecyclerView recyclerViewVideo;
 
-    @BindView(R.id.textView_nothingToShow)
-    TextView textViewNothingToShow;
+    @BindView(R.id.scrollView_nothingToShow)
+    NestedScrollView scrollViewNothingToShow;
 
     @Override
     public View onCreateView(
@@ -80,6 +81,8 @@ public class MovieVideoTabFragment<V extends MovieVideosEntity> extends BaseFrag
     @Override
     public void onDetach() {
         super.onDetach();
+        this.recyclerViewVideo = null;
+        this.scrollViewNothingToShow = null;
         this.movieVideoTabFragmentInteractionListener = null;
     }
 
@@ -92,7 +95,9 @@ public class MovieVideoTabFragment<V extends MovieVideosEntity> extends BaseFrag
     @Override
     public void onDestroy() {
         super.onDestroy();
-        this.movieDetailsTabLayoutPresenter.destroy();
+        if (  this.movieDetailsTabLayoutPresenter != null) {
+            this.movieDetailsTabLayoutPresenter.destroy();
+        }
     }
 
     private MovieVideosEntity someMovieData;
@@ -112,7 +117,7 @@ public class MovieVideoTabFragment<V extends MovieVideosEntity> extends BaseFrag
 
     @Override
     public void displayNothingToShowHint() {
-        this.textViewNothingToShow.setVisibility(View.VISIBLE);
+        this.scrollViewNothingToShow.setVisibility(View.VISIBLE);
     }
 
     private int getMovieIdFromArguments() {

@@ -1,5 +1,6 @@
 package com.example.movietracker.view.fragment.movie_details;
 
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -62,7 +63,7 @@ public class YouTubePlayerFragment extends BaseFragment implements OnBackPressLi
             @NonNull LayoutInflater inflater,
             ViewGroup container,
             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.you_tube_player, container, false);
+        View rootView = inflater.inflate(R.layout.you_tube_player3, container, false);
 
         ButterKnife.bind(this, rootView);
 
@@ -78,6 +79,7 @@ public class YouTubePlayerFragment extends BaseFragment implements OnBackPressLi
         this.movieVideosEntity = getVideosFromArguments();
         initYouTubePlayerView();
         initVideoListRecyclerView();
+        setYouTubePlayerViewStateAccordingToConfiguration(getContext().getResources().getConfiguration().orientation);
     }
 
     private void initVideoListRecyclerView() {
@@ -149,6 +151,8 @@ public class YouTubePlayerFragment extends BaseFragment implements OnBackPressLi
 
         this.fullScreenHelper = null;
         this.youTubePlayer = null;
+        this.recyclerViewYoutubeVideo = null;
+        this.youTubePlayerView = null;
     }
 
     private String getVideoIdFromArguments() {
@@ -167,6 +171,16 @@ public class YouTubePlayerFragment extends BaseFragment implements OnBackPressLi
         return null;
     }
 
+    private void setYouTubePlayerViewStateAccordingToConfiguration(int orientation) {
+        if(orientation == Configuration.ORIENTATION_LANDSCAPE && !youTubePlayerView.isFullScreen()) {
+            youTubePlayerView.enterFullScreen();
+            fullScreenHelper.enterFullScreen();
+        } else if (orientation == Configuration.ORIENTATION_PORTRAIT && youTubePlayerView.isFullScreen()){
+            youTubePlayerView.exitFullScreen();
+            fullScreenHelper.exitFullScreen();
+        }
+    }
+
     @Override
     public boolean canGoBackOnBackPressed() {
         if(this.youTubePlayerView.isFullScreen()) {
@@ -182,25 +196,26 @@ public class YouTubePlayerFragment extends BaseFragment implements OnBackPressLi
         @Override
         public void onYouTubePlayerEnterFullScreen() {
             fullScreenHelper.enterFullScreen();
+            rotateScreen(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
 
         @Override
         public void onYouTubePlayerExitFullScreen() {
             fullScreenHelper.exitFullScreen();
+            rotateScreen(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
     }
 
     @Override
     public void onConfigurationChanged(Configuration configuration) {
         super.onConfigurationChanged(configuration);
+        setYouTubePlayerViewStateAccordingToConfiguration(configuration.orientation);
+    }
 
-        if(configuration.orientation == Configuration.ORIENTATION_LANDSCAPE && !youTubePlayerView.isFullScreen()) {
-            youTubePlayerView.enterFullScreen();
-            fullScreenHelper.enterFullScreen();
-        } else if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT && youTubePlayerView.isFullScreen()){
-            youTubePlayerView.exitFullScreen();
-            fullScreenHelper.exitFullScreen();
-        }
+    private void rotateScreen(int orientation) {
+        getActivity().setRequestedOrientation(orientation);
+        getView().postDelayed(() ->
+                    getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR),  3000L);
     }
 
     private class ClickListener implements RecyclerView.OnClickListener {

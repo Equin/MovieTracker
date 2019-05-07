@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.example.movietracker.R;
@@ -16,6 +17,7 @@ import com.example.movietracker.listener.SnapScrollListener;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -40,8 +42,8 @@ public class MovieReviewTabFragment extends BaseFragment implements TabLayoutVie
     @BindView(R.id.recyclerView_reviewList)
     RecyclerView recyclerViewReview;
 
-    @BindView(R.id.textView_nothingToShow)
-    TextView textViewNothingToShow;
+    @BindView(R.id.scrollView_nothingToShow)
+    NestedScrollView scrollViewNothingToShow;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,9 +71,18 @@ public class MovieReviewTabFragment extends BaseFragment implements TabLayoutVie
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        this.scrollViewNothingToShow = null;
+        this.recyclerViewReview = null;
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-        this.movieDetailsTabLayoutPresenter.destroy();
+        if(this.movieDetailsTabLayoutPresenter != null) {
+            this.movieDetailsTabLayoutPresenter.destroy();
+        }
     }
 
     @Override
@@ -85,7 +96,7 @@ public class MovieReviewTabFragment extends BaseFragment implements TabLayoutVie
 
     @Override
     public void displayNothingToShowHint() {
-        this.textViewNothingToShow.setVisibility(View.VISIBLE);
+        this.scrollViewNothingToShow.setVisibility(View.VISIBLE);
     }
 
     private int getMovieIdFromArguments() {

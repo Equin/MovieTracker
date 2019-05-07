@@ -1,10 +1,12 @@
 package com.example.movietracker.view.custom_view;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ToggleButton;
@@ -19,6 +21,7 @@ import java.util.List;
 public class CustomGenreView extends ViewGroup {
 
     private static final int COUNT_OF_BUTTONS_PER_ROW = 3;
+    private static final int COUNT_OF_BUTTONS_PER_ROW_LANDSCAPE = 5;
 
     public CustomGenreView(Context context) {
         this(context, null);
@@ -32,12 +35,29 @@ public class CustomGenreView extends ViewGroup {
         super(context, attrs, defStyleAttr);
     }
 
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+        }
+    }
+
     public void renderGenreView(GenresEntity genresEntity,
                                 CompoundButton.OnCheckedChangeListener onCheckedChangeListener,
                                 List<Integer> selectedGenresIds) {
         removeAllViews();
 
-        List<List<GenreEntity>> genres = Lists.partition(genresEntity.getGenres(), COUNT_OF_BUTTONS_PER_ROW);
+        int buttonsPerRow;
+
+        if  (getContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            buttonsPerRow = COUNT_OF_BUTTONS_PER_ROW_LANDSCAPE;
+        } else {
+            buttonsPerRow = COUNT_OF_BUTTONS_PER_ROW;
+        }
+
+        List<List<GenreEntity>> genres = Lists.partition(genresEntity.getGenres(), buttonsPerRow);
 
         LinearLayout.LayoutParams linearLayoutParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -130,11 +150,12 @@ public class CustomGenreView extends ViewGroup {
             }
 
             //do the layout
-            //   child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight);
+             //  child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight);
             child.layout(curLeft, curTop, childWidth, curTop + curHeight);
 
             int finalCurWidth = curWidth;
             child.postOnAnimation(()-> {
+               // child.setPadding(((childRight - finalCurWidth) / 10), 0, (childRight - finalCurWidth) / 10, 0);
                 child.setPadding(((childRight - finalCurWidth) / 10), 0, (childRight - finalCurWidth) / 10, 0);
             });
 

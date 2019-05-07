@@ -40,18 +40,8 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
     private static String[] tabTitles = new String[]{"Info", "Cast", "Review", "Video"};
     private static final int ANIMATION_DURATION_IN_MS = 200;
 
-    @Override
-    public boolean canGoBackOnBackPressed() {
-        if (imageViewExpandedPoster.getVisibility() == View.VISIBLE) {
-            imageViewExpandedPoster.setVisibility(View.GONE);
-            imageViewMoviePoster.setAlpha(1f);
-            return false;
-        }
-        return true;
-    }
-
     public interface MovieDetailsFragmentInteractionListener {
-        void openNewFragmentInTab(Fragment fragment);
+        void openNewFragmentInTab(Fragment fragment, String fragmentName);
     }
 
     public static MovieDetailsFragment newInstance(int movieId) {
@@ -86,6 +76,7 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
 
     @BindView(R.id.textView_nothingToShow)
     TextView textViewNothingToShow;
+
     @BindView(R.id.expanded_image)
     ImageView imageViewExpandedPoster;
 
@@ -123,21 +114,21 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
             tabLayoutMovieDetails.addTab(tabLayoutMovieDetails.newTab().setText(tabTitles[i]), i == 0);
         }
 
-        replaceFragment(MovieInfoTabFragment.newInstance(movieDetailsEntity));
+        replaceFragment(MovieInfoTabFragment.newInstance(movieDetailsEntity), "MovieInfoTabFragment");
 
         tabLayoutMovieDetails.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 switch (tab.getPosition()) {
-                    case 0 : replaceFragment(MovieInfoTabFragment.newInstance(movieDetailsEntity));
+                    case 0 : replaceFragment(MovieInfoTabFragment.newInstance(movieDetailsEntity), "MovieInfoTabFragment");
                         break;
-                    case 1 : replaceFragment(MovieCastTabFragment.newInstance(movieDetailsEntity.getMovieId()));
+                    case 1 : replaceFragment(MovieCastTabFragment.newInstance(movieDetailsEntity.getMovieId()), "MovieCastTabFragment");
                         break;
-                    case 2 : replaceFragment(MovieReviewTabFragment.newInstance(movieDetailsEntity.getMovieId()));
+                    case 2 : replaceFragment(MovieReviewTabFragment.newInstance(movieDetailsEntity.getMovieId()), "MovieReviewTabFragment");
                         break;
-                    case 3 : replaceFragment(MovieVideoTabFragment.newInstance(movieDetailsEntity.getMovieId()));
+                    case 3 : replaceFragment(MovieVideoTabFragment.newInstance(movieDetailsEntity.getMovieId()), "MovieVideoTabFragment");
                         break;
-                    default: replaceFragment(new MovieCastTabFragment());
+                    default: replaceFragment(MovieInfoTabFragment.newInstance(movieDetailsEntity), "MovieInfoTabFragment");
                 }
             }
 
@@ -153,8 +144,8 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
         });
     }
 
-    private void replaceFragment(Fragment fragment) {
-        this.movieDetailsFragmentInteractionListener.openNewFragmentInTab(fragment);
+    private void replaceFragment(Fragment fragment, String fragmentName) {
+        this.movieDetailsFragmentInteractionListener.openNewFragmentInTab(fragment, fragmentName);
     }
 
     @Override
@@ -169,13 +160,22 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
     @Override
     public void onDetach() {
         super.onDetach();
+        this.textViewMovieDuration = null;
+        this.textViewMovieGenres = null;
+        this.textViewMovieReleaseDate = null;
+        this.textViewMovieTitle = null;
+        this.textViewNothingToShow = null;
+        this.imageViewExpandedPoster = null;
+        this.imageViewMoviePoster = null;
         this.movieDetailsFragmentInteractionListener = null;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        this.movieDetailsPresenter.destroy();
+        if (  this.movieDetailsPresenter != null) {
+            this.movieDetailsPresenter.destroy();
+        }
     }
 
     private int getMovieIdFromArguments() {
@@ -200,6 +200,16 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
     @Override
     public void displayNothingToShowHint() {
         this.textViewNothingToShow.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public boolean canGoBackOnBackPressed() {
+        if (imageViewExpandedPoster.getVisibility() == View.VISIBLE) {
+            imageViewExpandedPoster.setVisibility(View.GONE);
+            imageViewMoviePoster.setAlpha(1f);
+            return false;
+        }
+        return true;
     }
 
     @OnClick(R.id.imageView_moviePoster_details)
