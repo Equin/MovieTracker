@@ -188,7 +188,8 @@ public class MovieListPresenter extends BasePresenter {
     }
 
     private void scrollToMovieIfPossible(MoviesEntity moviesEntity) {
-        if (!moviesEntity.getMovies().isEmpty() && moviesEntity.getMovies().get(recyclerItemPosition.getItemPosition()).getMovieId() != 0) {
+        if (!moviesEntity.getMovies().isEmpty() && recyclerItemPosition.getItemPosition() != -1
+                && moviesEntity.getMovies().get(recyclerItemPosition.getItemPosition()).getMovieId() != 0) {
             this.scrollToPosition(recyclerItemPosition.getItemPosition(), recyclerItemPosition.getOffset());
         }
     }

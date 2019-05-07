@@ -1,6 +1,7 @@
 package com.example.movietracker.view.fragment;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +27,7 @@ import com.example.movietracker.view.FilterAlertDialog;
 import com.example.movietracker.view.MovieCardItemDecorator;
 import com.example.movietracker.view.adapter.MovieListAdapter;
 import com.example.movietracker.view.contract.MovieListView;
+import com.example.movietracker.view.helper.RecyclerViewOrientationUtility;
 import com.example.movietracker.view.helper.UtilityHelpers;
 import com.example.movietracker.view.model.Filters;
 import com.example.movietracker.view.model.MovieRecyclerItemPosition;
@@ -122,13 +124,13 @@ public class MovieListFragment extends BaseFragment
         this.movieListPresenter.initialize(shouldShowFavoriteMoviesList());
         this.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshListener());
 
+        RecyclerViewOrientationUtility.setLayoutManagerToRecyclerView(
+                this.movieRecyclerView,
+                getContext().getResources().getConfiguration().orientation);
         this.movieRecyclerView.addItemDecoration(new MovieCardItemDecorator(RECYCLER_VIEW_CARD_ITEM_OFFSET_DPI));
     }
 
     private void setupActionToolbar() {
-        setSupportActionBar();
-        setNotTransparentToolbar();
-
         if (!shouldShowFavoriteMoviesList()) {
             setToolbarTitle(
                     UtilityHelpers.getPipeDividedGenres(
@@ -136,6 +138,9 @@ public class MovieListFragment extends BaseFragment
         } else  {
             setToolbarTitle(getString(R.string.movie_list_favorite_header));
         }
+
+        setSupportActionBar();
+        setNotTransparentToolbar();
 
         this.setupMenuDrawer();
     }
@@ -178,9 +183,6 @@ public class MovieListFragment extends BaseFragment
         this.filterMenuItem = null;
         this.textViewNothingToShow = null;
         this.movieListAdapter = null;
-        this.toolbar = null;
-        this.backPlateConstraintLayout = null;
-        this.progressView = null;
     }
 
     @Override
@@ -207,11 +209,7 @@ public class MovieListFragment extends BaseFragment
                 getGenresEntity(),
                 new OnFavoriteCheckedListener());
 
-        LinearLayoutManager rowLayoutManager = new LinearLayoutManager(
-                getContext(), RecyclerView.VERTICAL, false);
-
         if (movieRecyclerView != null) {
-            this.movieRecyclerView.setLayoutManager(rowLayoutManager);
             this.movieRecyclerView.setHasFixedSize(true);
 
             this.movieRecyclerView.setAdapter(movieListAdapter);
@@ -221,6 +219,13 @@ public class MovieListFragment extends BaseFragment
         if (this.swipeRefreshLayout != null) {
             this.swipeRefreshLayout.setRefreshing(false);
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        RecyclerViewOrientationUtility.setLayoutManagerToRecyclerView(this.movieRecyclerView, newConfig.orientation);
     }
 
     /**

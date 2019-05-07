@@ -1,6 +1,7 @@
 package com.example.movietracker.view.fragment.movie_details;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,10 +11,12 @@ import android.widget.TextView;
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.movie_details.video.MovieVideosEntity;
 import com.example.movietracker.presenter.MovieDetailsTabLayoutPresenter;
+import com.example.movietracker.view.MovieCardItemDecorator;
 import com.example.movietracker.view.adapter.VideoListAdapter;
 import com.example.movietracker.view.contract.TabLayoutView;
 import com.example.movietracker.view.fragment.BaseFragment;
 import com.example.movietracker.listener.SnapScrollListener;
+import com.example.movietracker.view.helper.RecyclerViewOrientationUtility;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +27,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MovieVideoTabFragment<V extends MovieVideosEntity> extends BaseFragment implements TabLayoutView<MovieVideosEntity> {
+
+    private static final int RECYCLER_VIEW_CARD_ITEM_OFFSET_DPI = 4;
 
     public interface MovieVideoTabFragmentInteractionListener {
         void showYouTubePlayer(String videoId, MovieVideosEntity movieVideosEntity);
@@ -66,6 +71,10 @@ public class MovieVideoTabFragment<V extends MovieVideosEntity> extends BaseFrag
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        RecyclerViewOrientationUtility.setLayoutManagerToRecyclerView(
+                this.recyclerViewVideo,
+                getContext().getResources().getConfiguration().orientation);
+
         this.movieDetailsTabLayoutPresenter = new MovieDetailsTabLayoutPresenter(this);
         this.movieDetailsTabLayoutPresenter.getMovieVideos(getMovieIdFromArguments());
     }
@@ -105,15 +114,21 @@ public class MovieVideoTabFragment<V extends MovieVideosEntity> extends BaseFrag
     @Override
     public void renderInfoToTab(MovieVideosEntity someMovieData) {
         this.someMovieData = someMovieData;
-        RecyclerView.LayoutManager rowLayoutManager = new LinearLayoutManager(
-                getContext(), RecyclerView.VERTICAL, false);
 
-        this.recyclerViewVideo.setLayoutManager(rowLayoutManager);
         VideoListAdapter reviewListAdapter = new VideoListAdapter(someMovieData, new ClickListener());
         this.recyclerViewVideo.setAdapter(reviewListAdapter);
 
+        this.recyclerViewVideo.addItemDecoration(new MovieCardItemDecorator(RECYCLER_VIEW_CARD_ITEM_OFFSET_DPI));
         this.recyclerViewVideo.addOnScrollListener(new SnapScrollListener(this));
     }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        RecyclerViewOrientationUtility.setLayoutManagerToRecyclerView(this.recyclerViewVideo, newConfig.orientation);
+    }
+
 
     @Override
     public void displayNothingToShowHint() {

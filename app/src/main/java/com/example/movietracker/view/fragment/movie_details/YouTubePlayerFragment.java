@@ -17,6 +17,7 @@ import com.example.movietracker.view.adapter.VideoListAdapter;
 import com.example.movietracker.view.fragment.BaseFragment;
 import com.example.movietracker.view.helper.FullScreenHelper;
 import com.example.movietracker.listener.SnapScrollListener;
+import com.example.movietracker.view.helper.RecyclerViewOrientationUtility;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerFullScreenListener;
@@ -83,9 +84,11 @@ public class YouTubePlayerFragment extends BaseFragment implements OnBackPressLi
     }
 
     private void initVideoListRecyclerView() {
-        RecyclerView.LayoutManager rowLayoutManager = new LinearLayoutManager(
-                getContext(), RecyclerView.VERTICAL, false);
-        this.recyclerViewYoutubeVideo.setLayoutManager(rowLayoutManager);
+
+        RecyclerViewOrientationUtility.setLayoutManagerToRecyclerView(
+                this.recyclerViewYoutubeVideo,
+                getContext().getResources().getConfiguration().orientation);
+
         VideoListAdapter videoListAdapter = new VideoListAdapter(this.movieVideosEntity, new ClickListener());
         this.recyclerViewYoutubeVideo.setAdapter(videoListAdapter);
         this.recyclerViewYoutubeVideo.addOnScrollListener(new SnapScrollListener(this));
@@ -210,10 +213,12 @@ public class YouTubePlayerFragment extends BaseFragment implements OnBackPressLi
     public void onConfigurationChanged(Configuration configuration) {
         super.onConfigurationChanged(configuration);
         setYouTubePlayerViewStateAccordingToConfiguration(configuration.orientation);
+        RecyclerViewOrientationUtility.setLayoutManagerToRecyclerView(this.recyclerViewYoutubeVideo, configuration.orientation);
     }
 
     private void rotateScreen(int orientation) {
         getActivity().setRequestedOrientation(orientation);
+
         getView().postDelayed(() ->
                     getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR),  3000L);
     }

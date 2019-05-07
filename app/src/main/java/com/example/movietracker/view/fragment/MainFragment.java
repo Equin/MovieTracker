@@ -1,6 +1,7 @@
 package com.example.movietracker.view.fragment;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -160,9 +161,6 @@ public class MainFragment extends BaseFragment
         this.drawerLayout = null;
         this.navigationView = null;
         this.searchMenuItem = null;
-        this.toolbar = null;
-        this.backPlateConstraintLayout = null;
-        this.progressView = null;
     }
 
     @Override
@@ -180,9 +178,9 @@ public class MainFragment extends BaseFragment
     }
 
     private void setupActionToolbar() {
-        setSupportActionBar();
-        setTransparentToolbar();
         setToolbarTitle(getString(R.string.main_fragment_toolbar_title));
+        setTransparentToolbar();
+        setSupportActionBar();
         this.setupMenuDrawer();
     }
 

@@ -1,5 +1,6 @@
 package com.example.movietracker.view.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -53,10 +54,10 @@ public abstract class BaseFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        this.toolbar = null;
+    public void onDetach(){
+        super.onDetach();
         this.backPlateConstraintLayout = null;
+        this.toolbar = null;
         this.progressView = null;
         this.alertDialog = null;
         this.toast = null;

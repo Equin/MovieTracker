@@ -1,5 +1,6 @@
 package com.example.movietracker.view.fragment.movie_details;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,10 +10,12 @@ import android.widget.TextView;
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.movie_details.cast.MovieCastsEntity;
 import com.example.movietracker.presenter.MovieDetailsTabLayoutPresenter;
+import com.example.movietracker.view.MovieCardItemDecorator;
 import com.example.movietracker.view.adapter.CastListAdapter;
 import com.example.movietracker.view.contract.TabLayoutView;
 import com.example.movietracker.view.fragment.BaseFragment;
 import com.example.movietracker.listener.SnapScrollListener;
+import com.example.movietracker.view.helper.RecyclerViewOrientationUtility;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,6 +26,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MovieCastTabFragment extends BaseFragment implements TabLayoutView<MovieCastsEntity> {
+
+    private static final int RECYCLER_VIEW_CARD_ITEM_OFFSET_DPI = 4;
 
     public static MovieCastTabFragment newInstance(int movieId) {
         MovieCastTabFragment movieCastTabFragment = new MovieCastTabFragment();
@@ -60,6 +65,9 @@ public class MovieCastTabFragment extends BaseFragment implements TabLayoutView<
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        RecyclerViewOrientationUtility.setLayoutManagerToRecyclerView(this.recyclerViewCastList,
+                getContext().getResources().getConfiguration().orientation);
+
         this.movieDetailsTabLayoutPresenter = new MovieDetailsTabLayoutPresenter(this);
         this.movieDetailsTabLayoutPresenter.getMovieCasts(getMovieIdFromArguments());
     }
@@ -80,13 +88,18 @@ public class MovieCastTabFragment extends BaseFragment implements TabLayoutView<
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        RecyclerViewOrientationUtility.setLayoutManagerToRecyclerView(this.recyclerViewCastList, newConfig.orientation);
+    }
+
+    @Override
     public void renderInfoToTab(MovieCastsEntity someMovieData) {
-        RecyclerView.LayoutManager rowLayoutManager = new LinearLayoutManager(
-                getContext(), RecyclerView.VERTICAL, false);
-        this.recyclerViewCastList.setLayoutManager(rowLayoutManager);
         CastListAdapter castListAdapter = new CastListAdapter(someMovieData);
         this.recyclerViewCastList.setAdapter(castListAdapter);
 
+        this.recyclerViewCastList.addItemDecoration(new MovieCardItemDecorator(RECYCLER_VIEW_CARD_ITEM_OFFSET_DPI));
         this.recyclerViewCastList.addOnScrollListener(new SnapScrollListener(this));
     }
 

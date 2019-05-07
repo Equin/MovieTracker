@@ -1,6 +1,7 @@
 package com.example.movietracker.view.custom_view;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -18,11 +19,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.movietracker.R;
 import com.example.movietracker.view.MovieCardItemDecorator;
+import com.example.movietracker.view.helper.RecyclerViewOrientationUtility;
 
 
 public class CustomToolbarSearchView extends SearchView {
 
-    private static final int RECYCLER_VIEW_CARD_ITEM_OFFSET_DPI = 8;
+    private static final int RECYCLER_VIEW_CARD_ITEM_OFFSET_DPI = 4;
 
     private RelativeLayout relativeLayoutResultBox;
     private RecyclerView recyclerView;
@@ -123,19 +125,20 @@ public class CustomToolbarSearchView extends SearchView {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(
-                getContext(), RecyclerView.VERTICAL, false);
-
         recyclerView.setId(R.id.recycler_view_search_results);
         recyclerView.setLayoutParams(linearLayoutParams);
         relativeLayoutResultBox.addView(recyclerView);
 
+        RecyclerViewOrientationUtility.setLayoutManagerToRecyclerView(
+                this.recyclerView,
+                getContext().getResources().getConfiguration().orientation);
+
         recyclerView.setAdapter(recycleViewAdapter);
-        recyclerView.setLayoutManager(layoutManager);
+
         recyclerView.addItemDecoration(new MovieCardItemDecorator(RECYCLER_VIEW_CARD_ITEM_OFFSET_DPI));
 
         linearLayoutParams.width = ((View)this.getParent()).getWidth() - (convertDpToPixel(14, getContext()) * 2);
-        linearLayoutParams.setMargins(convertDpToPixel(14, getContext()), convertDpToPixel(visibleSearchViewRect.top, getContext()), convertDpToPixel(14, getContext()),0);
+        linearLayoutParams.setMargins(convertDpToPixel(14, getContext()), visibleSearchViewRect.top * 2, convertDpToPixel(14, getContext()),0);
 
         relativeLayoutResultBox.setBackgroundColor(getColor(R.color.custom_search_view_result_box_background));
         relativeLayoutResultBox.setLayoutParams(linearLayoutParams);
@@ -165,6 +168,15 @@ public class CustomToolbarSearchView extends SearchView {
                 relativeLayoutResultBox.requestLayout();
             }
         });
+    }
+
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        RecyclerViewOrientationUtility.setLayoutManagerToRecyclerView(
+                this.recyclerView,
+                newConfig.orientation);
     }
 
     @Override
