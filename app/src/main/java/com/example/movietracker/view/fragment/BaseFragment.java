@@ -2,6 +2,7 @@ package com.example.movietracker.view.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.example.movietracker.AndroidApplication;
 import com.example.movietracker.R;
 import com.example.movietracker.presenter.MainPresenter;
 import com.example.movietracker.view.custom_view.CustomPasswordPinEditText;
+import com.example.movietracker.view.helper.KeyboardUtility;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -117,20 +119,6 @@ public abstract class BaseFragment extends Fragment {
         this.showToast(getString(resourceId));
     }
 
-    protected void showKeyboard() {
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if(imm!=null) {
-            imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT,0);
-        }
-    }
-
-    protected void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null && getView() != null)  {
-            imm.hideSoftInputFromWindow(getView().getWindowToken(),0);
-        }
-    }
-
     private boolean progressViewNotExists() {
         return this.progressView == null;
     }
@@ -208,8 +196,8 @@ public abstract class BaseFragment extends Fragment {
     }
 
     private void createDialog(View dialogCustomVIew) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);;
 
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
         alertDialogBuilder.setView(dialogCustomVIew);
 
         if(alertDialog == null) {
@@ -219,14 +207,8 @@ public abstract class BaseFragment extends Fragment {
             alertDialog = alertDialogBuilder.create();
         }
 
-        alertDialog.setOnShowListener(dialogInterface -> {
-            showKeyboard();
-
-        });
-
-        alertDialog.setOnDismissListener(dialogInterface -> {
-            hideKeyboard();
-        });
+        Button cancelButton = dialogCustomVIew.findViewById(R.id.button_cancel_password_reset);
+        cancelButton.setOnClickListener(click -> alertDialog.dismiss());
 
         alertDialog.show();
     }

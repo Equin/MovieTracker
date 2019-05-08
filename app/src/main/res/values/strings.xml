@@ -44,6 +44,7 @@
     <string name="password_reset_dialog_new_password_hint">Enter new password</string>
     <string name="password_reset_dialog_old_password_hint">Enter old password</string>
     <string name="password_reset_dialog_button_save">SAVE</string>
+    <string name="password_reset_dialog_button_cancel">CANCEL</string>
     <string name="password_reset_dialog_button_check">CHECK</string>
     <string name="password_reset_dialog_enter_password_hint">Enter password</string>
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="phone_number_verification_code_length">4</integer>
-    <integer name="phone_number_verification_code_input_type">2</integer> <!-- TYPE_CLASS_NUMBER -->
+    <integer name="pin_code_length">4</integer>
+    <integer name="refactor_code_input_type">2</integer> <!-- TYPE_CLASS_NUMBER -->
 </resources>

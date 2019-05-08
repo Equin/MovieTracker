@@ -27,6 +27,7 @@ import com.example.movietracker.view.adapter.SearchResultMovieListAdapter;
 import com.example.movietracker.view.contract.MainView;
 import com.example.movietracker.view.custom_view.CustomGenreView;
 import com.example.movietracker.view.custom_view.CustomToolbarSearchView;
+import com.example.movietracker.view.helper.KeyboardUtility;
 import com.example.movietracker.view.model.Filters;
 import com.google.android.material.navigation.NavigationView;
 
@@ -166,7 +167,7 @@ public class MainFragment extends BaseFragment
     @Override
     public void onStop() {
         super.onStop();
-        hideKeyboard();
+        KeyboardUtility.hideKeyboard(getContext(), getView());
         dismissDialog();
         this.searchMenuItem.collapseActionView();
     }

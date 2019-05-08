@@ -8,7 +8,7 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
@@ -17,14 +17,15 @@ import java.util.List;
 
 import androidx.annotation.Nullable;
 import com.example.movietracker.R;
+import com.example.movietracker.view.helper.KeyboardUtility;
 import com.example.movietracker.view.helper.pin_code.DigitEditText;
 
 public class CustomPasswordPinEditText extends LinearLayout {
 
     private final List<DigitEditText> digitEditTexts = new ArrayList<>();
 
-    private final int phoneNumberVerificationCodeLength =
-            getIntegerFromResource(R.integer.phone_number_verification_code_length);
+    private final int pinCodeLength =
+            getIntegerFromResource(R.integer.pin_code_length);
 
     private EditText invisibleCodeEditText;
     private boolean shouldRequestFocus;
@@ -57,17 +58,19 @@ public class CustomPasswordPinEditText extends LinearLayout {
         setSize(this, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         setOnClickListener(view -> requestCodeEditTextFocus());
 
-        setupInvisibleEditText();
         createDigitEditTexts();
-        selectDigitAtIndex(0);
+        setupInvisibleEditText();
     }
 
     private int getIntegerFromResource(int resourceId) {
         return getResources().getInteger(resourceId);
     }
 
+    /**
+     * creating digitEditText according to pin code length
+     */
     private void createDigitEditTexts() {
-        for (int i = 1; i <= this.phoneNumberVerificationCodeLength; i++) {
+        for (int i = 1; i <= this.pinCodeLength; i++) {
             DigitEditText digitEditText = new DigitEditText(getContext(), isLastDigit(i));
             this.digitEditTexts.add(digitEditText);
             digitEditText.setOnClickListener(view -> requestCodeEditTextFocus());
@@ -77,21 +80,23 @@ public class CustomPasswordPinEditText extends LinearLayout {
 
     private void requestCodeEditTextFocus() {
         this.invisibleCodeEditText.requestFocus();
-        showKeyboard(this.invisibleCodeEditText);
+        KeyboardUtility.showKeyboard(getContext(), this.invisibleCodeEditText);
     }
 
     private void setupInvisibleEditText() {
         final int inputType =
-                getIntegerFromResource(R.integer.phone_number_verification_code_input_type);
+                getIntegerFromResource(R.integer.refactor_code_input_type);
         this.invisibleCodeEditText = new EditText(getContext());
         setSize(this.invisibleCodeEditText, 0, 0);
         this.invisibleCodeEditText.setInputType(inputType);
         this.invisibleCodeEditText.setFilters(new InputFilter[]{
-                new InputFilter.LengthFilter(this.phoneNumberVerificationCodeLength)
+                new InputFilter.LengthFilter(this.pinCodeLength)
         });
         addView(this.invisibleCodeEditText);
         setupEditTextCodeListener(this.invisibleCodeEditText);
+        this.invisibleCodeEditText.setImeOptions(EditorInfo.IME_FLAG_NO_FULLSCREEN);
         this.invisibleCodeEditText.setId(R.id.invisibleCodeEditText);
+        setupEditTextFocusChangeListener(this.invisibleCodeEditText);
 
         if(shouldRequestFocus) {
             requestCodeEditTextFocus();
@@ -100,13 +105,6 @@ public class CustomPasswordPinEditText extends LinearLayout {
 
     private void setSize(View v, int width, int height) {
         v.setLayoutParams(new LayoutParams(width, height));
-    }
-
-    private void showKeyboard(View view) {
-        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if(imm!=null) {
-            imm.showSoftInput(view,0);
-        }
     }
 
     public static void setMargins(View v, int left, int top, int right, int bottom) {
@@ -122,11 +120,11 @@ public class CustomPasswordPinEditText extends LinearLayout {
     }
 
     private boolean isLastDigit(int i) {
-        return i == this.phoneNumberVerificationCodeLength;
+        return i == this.pinCodeLength;
     }
 
     private boolean isCodeComplete(int textLengthAfter) {
-        return textLengthAfter == phoneNumberVerificationCodeLength;
+        return textLengthAfter == pinCodeLength;
     }
 
     private boolean isCodeIncomplete(int textSizeBefore, int size) {
@@ -139,8 +137,14 @@ public class CustomPasswordPinEditText extends LinearLayout {
         getDigitEditTextAt(digitIndex).select();
     }
 
+    private void deselectDigitAtIndex(int digitIndex) {
+        if (isDigitIndexInvalid(digitIndex)) return;
+
+        getDigitEditTextAt(digitIndex).deselect();
+    }
+
     private boolean isDigitIndexInvalid(int digitIndex) {
-        return digitIndex < 0 || digitIndex >= this.phoneNumberVerificationCodeLength;
+        return digitIndex < 0 || digitIndex >= this.pinCodeLength;
     }
 
     private void deleteDigitAtIndex(int digitIndex) {
@@ -163,6 +167,34 @@ public class CustomPasswordPinEditText extends LinearLayout {
         }
     }
 
+    /**
+     * selecting and deselecting pinCodeEditText on focus change according to length of invisibleEditText text length
+     * @param editText
+     */
+    private void setupEditTextFocusChangeListener(EditText editText) {
+        editText.setOnFocusChangeListener((v, hasFocus) -> {
+            int  length = editText.getText().toString().length();
+            if (hasFocus) {
+                if(!isLastDigit(length) ||  length == 0){
+                    selectDigitAtIndex(length);
+                } else {
+                    selectDigitAtIndex(length - 1);
+                }
+            } else {
+                if(!isLastDigit(length) ||  length == 0){
+                    deselectDigitAtIndex(length);
+                } else {
+                    deselectDigitAtIndex(length - 1);
+                }
+            }
+        });
+    }
+
+    /**
+     * setting digits and selecting next pinCodeEditText on text changes in invisibleEditText
+     *
+     * @param editText
+     */
     private void setupEditTextCodeListener(EditText editText) {
         editText.addTextChangedListener(new TextWatcher() {
             int lastTextLength = 0;

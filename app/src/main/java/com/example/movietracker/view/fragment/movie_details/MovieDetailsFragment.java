@@ -246,7 +246,7 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
         // bounds, since that's the origin for the positioning animation
         // properties (X, Y).
         thumbView.getGlobalVisibleRect(startBounds);
-        getActivity().findViewById(R.id.relativeLayout_movie_details_container)
+        getActivity().findViewById(R.id.coordinatorLayout_movie_details_container)
                 .getGlobalVisibleRect(finalBounds, globalOffset);
         startBounds.offset(-globalOffset.x, -globalOffset.y);
         finalBounds.offset(-globalOffset.x, -globalOffset.y);
