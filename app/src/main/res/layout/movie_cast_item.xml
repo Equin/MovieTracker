@@ -9,7 +9,7 @@
     android:orientation="vertical"
     android:padding="8dp">
 
-    <ImageView
+    <com.example.movietracker.view.custom_view.CustomImageView
         android:id="@+id/imageView_castPhoto"
         android:layout_width="100dp"
         android:layout_height="100dp"

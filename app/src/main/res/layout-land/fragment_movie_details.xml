@@ -60,7 +60,7 @@
                     app:layout_constraintStart_toEndOf="@+id/imageView_moviePoster_details"
                     app:layout_constraintTop_toBottomOf="@+id/textView_movieTitle_details" />
 
-                <ImageView
+                <com.example.movietracker.view.custom_view.CustomImageView
                     android:id="@+id/imageView_moviePoster_details"
                     android:layout_width="130dp"
                     android:layout_height="180dp"

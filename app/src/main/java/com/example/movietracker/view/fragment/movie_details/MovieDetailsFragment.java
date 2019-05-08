@@ -23,6 +23,7 @@ import com.example.movietracker.listener.OnBackPressListener;
 import com.example.movietracker.model.model_impl.MovieInfoModelImpl;
 import com.example.movietracker.presenter.MovieDetailsPresenter;
 import com.example.movietracker.view.contract.MovieDetailsView;
+import com.example.movietracker.view.custom_view.CustomImageView;
 import com.example.movietracker.view.fragment.BaseFragment;
 import com.example.movietracker.view.helper.UtilityHelpers;
 import com.google.android.material.tabs.TabLayout;
@@ -60,7 +61,7 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
     TabLayout tabLayoutMovieDetails;
 
     @BindView(R.id.imageView_moviePoster_details)
-    ImageView imageViewMoviePoster;
+    CustomImageView imageViewMoviePoster;
 
     @BindView(R.id.textView_movieReleaseDate_details)
     TextView textViewMovieReleaseDate;
@@ -212,7 +213,7 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
         return true;
     }
 
-    @OnClick(R.id.imageView_moviePoster_details)
+   // @OnClick(R.id.imageView_moviePoster_details)
     public void onPosterImageClicked(View view) {
         zoomImageFromThumb(view, movieDetailsPresenter.getPosterImagePath());
     }
@@ -384,11 +385,14 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
                 UtilityHelpers.getYear(movieDetailsEntity.getMovieReleaseDate()));
         this.textViewMovieGenres.setText(
                 UtilityHelpers.getPipeDividedGenres(movieDetailsEntity.getGenres()));
+        this.imageViewMoviePoster.setImageSourcePathAndName(movieDetailsEntity.getMoviePosterPath(), movieDetailsEntity.getMovieTitle());
+        this.imageViewMoviePoster.setOnClickListener(this::onPosterImageClicked);
 
        loadImageIntoImageView(this.imageViewMoviePoster, movieDetailsEntity.getMoviePosterPath(), NetConstant.IMAGE_BASE_URL);
     }
 
     private void loadImageIntoImageView(ImageView imageView, String posterPath, String baseUrl) {
+
         Glide
                 .with(this)
                 .load(baseUrl + posterPath)

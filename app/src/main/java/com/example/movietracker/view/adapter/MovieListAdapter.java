@@ -16,6 +16,7 @@ import com.example.movietracker.data.entity.MovieResultEntity;
 import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.data.net.constant.NetConstant;
+import com.example.movietracker.view.custom_view.CustomImageView;
 import com.example.movietracker.view.diff_utill.MovieDiffCallback;
 import com.example.movietracker.view.helper.UtilityHelpers;
 
@@ -111,7 +112,7 @@ implements Filterable {
 
     class MovieListViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView moviePoster;
+        private CustomImageView moviePoster;
         private TextView movieReleaseDate;
         private TextView movieTitle;
         private TextView movieGenres;
@@ -146,6 +147,7 @@ implements Filterable {
             this.itemView.setTag(R.id.tag_int_movie_id, movie.getMovieId());
             this.favoriteToggleButton.setTag(R.id.tag_movieResultEntity_movie_object, movie);
             this.favoriteToggleButton.setChecked(movie.isFavorite());
+            this.moviePoster.setImageSourcePathAndName(movie.getPosterPath(), movie.getMovieTitle());
 
             Glide
                     .with(this.itemView)
