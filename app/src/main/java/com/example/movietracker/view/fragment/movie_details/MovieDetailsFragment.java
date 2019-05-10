@@ -23,7 +23,7 @@ import com.example.movietracker.listener.OnBackPressListener;
 import com.example.movietracker.model.model_impl.MovieInfoModelImpl;
 import com.example.movietracker.presenter.MovieDetailsPresenter;
 import com.example.movietracker.view.contract.MovieDetailsView;
-import com.example.movietracker.view.custom_view.CustomImageView;
+import com.example.movietracker.view.custom_view.CustomPressableImageView;
 import com.example.movietracker.view.fragment.BaseFragment;
 import com.example.movietracker.view.helper.UtilityHelpers;
 import com.google.android.material.tabs.TabLayout;
@@ -33,7 +33,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class MovieDetailsFragment extends BaseFragment implements MovieDetailsView, OnBackPressListener {
 
@@ -61,7 +60,7 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
     TabLayout tabLayoutMovieDetails;
 
     @BindView(R.id.imageView_moviePoster_details)
-    CustomImageView imageViewMoviePoster;
+    CustomPressableImageView imageViewMoviePoster;
 
     @BindView(R.id.textView_movieReleaseDate_details)
     TextView textViewMovieReleaseDate;
@@ -211,6 +210,21 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void onDownloadStarted() {
+        showToast("Download started");
+    }
+
+    @Override
+    public void onDownloadCompleted() {
+        showToast("Download completed");
+    }
+
+    @Override
+    public void onDownloadFailed() {
+        showToast("Download failed");
     }
 
    // @OnClick(R.id.imageView_moviePoster_details)
@@ -386,6 +400,7 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
         this.textViewMovieGenres.setText(
                 UtilityHelpers.getPipeDividedGenres(movieDetailsEntity.getGenres()));
         this.imageViewMoviePoster.setImageSourcePathAndName(movieDetailsEntity.getMoviePosterPath(), movieDetailsEntity.getMovieTitle());
+        this.imageViewMoviePoster.setOnLongClickListener(new OnImageViewLongClickListener());
         this.imageViewMoviePoster.setOnClickListener(this::onPosterImageClicked);
 
        loadImageIntoImageView(this.imageViewMoviePoster, movieDetailsEntity.getMoviePosterPath(), NetConstant.IMAGE_BASE_URL);
@@ -398,5 +413,15 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
                 .load(baseUrl + posterPath)
                 .centerCrop()
                 .into(imageView);
+    }
+
+    private class OnImageViewLongClickListener implements View.OnLongClickListener {
+        @Override
+        public boolean onLongClick(View view) {
+            String imageName = (String) view.getTag(R.id.tag_string_image_name);
+            String imageSourcePath = (String) view.getTag(R.id.tag_string_image_source_path);
+            MovieDetailsFragment.this.movieDetailsPresenter.onImageViewLongClick(imageName,imageSourcePath);
+            return true;
+        }
     }
 }

@@ -135,6 +135,21 @@ public class MovieVideoTabFragment<V extends MovieVideosEntity> extends BaseFrag
         this.scrollViewNothingToShow.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public void onDownloadStarted() {
+        // left empty
+    }
+
+    @Override
+    public void onDownloadCompleted() {
+        // left empty
+    }
+
+    @Override
+    public void onDownloadFailed() {
+        // left empty
+    }
+
     private int getMovieIdFromArguments() {
         if(getArguments() != null) {
             return   getArguments().getInt(MovieDetailsFragment.ARG_SELECTED_MOVIE_ID);

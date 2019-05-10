@@ -2,6 +2,7 @@ package com.example.movietracker.presenter;
 
 import android.util.Log;
 
+import com.example.movietracker.AndroidApplication;
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.movie_details.cast.MovieCastsEntity;
 import com.example.movietracker.data.entity.movie_details.review.MovieReviewsEntity;
@@ -9,6 +10,7 @@ import com.example.movietracker.data.entity.movie_details.video.MovieVideosEntit
 import com.example.movietracker.model.ModelContract;
 import com.example.movietracker.model.model_impl.MovieDetailTabsModelImpl;
 import com.example.movietracker.view.contract.TabLayoutView;
+import com.example.movietracker.view.helper.ImageSaveUtility;
 import com.example.movietracker.view.helper.RxDisposeHelper;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -60,6 +62,10 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribeWith(new GetMovieVideosObserver());
+    }
+
+    public void onImageViewLongClick(String imageName, String imageSourcePath) {
+        ImageSaveUtility.saveImageToDisk(AndroidApplication.getRunningActivity(), imageSourcePath, imageName, view);
     }
 
     private void showLoading() {

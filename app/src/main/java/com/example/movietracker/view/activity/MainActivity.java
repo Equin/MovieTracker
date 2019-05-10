@@ -1,14 +1,17 @@
 package com.example.movietracker.view.activity;
 
 import android.Manifest;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.data.entity.movie_details.video.MovieVideosEntity;
+import com.example.movietracker.service.DownloadCompleteBroadcastReceiver;
 import com.example.movietracker.view.fragment.MainFragment;
 import com.example.movietracker.view.fragment.movie_details.MovieDetailsFragment;
 import com.example.movietracker.view.fragment.MovieListFragment;
@@ -24,13 +27,14 @@ public class MainActivity extends BaseActivity implements
         MovieListFragment.MovieListFragmentInteractionListener,
         MovieVideoTabFragment.MovieVideoTabFragmentInteractionListener,
         MovieDetailsFragment.MovieDetailsFragmentInteractionListener {
+
     private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
 
     public static Intent getCallingIntent(Context context) {
         return new Intent(context, MainActivity.class);
     }
 
-    MovieDetailsFragment movieDetailsFragment;
+   private DownloadCompleteBroadcastReceiver downloadCompleteBroadcastReceiver;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,9 +49,17 @@ public class MainActivity extends BaseActivity implements
                     MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
         }
 
+       // downloadCompleteBroadcastReceiver = new DownloadCompleteBroadcastReceiver();
+       // registerReceiver(downloadCompleteBroadcastReceiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
         if (savedInstanceState == null) {
             addFragment(R.id.container_for_fragment, MainFragment.newInstance());
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+       // unregisterReceiver(downloadCompleteBroadcastReceiver);
     }
 
     @Override

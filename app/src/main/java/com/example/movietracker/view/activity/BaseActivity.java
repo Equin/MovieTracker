@@ -1,5 +1,7 @@
 package com.example.movietracker.view.activity;
 
+import android.app.DownloadManager;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -8,6 +10,7 @@ import com.example.movietracker.AndroidApplication;
 import com.example.movietracker.R;
 import com.example.movietracker.di.ClassProvider;
 import com.example.movietracker.listener.OnBackPressListener;
+import com.example.movietracker.service.DownloadCompleteBroadcastReceiver;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -28,6 +31,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
+
 
         AndroidApplication.setRunningActivity(this);
         ClassProvider.initialize(getApplication().getApplicationContext());

@@ -2,10 +2,13 @@ package com.example.movietracker.presenter;
 
 import android.util.Log;
 
+import com.example.movietracker.AndroidApplication;
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.movie_details.MovieDetailsEntity;
+import com.example.movietracker.di.ClassProvider;
 import com.example.movietracker.model.ModelContract;
 import com.example.movietracker.view.contract.MovieDetailsView;
+import com.example.movietracker.view.helper.ImageSaveUtility;
 import com.example.movietracker.view.helper.RxDisposeHelper;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -75,6 +78,10 @@ public class MovieDetailsPresenter extends BasePresenter {
     public void destroy() {
         this.view = null;
         RxDisposeHelper.dispose(this.disposable);
+    }
+
+    public void onImageViewLongClick(String imageName, String imageSourcePath) {
+       ImageSaveUtility.saveImageToDisk(AndroidApplication.getRunningActivity(), imageSourcePath, imageName, view);
     }
 
     private class GetMovieDetailObserver extends DisposableObserver<MovieDetailsEntity> {

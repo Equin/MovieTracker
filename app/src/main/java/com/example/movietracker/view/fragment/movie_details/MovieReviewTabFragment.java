@@ -106,4 +106,19 @@ public class MovieReviewTabFragment extends BaseFragment implements TabLayoutVie
 
         return -1;
     }
+
+    @Override
+    public void onDownloadStarted() {
+        // left empty
+    }
+
+    @Override
+    public void onDownloadCompleted() {
+        // left empty
+    }
+
+    @Override
+    public void onDownloadFailed() {
+        // left empty
+    }
 }

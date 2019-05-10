@@ -4,5 +4,7 @@
     <item name="tag_int_movie_id" type="id"/>
     <item name="tag_movieResultEntity_movie_object" type="id" />
     <item name="recycler_view_search_results" type="id" />
-    <item type="id" name="invisibleCodeEditText" />
+    <item name="invisibleCodeEditText" type="id"/>
+    <item name="tag_string_image_name" type="id"/>
+    <item name="tag_string_image_source_path" type="id"/>
 </resources>

@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -16,7 +15,7 @@ import com.example.movietracker.data.entity.MovieResultEntity;
 import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.data.net.constant.NetConstant;
-import com.example.movietracker.view.custom_view.CustomImageView;
+import com.example.movietracker.view.custom_view.CustomPressableImageView;
 import com.example.movietracker.view.diff_utill.MovieDiffCallback;
 import com.example.movietracker.view.helper.UtilityHelpers;
 
@@ -39,18 +38,21 @@ implements Filterable {
     private GenresEntity genresEntity;
     private View.OnClickListener clickListener;
     private CompoundButton.OnCheckedChangeListener onCheckedChangeListener;
+    private View.OnLongClickListener onImageViewLongClickListener;
 
     public MovieListAdapter(
             MoviesEntity movieList,
             View.OnClickListener clickListener,
             GenresEntity genresEntity,
-            CompoundButton.OnCheckedChangeListener onCheckedChangeListener) {
+            CompoundButton.OnCheckedChangeListener onCheckedChangeListener,
+            View.OnLongClickListener onImageViewLongClickListener) {
         this.movieList = new ArrayList<>();
         this.movieList.addAll(movieList.getMovies());
         this.movieListFull = new ArrayList<>(this.movieList);
         this.genresEntity = genresEntity;
         this.clickListener = clickListener;
         this.onCheckedChangeListener = onCheckedChangeListener;
+        this.onImageViewLongClickListener = onImageViewLongClickListener;
     }
 
     @NonNull
@@ -61,6 +63,7 @@ implements Filterable {
 
         MovieListViewHolder viewHolder = new MovieListViewHolder(view);
         viewHolder.favoriteToggleButton.setOnCheckedChangeListener(onCheckedChangeListener);
+        viewHolder.moviePoster.setOnLongClickListener(this.onImageViewLongClickListener);
 
         return viewHolder;
     }
@@ -112,7 +115,7 @@ implements Filterable {
 
     class MovieListViewHolder extends RecyclerView.ViewHolder {
 
-        private CustomImageView moviePoster;
+        private CustomPressableImageView moviePoster;
         private TextView movieReleaseDate;
         private TextView movieTitle;
         private TextView movieGenres;

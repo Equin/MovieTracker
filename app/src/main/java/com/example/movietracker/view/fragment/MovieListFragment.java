@@ -207,7 +207,8 @@ public class MovieListFragment extends BaseFragment
                 moviesEntity,
                 new ClickListener(),
                 getGenresEntity(),
-                new OnFavoriteCheckedListener());
+                new OnFavoriteCheckedListener(),
+                new OnImageViewLongClickListener());
 
         if (movieRecyclerView != null) {
             this.movieRecyclerView.setHasFixedSize(true);
@@ -346,6 +347,21 @@ public class MovieListFragment extends BaseFragment
         this.movieListPresenter.lastMovieOfPageReached();
     }
 
+    @Override
+    public void onDownloadStarted() {
+        showToast("Download started");
+    }
+
+    @Override
+    public void onDownloadCompleted() {
+        showToast("Download completed");
+    }
+
+    @Override
+    public void onDownloadFailed() {
+        showToast("Download failed");
+    }
+
     /**
      * getting movies by filters on alert dialog done button clicked
      * @param alertDialog
@@ -413,6 +429,16 @@ public class MovieListFragment extends BaseFragment
                 MovieResultEntity movieResultEntity = (MovieResultEntity)buttonView.getTag(R.id.tag_movieResultEntity_movie_object) ;
                 MovieListFragment.this.movieListPresenter.onFavoriteChecked(movieResultEntity, isChecked);
             }
+        }
+    }
+
+    private class OnImageViewLongClickListener implements View.OnLongClickListener {
+        @Override
+        public boolean onLongClick(View view) {
+            String imageName = (String) view.getTag(R.id.tag_string_image_name);
+            String imageSourcePath = (String) view.getTag(R.id.tag_string_image_source_path);
+            MovieListFragment.this.movieListPresenter.onImageViewLongClick(imageName,imageSourcePath);
+            return true;
         }
     }
 }

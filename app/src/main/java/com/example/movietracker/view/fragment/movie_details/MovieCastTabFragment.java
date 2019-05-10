@@ -96,7 +96,7 @@ public class MovieCastTabFragment extends BaseFragment implements TabLayoutView<
 
     @Override
     public void renderInfoToTab(MovieCastsEntity someMovieData) {
-        CastListAdapter castListAdapter = new CastListAdapter(someMovieData);
+        CastListAdapter castListAdapter = new CastListAdapter(someMovieData, new OnImageViewLongClickListener());
         this.recyclerViewCastList.setAdapter(castListAdapter);
 
         this.recyclerViewCastList.addItemDecoration(new MovieCardItemDecorator(RECYCLER_VIEW_CARD_ITEM_OFFSET_DPI));
@@ -108,11 +108,36 @@ public class MovieCastTabFragment extends BaseFragment implements TabLayoutView<
         this.scrollViewNothingToShow.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public void onDownloadStarted() {
+        showToast("Download started");
+    }
+
+    @Override
+    public void onDownloadCompleted() {
+        showToast("Download completed");
+    }
+
+    @Override
+    public void onDownloadFailed() {
+        showToast("Download failed");
+    }
+
     private int getMovieIdFromArguments() {
         if(getArguments() != null) {
             return   getArguments().getInt(MovieDetailsFragment.ARG_SELECTED_MOVIE_ID);
         }
 
         return -1;
+    }
+
+    private class OnImageViewLongClickListener implements View.OnLongClickListener {
+        @Override
+        public boolean onLongClick(View view) {
+            String imageName = (String) view.getTag(R.id.tag_string_image_name);
+            String imageSourcePath = (String) view.getTag(R.id.tag_string_image_source_path);
+            MovieCastTabFragment.this.movieDetailsTabLayoutPresenter.onImageViewLongClick(imageName,imageSourcePath);
+            return true;
+        }
     }
 }

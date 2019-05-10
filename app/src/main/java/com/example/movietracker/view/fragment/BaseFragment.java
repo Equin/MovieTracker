@@ -111,7 +111,7 @@ public abstract class BaseFragment extends Fragment {
             this.toast.cancel();
         }
 
-        this.toast = Toast.makeText(AndroidApplication.getRunningActivity().getApplicationContext(), message, Toast.LENGTH_LONG);
+        this.toast = Toast.makeText(AndroidApplication.getRunningActivity().getApplicationContext(), message, Toast.LENGTH_SHORT);
         this.toast.show();
     }
 

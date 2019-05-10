@@ -2,11 +2,13 @@ package com.example.movietracker.presenter;
 
 import android.util.Log;
 
+import com.example.movietracker.AndroidApplication;
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.MovieResultEntity;
 import com.example.movietracker.data.entity.MoviesEntity;
 import com.example.movietracker.data.entity.UserEntity;
 import com.example.movietracker.data.entity.UserWithFavoriteMovies;
+import com.example.movietracker.view.helper.ImageSaveUtility;
 import com.example.movietracker.view.helper.RxDisposeHelper;
 import com.example.movietracker.view.model.Filters;
 import com.example.movietracker.model.ModelContract;
@@ -304,6 +306,11 @@ public class MovieListPresenter extends BasePresenter {
             this.view.renderMoviesList(moviesEntity);
         }
     }
+
+    public void onImageViewLongClick(String imageName, String imageSourcePath) {
+        ImageSaveUtility.saveImageToDisk(AndroidApplication.getRunningActivity(), imageSourcePath, imageName, view);
+    }
+
 
     private class GetMoviesObserver extends DisposableObserver<MoviesEntity> {
         @Override

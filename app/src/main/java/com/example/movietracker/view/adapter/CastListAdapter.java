@@ -3,9 +3,7 @@ package com.example.movietracker.view.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -14,7 +12,7 @@ import com.example.movietracker.R;
 import com.example.movietracker.data.entity.movie_details.cast.MovieCastResultEntity;
 import com.example.movietracker.data.entity.movie_details.cast.MovieCastsEntity;
 import com.example.movietracker.data.net.constant.NetConstant;
-import com.example.movietracker.view.custom_view.CustomImageView;
+import com.example.movietracker.view.custom_view.CustomPressableImageView;
 
 import java.util.List;
 
@@ -24,16 +22,20 @@ import androidx.recyclerview.widget.RecyclerView;
 public class CastListAdapter extends RecyclerView.Adapter<CastListAdapter.CastListViewHolder> {
 
     private List<MovieCastResultEntity> castResultEntity;
+    private View.OnLongClickListener onImageViewLongClickListener;
 
-    public CastListAdapter(MovieCastsEntity castsEntity) {
+    public CastListAdapter(MovieCastsEntity castsEntity, View.OnLongClickListener onImageViewLongClickListener) {
         this.castResultEntity = castsEntity.getMovieCasts();
+        this.onImageViewLongClickListener = onImageViewLongClickListener;
     }
 
     @NonNull
     @Override
     public CastListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_cast_item, parent, false);
-        return new CastListViewHolder(view);
+        CastListViewHolder castListViewHolder = new CastListViewHolder(view);
+        castListViewHolder.castPhoto.setOnLongClickListener(this.onImageViewLongClickListener);
+        return castListViewHolder;
     }
 
     @Override
@@ -48,7 +50,7 @@ public class CastListAdapter extends RecyclerView.Adapter<CastListAdapter.CastLi
 
     class CastListViewHolder extends RecyclerView.ViewHolder {
 
-        private CustomImageView castPhoto;
+        private CustomPressableImageView castPhoto;
         private TextView castName;
 
         CastListViewHolder(@NonNull View itemView) {

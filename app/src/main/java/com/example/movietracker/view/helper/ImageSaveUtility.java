@@ -1,6 +1,7 @@
 package com.example.movietracker.view.helper;
 import android.app.DownloadManager;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
@@ -14,6 +15,8 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.movietracker.data.net.constant.NetConstant;
+import com.example.movietracker.service.DownloadCompleteBroadcastReceiver;
+import com.example.movietracker.view.contract.DownloadListenerView;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -28,11 +31,16 @@ public class ImageSaveUtility  {
 
     private ImageSaveUtility() {}
 
-    public static void saveImageToDisk(Context context, String imageSourcePath, String movieName) {
-        saveWithDownloadManager(context, imageSourcePath, movieName);
+    public static void saveImageToDisk(Context context, String imageSourcePath, String movieName, DownloadListenerView downloadListenerView) {
+        saveWithDownloadManager(context, imageSourcePath, movieName, downloadListenerView);
     }
 
-    private static void saveWithDownloadManager(Context context, String imageSourcePath, String movieName) {
+    private static void saveWithDownloadManager(Context context, String imageSourcePath, String movieName, DownloadListenerView downloadListenerView) {
+
+        if(downloadListenerView != null) {
+            downloadListenerView.onDownloadStarted();
+        }
+
         Uri uri= Uri.parse(NetConstant.IMAGE_HIGHT_RES_URL + imageSourcePath);
 
         DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
@@ -40,17 +48,19 @@ public class ImageSaveUtility  {
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI |
                 DownloadManager.Request.NETWORK_MOBILE);
 
-        // set title and description
         request.setTitle("Data Download");
         request.setDescription("Android Data download using DownloadManager.");
-
         request.allowScanningByMediaScanner();
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setVisibleInDownloadsUi(true);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,"MovieTracker/" + movieName);
+        request.setMimeType("image/jpeg");
 
-        //set the local destination for download file to a path within the application's external files directory
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,"MoiveTracker/" + movieName);
-        // request.setMimeType("*/*");
-        downloadManager.enqueue(request);
+        context.registerReceiver(
+                new DownloadCompleteBroadcastReceiver(
+                        downloadManager.enqueue(request),
+                        downloadListenerView),
+                new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
     }
 
     private static void saveWithGlide(Context context, String imageSourcePath, String movieName) {
