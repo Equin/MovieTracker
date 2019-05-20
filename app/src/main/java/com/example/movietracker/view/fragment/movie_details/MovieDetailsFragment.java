@@ -102,6 +102,11 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
         return rootView;
     }
 
+    /**
+     * initialize MovieDetailsPresenter and getting movieDetail
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -109,6 +114,10 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
         this.movieDetailsPresenter.getMovieDetails(getMovieIdFromArguments());
     }
 
+    /**
+     * setting movieDetailsEntity to TabLayout, each tab replacing with appropriate TabFragment
+     * @param movieDetailsEntity
+     */
     private void setupTabLayout(MovieDetailsEntity movieDetailsEntity) {
         for (int i = 0; i<tabTitles.length; i++) {
             tabLayoutMovieDetails.addTab(tabLayoutMovieDetails.newTab().setText(tabTitles[i]), i == 0);
@@ -202,6 +211,10 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
         this.textViewNothingToShow.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * checking if imageMovie is expanded is shown -> hiding and returning false, else return true
+     * @return
+     */
     @Override
     public boolean canGoBackOnBackPressed() {
         if (imageViewExpandedPoster.getVisibility() == View.VISIBLE) {
@@ -214,17 +227,17 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
 
     @Override
     public void onDownloadStarted() {
-        showToast("Download started");
+        showToast(R.string.download_manager_img_download_started);
     }
 
     @Override
     public void onDownloadCompleted() {
-        showToast("Download completed");
+        showToast(R.string.download_manager_img_download_finished);
     }
 
     @Override
     public void onDownloadFailed() {
-        showToast("Download failed");
+        showToast(R.string.download_manager_img_download_failed);
     }
 
    // @OnClick(R.id.imageView_moviePoster_details)
@@ -415,6 +428,10 @@ public class MovieDetailsFragment extends BaseFragment implements MovieDetailsVi
                 .into(imageView);
     }
 
+    /**
+     * listener for imageLongClick
+     * getting imageName and imageSourcePath from tag of clicked item and passing it to movieDetailsPresenter
+     */
     private class OnImageViewLongClickListener implements View.OnLongClickListener {
         @Override
         public boolean onLongClick(View view) {

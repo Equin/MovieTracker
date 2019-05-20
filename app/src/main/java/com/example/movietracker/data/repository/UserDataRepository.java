@@ -50,7 +50,7 @@ public class UserDataRepository implements UserRepository {
     /**
      * getting user from UserEntity table, with 2 seconds timeout, if no emit by that time it
      * throws TimeoutException, and in onErrorReturn returns default User
-     * @return UserEntity
+     * @return Observable<UserEntity>
      */
     @Override
     public Observable<UserEntity> getUser() {
@@ -66,7 +66,7 @@ public class UserDataRepository implements UserRepository {
     /**
      * getting user with favorites from DB, if there is no favorites in UserWithFavoritesEntity table
      * -> gets user and checking his movieId field by getting movie from MovieResultEntity table
-     * @return userEntity with favorite movies
+     * @return Observable<UserEntity> -  userEntity with favorite movies
      */
     @Override
     public Observable<UserEntity> getUserWithFavorites() {
@@ -98,6 +98,11 @@ public class UserDataRepository implements UserRepository {
         this.userDao.addUser(userEntity);
     }
 
+    /**
+     * updating user and userMovieRelation
+     * @param userEntity
+     * @return Completable
+     */
     @Override
     public Completable updateUser(UserEntity userEntity) {
         if(userEntity.getFavoriteMovies() != null && !userEntity.getFavoriteMovies().isEmpty()) {
@@ -112,6 +117,14 @@ public class UserDataRepository implements UserRepository {
         return this.userDao.deleteMovieFromFavorites(userWithFavoriteMovies);
     }
 
+    /**
+     * syncing favorite movies with server
+     * 1. getting userWithFavorites from db
+     * 2. getting favorites from server
+     * 3. syncAllMovieFavorites(moviesEntity, userWithFavoritesFromDB)))
+     * @param userEntity
+     * @return Completable.error(new Throwable(markAsFavoriteResultEntity.getStatusMessage()))
+     */
     @Override
     public Completable syncFavoritesWithServer(UserEntity userEntity) {
         return this.getUserWithFavorites().flatMapCompletable(userWithFavoritesFromDB ->
@@ -120,6 +133,12 @@ public class UserDataRepository implements UserRepository {
                         Completable.error(new Throwable(markAsFavoriteResultEntity.getStatusMessage()))));
     }
 
+    /**
+     * comparing favorites from server with favorites from db and making server favorites match the db favorites
+     * @param moviesEntityFromServer
+     * @param localUserWithFavorites
+     * @return Single<MarkMovieAsFavoriteResultEntity>
+     */
     private Single<MarkMovieAsFavoriteResultEntity> syncAllMovieFavorites(
             MoviesEntity moviesEntityFromServer,
             UserEntity localUserWithFavorites) {
@@ -177,6 +196,12 @@ public class UserDataRepository implements UserRepository {
         }).singleOrError();
     }
 
+    /**
+     * marking/unmarking all provided movies as favorite
+     * @param markFavoriteRequestBodyEntities
+     * @param localUserWithFavorites
+     * @return if there are some error  like AUTHORIZATION_FAILED or UPDATE_FAILED returns such error
+     */
     private MarkMovieAsFavoriteResultEntity markAsFavoriteMoviesOnTmdbServer(
             List<MarkMovieAsFavoriteRequestBodyEntity> markFavoriteRequestBodyEntities,
             UserEntity localUserWithFavorites) {
@@ -206,6 +231,12 @@ public class UserDataRepository implements UserRepository {
         }).blockingSingle();
     }
 
+    /**
+     * making mark as favorite request
+     * @param markMovieAsFavoriteRequestBodyEntity
+     * @param userEntity
+     * @return Single<MarkMovieAsFavoriteResultEntity>
+     */
     private Single<MarkMovieAsFavoriteResultEntity> addMarkAsFavoriteRequest(
             MarkMovieAsFavoriteRequestBodyEntity markMovieAsFavoriteRequestBodyEntity,
             UserEntity userEntity) {
@@ -215,6 +246,12 @@ public class UserDataRepository implements UserRepository {
                 userEntity.getSessionId());
     }
 
+    /**
+     * getting from server favorites for page
+     * @param page
+     * @param localUserWithFavorites
+     * @return Single<MoviesEntity>
+     */
     private Single<MoviesEntity> addRequest(UserEntity localUserWithFavorites, int page) {
         return this.getFavoritesFromServer(
                 localUserWithFavorites.getUserId(),
@@ -235,6 +272,10 @@ public class UserDataRepository implements UserRepository {
         return this.userApi.markAsFavorite(accountId, favoriteRequestBody, sessionId);
     }
 
+    /**
+     * getting from server favorites for page
+     * @return  Single<MoviesEntity>
+     */
     @Override
     public Single<MoviesEntity> getFavoritesFromServer(int accountId, String sessionId, int page) {
         return this.userApi.getFavoriteMoviesFromServer(accountId, sessionId, page);

@@ -78,11 +78,17 @@ public class CustomPasswordPinEditText extends LinearLayout {
         }
     }
 
+    /**
+     * requesting focus for invisibleEditText and showing keyboard
+     */
     private void requestCodeEditTextFocus() {
         this.invisibleCodeEditText.requestFocus();
         KeyboardUtility.showKeyboard(getContext(), this.invisibleCodeEditText);
     }
 
+    /**
+     * creating invisibleEditText for typing password in it
+     */
     private void setupInvisibleEditText() {
         final int inputType =
                 getIntegerFromResource(R.integer.refactor_code_input_type);
@@ -115,6 +121,10 @@ public class CustomPasswordPinEditText extends LinearLayout {
         }
     }
 
+    /**
+     * returning value from invisibleEditText
+     * @returns password value
+     */
     public String getPasswordValue() {
        return isCodeComplete(invisibleCodeEditText.getText().toString().length()) ? invisibleCodeEditText.getText().toString() : "";
     }
@@ -131,12 +141,20 @@ public class CustomPasswordPinEditText extends LinearLayout {
         return textSizeBefore < size;
     }
 
+    /**
+     * selecting digit at provided index
+     * @param digitIndex
+     */
     private void selectDigitAtIndex(int digitIndex) {
         if (isDigitIndexInvalid(digitIndex)) return;
 
         getDigitEditTextAt(digitIndex).select();
     }
 
+    /**
+     * deselecting digit at provided index
+     * @param digitIndex
+     */
     private void deselectDigitAtIndex(int digitIndex) {
         if (isDigitIndexInvalid(digitIndex)) return;
 

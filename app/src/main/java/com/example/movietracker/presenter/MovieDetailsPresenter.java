@@ -32,6 +32,10 @@ public class MovieDetailsPresenter extends BasePresenter {
         this.view = movieDetailsView;
     }
 
+    /**
+     * getting movie details by movie id
+     * @param movieId
+     */
     public void getMovieDetails(int movieId) {
         showLoading();
         disposable = this.movieInfoModel.getMovieInfo(movieId)
@@ -40,6 +44,10 @@ public class MovieDetailsPresenter extends BasePresenter {
                 .subscribeWith(new GetMovieDetailObserver());
     }
 
+    /**
+     * getting movie poster url
+     * @return movie poster url
+     */
     public String getPosterImagePath() {
         return this.movieDetailsEntity.getMoviePosterPath();
     }
@@ -62,6 +70,7 @@ public class MovieDetailsPresenter extends BasePresenter {
         }
     }
 
+
     private void renderMovieDetails(MovieDetailsEntity movieDetailsEntity) {
         if (this.view != null) {
             this.view.renderMovieDetails(movieDetailsEntity);
@@ -80,10 +89,20 @@ public class MovieDetailsPresenter extends BasePresenter {
         RxDisposeHelper.dispose(this.disposable);
     }
 
+    /**
+     * saving clicked image to disc
+     * @param imageName - image name
+     * @param imageSourcePath - image url
+     */
     public void onImageViewLongClick(String imageName, String imageSourcePath) {
        ImageSaveUtility.saveImageToDisk(AndroidApplication.getRunningActivity(), imageSourcePath, imageName, view);
     }
 
+    /**
+     * getting movie detail
+     *
+     * onNext: rendering movie detail into fragment or show Empty hint
+     */
     private class GetMovieDetailObserver extends DisposableObserver<MovieDetailsEntity> {
         @Override
         public void onNext(MovieDetailsEntity movieDetailsEntity) {

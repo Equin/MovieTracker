@@ -64,6 +64,10 @@ public class MovieDataRepository implements MovieRepository {
         this.userRepository = userRepository;
     }
 
+    /**
+     * getting genres from server and saving to db, if error -> gets from db
+     * @return Single<GenresEntity>
+     */
     @Override
     public Single<GenresEntity> getGenres() {
         return this.movieApi.getGenres()
@@ -71,6 +75,10 @@ public class MovieDataRepository implements MovieRepository {
                 .onErrorResumeNext(this.genresDao.getAllGenres().map(GenresEntity::new));
     }
 
+    /**
+     * getting genres from DB, if error -> from server and saving to db
+     * @return Single<GenresEntity>
+     */
     @Override
     public Single<GenresEntity> getLocalGenres() {
         return this.genresDao.getAllGenres().map(genreEntities -> new GenresEntity())
@@ -78,6 +86,11 @@ public class MovieDataRepository implements MovieRepository {
                         .doOnSuccess(genresEntity -> this.genresDao.saveGenres(genresEntity.getGenres())));
     }
 
+    /**
+     * getting movies by filters from server and saving to db, if error -> getting from Db
+     * @param filters
+     * @return Observable<MoviesEntity>
+     */
     @Override
     public Observable<MoviesEntity> getMovies(Filters filters) {
         return this.movieApi.getMovies(
@@ -113,6 +126,11 @@ public class MovieDataRepository implements MovieRepository {
                 );
     }
 
+    /**
+     * getting movies by title and saving it to db, if there is error it searching movies in db
+     * @param filters
+     * @return Observable<MoviesEntity>
+     */
     @Override
     public Observable<MoviesEntity> getMoviesByTitle(Filters filters) {
         return this.movieApi.getMoviesByTitle(filters.getSearchQueryByTitle(), filters.isIncludeAdult())
@@ -130,6 +148,13 @@ public class MovieDataRepository implements MovieRepository {
         return  getMovieFavorites(getMovies(filters));
     }
 
+    /**
+     * getting movies with favorites by zipping getUserWithFavorites with moviesEntityObservable that has movieListForPages
+     *
+     *  checking movies from userWithFavorites and moviesEntityObservable, and there is a match its mark movie as favorite
+     * @param moviesEntityObservable - movie list for pages
+     * @return Observable<MoviesEntity>
+     */
     private Observable<MoviesEntity> getMovieFavorites( Observable<MoviesEntity> moviesEntityObservable ) {
         return Observable.zip(
                 this.userRepository.getUserWithFavorites().subscribeOn(Schedulers.newThread()),
@@ -158,6 +183,11 @@ public class MovieDataRepository implements MovieRepository {
        return  getMovieFavorites(getMovieListForPages(filters));
     }
 
+    /**
+     * getting movies for each page, for ading it to one list.
+     * @param filters
+     * @return Observable<MoviesEntity>
+     */
     @Override
     public Observable<MoviesEntity> getMovieListForPages(Filters filters) {
         List<Observable<MoviesEntity>> requests = new ArrayList<>();
@@ -186,6 +216,13 @@ public class MovieDataRepository implements MovieRepository {
         });
     }
 
+    /**
+     * adding requests for getting movies from server (and saving it to db) for each page in one list.
+     * if there is errror it gets movies form db
+     * @param filters
+     * @param page
+     * @return Observable<MoviesEntity>
+     */
     private Observable<MoviesEntity> addRequest(Filters filters, int page) {
         return this.movieApi.getMovies(
                 filters.getCommaSeparatedGenres(),
@@ -219,6 +256,12 @@ public class MovieDataRepository implements MovieRepository {
                 );
     }
 
+
+    /**
+     * getting movie details from server and saving it,  if there is error it gets details from DB
+     * @param movieId
+     * @return Observable<MovieDetailsEntity>
+     */
     @Override
     public Observable<MovieDetailsEntity> getMovieDetails(int movieId) {
         return this.movieApi.getMovieDetailsById(movieId)
@@ -239,6 +282,11 @@ public class MovieDataRepository implements MovieRepository {
                         }));
     }
 
+    /**
+     * getting movie casts from server and saving it,  if there is error it gets casts from DB
+     * @param movieId
+     * @return Observable<MovieCastsEntity>
+     */
     @Override
     public Observable<MovieCastsEntity> getMovieCasts(int movieId) {
         return this.movieApi.getMovieCasts(movieId)
@@ -250,6 +298,11 @@ public class MovieDataRepository implements MovieRepository {
                 );
     }
 
+    /**
+     * getting movie videos from server and saving it,  if there is error it gets videos from DB
+     * @param movieId
+     * @return Observable<MovieVideosEntity>
+     */
     @Override
     public Observable<MovieVideosEntity> getMovieVideos(int movieId) {
         return this.movieApi.getMovieVideos(movieId)
@@ -261,6 +314,11 @@ public class MovieDataRepository implements MovieRepository {
                 );
     }
 
+    /**
+     * getting movie reviews from server and saving it,  if there is error it gets reviews from DB
+     * @param movieId
+     * @return Observable<MovieReviewsEntity>
+     */
     @Override
     public Observable<MovieReviewsEntity> getMovieReviews(int movieId) {
         return this.movieApi.getMovieReviews(movieId)

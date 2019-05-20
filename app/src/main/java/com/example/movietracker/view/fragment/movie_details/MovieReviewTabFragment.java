@@ -62,6 +62,11 @@ public class MovieReviewTabFragment extends BaseFragment implements TabLayoutVie
         return rootView;
     }
 
+    /**
+     * initializing MovieDetailsTabLayoutPresenter and getting movie reviews
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -85,6 +90,10 @@ public class MovieReviewTabFragment extends BaseFragment implements TabLayoutVie
         }
     }
 
+    /**
+     * rendering movieReviewEntity to recyclerViewList with ReviewListAdapter and SnapScrollListener
+     * @param someMovieData
+     */
     @Override
     public void renderInfoToTab(MovieReviewsEntity someMovieData) {
         RecyclerView.LayoutManager rowLayoutManager = new LinearLayoutManager(

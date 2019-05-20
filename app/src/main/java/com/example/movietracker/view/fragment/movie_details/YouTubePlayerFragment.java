@@ -83,6 +83,9 @@ public class YouTubePlayerFragment extends BaseFragment implements OnBackPressLi
         setYouTubePlayerViewStateAccordingToConfiguration(getContext().getResources().getConfiguration().orientation);
     }
 
+    /**
+     * initializing recyclerViewYoutubeVideo with VideoListAdapter and movieVideosEntity and adding SnapScrollListener
+     */
     private void initVideoListRecyclerView() {
 
         RecyclerViewOrientationUtility.setLayoutManagerToRecyclerView(
@@ -195,6 +198,9 @@ public class YouTubePlayerFragment extends BaseFragment implements OnBackPressLi
         return true;
     }
 
+    /**
+     * listener for entering and exiting fullScreen mode
+     */
     private class YouTubePlayerFullScListener implements YouTubePlayerFullScreenListener {
         @Override
         public void onYouTubePlayerEnterFullScreen() {
@@ -209,6 +215,10 @@ public class YouTubePlayerFragment extends BaseFragment implements OnBackPressLi
         }
     }
 
+    /**
+     * changing recyclerViewYoutubeVideo orientation according to configuration
+     * @param configuration
+     */
     @Override
     public void onConfigurationChanged(Configuration configuration) {
         super.onConfigurationChanged(configuration);
@@ -223,6 +233,10 @@ public class YouTubePlayerFragment extends BaseFragment implements OnBackPressLi
                     getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR),  3000L);
     }
 
+    /**
+     * listener for video clicked item,
+     * selecting and deselecting recyclerView item on click
+     */
     private class ClickListener implements RecyclerView.OnClickListener {
 
         private int previousClick = -1;

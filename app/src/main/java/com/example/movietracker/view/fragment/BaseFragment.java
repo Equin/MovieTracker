@@ -121,6 +121,10 @@ public abstract class BaseFragment extends Fragment {
         return this.progressView == null;
     }
 
+    /**
+     * creating AlertDialog for Parental control password reset
+     * @param mainPresenter
+     */
     protected void createPasswordResetDialog(MainPresenter mainPresenter) {
         LayoutInflater li = LayoutInflater.from(getContext());
         View dialogView =  li.inflate(R.layout.password_reset_dialog_pins, null);
@@ -128,6 +132,10 @@ public abstract class BaseFragment extends Fragment {
         createDialog(dialogView);
     }
 
+    /**
+     * creating AlertDialog for Parental control password creating
+     * @param mainPresenter
+     */
     protected void createNewPasswordDialog(MainPresenter mainPresenter) {
         LayoutInflater li = LayoutInflater.from(getContext());
         View dialogView =  li.inflate(R.layout.password_new_dialog_pins, null);
@@ -135,6 +143,10 @@ public abstract class BaseFragment extends Fragment {
         createDialog(dialogView);
     }
 
+    /**
+     * creating AlertDialog for Parental control switching off by checking password
+     * @param mainPresenter
+     */
     protected void createCheckPasswordDialog(MainPresenter mainPresenter) {
         LayoutInflater li = LayoutInflater.from(getContext());
         View dialogView =  li.inflate(R.layout.password_new_dialog_pins, null);
@@ -142,6 +154,10 @@ public abstract class BaseFragment extends Fragment {
         createDialog(dialogView);
     }
 
+    /**
+     * creating AlertDialog for Login
+     * @param mainPresenter
+     */
     protected void createLoginDialog(MainPresenter mainPresenter) {
         LayoutInflater li = LayoutInflater.from(getContext());
         View dialogView =  li.inflate(R.layout.login_dialog, null);
@@ -168,6 +184,9 @@ public abstract class BaseFragment extends Fragment {
         });
     }
 
+    /**
+     * dismissing opened Alert Dialog
+     */
     public void dismissDialog() {
         if (alertDialog != null) {
             alertDialog.dismiss();
@@ -175,6 +194,11 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
+    /**
+     * initializing content for parental control reset password AlertDialog
+     * @param dialogCustomVIew
+     * @param mainPresenter
+     */
     private void initializeResetPasswordDialogContent(View dialogCustomVIew, MainPresenter mainPresenter) {
         Button savePassword = dialogCustomVIew.findViewById(R.id.button_save_password);
 
@@ -192,6 +216,11 @@ public abstract class BaseFragment extends Fragment {
         });
     }
 
+    /**
+     * initializing content for parental control new password AlertDialog
+     * @param dialogCustomVIew
+     * @param mainPresenter
+     */
     private void initializeNewPasswordDialogContent(View dialogCustomVIew, MainPresenter mainPresenter) {
         Button savePassword = dialogCustomVIew.findViewById(R.id.button_save_password);
 
@@ -205,6 +234,11 @@ public abstract class BaseFragment extends Fragment {
         });
     }
 
+    /**
+     * initializing content for parental controle check password AlertDialog
+     * @param dialogCustomVIew
+     * @param mainPresenter
+     */
     private void initializeCheckPasswordDialogContent(View dialogCustomVIew, MainPresenter mainPresenter) {
         Button checkPassword = dialogCustomVIew.findViewById(R.id.button_save_password);
         checkPassword.setText(getText(R.string.password_reset_dialog_button_check));
@@ -218,6 +252,10 @@ public abstract class BaseFragment extends Fragment {
         });
     }
 
+    /**
+     * showing dialog with provided view
+     * @param dialogCustomVIew
+     */
     private void createDialog(View dialogCustomVIew) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);;
 

@@ -61,6 +61,11 @@ public class MovieCastTabFragment extends BaseFragment implements TabLayoutView<
         return rootView;
     }
 
+    /**
+     * initializing MovieDetailsTabLayoutPresenter and getting MovieCasts
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -87,6 +92,10 @@ public class MovieCastTabFragment extends BaseFragment implements TabLayoutView<
         }
     }
 
+    /**
+     * changing recyclerViewCastList orientation according to configuration
+     * @param newConfig
+     */
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -94,6 +103,10 @@ public class MovieCastTabFragment extends BaseFragment implements TabLayoutView<
         RecyclerViewOrientationUtility.setLayoutManagerToRecyclerView(this.recyclerViewCastList, newConfig.orientation);
     }
 
+    /**
+     * setting castListAdapter with MovieCastsEntity to recyclerViewCastList adding MovieCardItemDecorator and SnapScrollListener
+     * @param someMovieData
+     */
     @Override
     public void renderInfoToTab(MovieCastsEntity someMovieData) {
         CastListAdapter castListAdapter = new CastListAdapter(someMovieData, new OnImageViewLongClickListener());
@@ -110,17 +123,17 @@ public class MovieCastTabFragment extends BaseFragment implements TabLayoutView<
 
     @Override
     public void onDownloadStarted() {
-        showToast("Download started");
+        showToast(R.string.download_manager_img_download_started);
     }
 
     @Override
     public void onDownloadCompleted() {
-        showToast("Download completed");
+        showToast(R.string.download_manager_img_download_finished);
     }
 
     @Override
     public void onDownloadFailed() {
-        showToast("Download failed");
+        showToast(R.string.download_manager_img_download_failed);
     }
 
     private int getMovieIdFromArguments() {
@@ -131,6 +144,10 @@ public class MovieCastTabFragment extends BaseFragment implements TabLayoutView<
         return -1;
     }
 
+    /**
+     * listener for imageLongClick
+     * getting imageName and imageSourcePath from tag of clicked item and passing it to movieDetailsTabLayoutPresenter
+     */
     private class OnImageViewLongClickListener implements View.OnLongClickListener {
         @Override
         public boolean onLongClick(View view) {

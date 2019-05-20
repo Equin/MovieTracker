@@ -44,6 +44,15 @@ public class CustomGenreView extends ViewGroup {
         }
     }
 
+    /**
+     * creating container and adding in it one more container with buttons (3 or 5 buttons per row according to orientation)
+     *  setting title of button and its state according to genresEntity and selectedGenresIds
+     *  setting onCheckedChangeListener
+     *
+     * @param genresEntity
+     * @param onCheckedChangeListener
+     * @param selectedGenresIds
+     */
     public void renderGenreView(GenresEntity genresEntity,
                                 CompoundButton.OnCheckedChangeListener onCheckedChangeListener,
                                 List<Integer> selectedGenresIds) {
@@ -106,6 +115,9 @@ public class CustomGenreView extends ViewGroup {
         }
     }
 
+    /**
+     * removing selections from Genre toggle buttons
+     */
     public void dismissSelections() {
         for(int i = 0; i < getChildCount(); i++) {
             LinearLayout linearLayout = (LinearLayout) getChildAt(i);
@@ -149,13 +161,12 @@ public class CustomGenreView extends ViewGroup {
                 maxHeight = 0;
             }
 
-            //do the layout
-             //  child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight);
+            // do the layout
+            // child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight);
             child.layout(curLeft, curTop, childWidth, curTop + curHeight);
 
             int finalCurWidth = curWidth;
             child.postOnAnimation(()-> {
-               // child.setPadding(((childRight - finalCurWidth) / 10), 0, (childRight - finalCurWidth) / 10, 0);
                 child.setPadding(((childRight - finalCurWidth) / 10), 0, (childRight - finalCurWidth) / 10, 0);
             });
 

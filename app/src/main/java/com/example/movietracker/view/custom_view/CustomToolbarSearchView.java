@@ -110,6 +110,10 @@ public class CustomToolbarSearchView extends SearchView {
         this.removeView(relativeLayoutResultBox);
     }
 
+    /**
+     * creating RelativeLayout container with recyclerView (RV orientation according to display orientation)
+     * and adding it to rootView with paddings
+     */
     private void createSearchResultRecyclerViewBox() {
         if (relativeLayoutResultBox != null) return;
         visibleSearchViewRect = new Rect();
@@ -154,6 +158,9 @@ public class CustomToolbarSearchView extends SearchView {
         adjustSearchResultBoxToVisibleScreen();
     }
 
+    /**
+     * making relativeLayoutResultBox adopt to screen height
+     */
     public void adjustSearchResultBoxToVisibleScreen() {
         this.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             Rect visibleWindowRect = new Rect();

@@ -1,7 +1,5 @@
 package com.example.movietracker.listener;
 
-import android.os.Handler;
-
 import com.example.movietracker.view.adapter.MovieListAdapter;
 
 import androidx.fragment.app.Fragment;

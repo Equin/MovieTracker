@@ -193,6 +193,12 @@ public class MainFragment extends BaseFragment
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
     }
 
+    /**
+     * initialize searchMenuItem and customSearchView providing it with SearchResultMovieListAdapter
+     * and OnQueryTextListener
+     * @param menu
+     * @param inflater
+     */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.toolbar_actions_main_screen, menu);
@@ -224,6 +230,10 @@ public class MainFragment extends BaseFragment
         showToast(getString(resourceId));
     }
 
+    /**
+     * rendering genres to CustomGenreView
+     * @param genreList
+     */
     @Override
     public void renderGenreView(GenresEntity genreList) {
         this.customGenreView.renderGenreView(genreList,
@@ -313,6 +323,10 @@ public class MainFragment extends BaseFragment
         }
     }
 
+    /**
+     * showing search results provided by customSearchView request
+     * @param moviesEntity
+     */
     @Override
     public void showSearchResult(MoviesEntity moviesEntity) {
         if (moviesEntity.getMovies().isEmpty()) {
@@ -403,6 +417,10 @@ public class MainFragment extends BaseFragment
         WorkManager.getInstance().enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.KEEP, backgroundSyncWorkRequest);
     }
 
+    /**
+     * dismissing alert dialog on Done button clicked
+     * @param alertDialog
+     */
     @Override
     public void onAlertDialogDoneButtonClicked(AlertDialog alertDialog) {
         alertDialog.dismiss();

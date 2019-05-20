@@ -222,6 +222,10 @@ public class MovieListFragment extends BaseFragment
         }
     }
 
+    /**
+     * changing RecyclerView layout manager on configuration change
+     * @param newConfig
+     */
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -248,6 +252,11 @@ public class MovieListFragment extends BaseFragment
         this.textViewNothingToShow.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * initializing SearchView with ExpandListener and OnQueryTextListener
+     * @param menu
+     * @param inflater
+     */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.toolbar_actions_movie_list, menu);
@@ -349,17 +358,17 @@ public class MovieListFragment extends BaseFragment
 
     @Override
     public void onDownloadStarted() {
-        showToast("Download started");
+        showToast(R.string.download_manager_img_download_started);
     }
 
     @Override
     public void onDownloadCompleted() {
-        showToast("Download completed");
+        showToast(R.string.download_manager_img_download_finished);
     }
 
     @Override
     public void onDownloadFailed() {
-        showToast("Download failed");
+        showToast(R.string.download_manager_img_download_failed);
     }
 
     /**
@@ -408,6 +417,9 @@ public class MovieListFragment extends BaseFragment
         }
     }
 
+    /**
+     * making new call for movies to update list
+     */
     private class SwipeRefreshListener implements SwipeRefreshLayout.OnRefreshListener {
 
         @Override
@@ -432,6 +444,10 @@ public class MovieListFragment extends BaseFragment
         }
     }
 
+    /**
+     * listener for imageLongClick
+     * getting imageName and imageSourcePath from tag of clicked item and passing it to movieListPresenter
+     */
     private class OnImageViewLongClickListener implements View.OnLongClickListener {
         @Override
         public boolean onLongClick(View view) {

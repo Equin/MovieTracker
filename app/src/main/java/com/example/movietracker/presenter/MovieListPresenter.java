@@ -166,6 +166,11 @@ public class MovieListPresenter extends BasePresenter {
         }
     }
 
+    /**
+     * adding/removing movie fto/from favorites on server
+     * @param userEntity
+     * @param movie
+     */
     private void addFavoriteMovieToTMDBServer(UserEntity userEntity, MovieResultEntity movie) {
         MarkMovieAsFavoriteRequestBodyEntity markMovieAsFavoriteRequestBodyEntity
                 = new MarkMovieAsFavoriteRequestBodyEntity("movie", movie.getMovieId(), movie.isFavorite());
@@ -173,7 +178,7 @@ public class MovieListPresenter extends BasePresenter {
             this.userModel.markAsFavorite(userEntity.getUserId(), markMovieAsFavoriteRequestBodyEntity, userEntity.getSessionId())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
-                    .subscribe(new SingleMarkAsFavoriteOnServer());
+                    .subscribe(new SingleMarkMovieAsFavoriteOnServer());
         }
     }
 
@@ -193,17 +198,31 @@ public class MovieListPresenter extends BasePresenter {
         }
     }
 
+    /**
+     * saving recycler item position and offset
+     * @param movieId
+     * @param offset
+     */
     private void setRecyclerItemPosition(int movieId, int offset) {
         this.recyclerItemPosition.setItemPosition(movieId);
         this.recyclerItemPosition.setOffset(offset);
     }
 
+    /**
+     * scrolling to provided item and offset
+     * @param itemPosition
+     * @param itemOffset
+     */
     private void scrollToPosition(int itemPosition, int itemOffset) {
         if (this.view != null) {
             this.view.scrollToPositionWithOffset(itemPosition, itemOffset);
         }
     }
 
+    /**
+     * scrolling to movie if there is movie and saved item position and offset
+     * @param moviesEntity
+     */
     private void scrollToMovieIfPossible(MoviesEntity moviesEntity) {
         if (!moviesEntity.getMovies().isEmpty() && recyclerItemPosition.getItemPosition() != -1
                 && moviesEntity.getMovies().get(recyclerItemPosition.getItemPosition()).getMovieId() != 0) {
@@ -217,6 +236,10 @@ public class MovieListPresenter extends BasePresenter {
         }
     }
 
+    /**
+     * getting movies by filters
+     * @param filters
+     */
     private void getMovies(Filters filters) {
         showLoading();
 
@@ -226,6 +249,9 @@ public class MovieListPresenter extends BasePresenter {
                 .subscribeWith(new GetMoviesObserver());
     }
 
+    /**
+     * getting user
+     */
     private void getUser() {
         this.userDisposable = this.userModel.getUserWithFavorites()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -233,6 +259,9 @@ public class MovieListPresenter extends BasePresenter {
                 .subscribeWith(new GetUserObserver());
     }
 
+    /**
+     * getting user with favorites
+     */
     private void getUserWithFavoriteMovies() {
         this.userWithFavoriteMoviesDisposable = this.userModel.getUserWithFavorites()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -240,6 +269,10 @@ public class MovieListPresenter extends BasePresenter {
                 .subscribeWith(new GetUserWithFavoriteMoviesObserver());
     }
 
+    /**
+     * updating user entity
+     * @param userEntity
+     */
     private void updateUser(UserEntity userEntity) {
         this.userModel.updateUser(userEntity)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -247,6 +280,10 @@ public class MovieListPresenter extends BasePresenter {
                 .subscribe(new CompletableUpdateUserObserver());
     }
 
+    /**
+     * adding favorites to db by updating userEntite and relation with movieEntity
+     * @param userEntity
+     */
     private void addFavoriteMovie(UserEntity userEntity) {
         this.userModel.updateUser(userEntity)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -254,13 +291,21 @@ public class MovieListPresenter extends BasePresenter {
                 .subscribe(new CompletableAddFavoriteMovieObserver());
     }
 
-    private void deleteMovieFromFavorites(UserWithFavoriteMovies movieId) {
-        this.userModel.deleteUserFromFavorites(movieId)
+    /**
+     * deleting favorite movie from db by removing relation from UserEntity and movieEntity
+     * @param userWithFavoriteMovie
+     */
+    private void deleteMovieFromFavorites(UserWithFavoriteMovies userWithFavoriteMovie) {
+        this.userModel.deleteUserFromFavorites(userWithFavoriteMovie)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new CompletableDeleteMovieFromFavoritesObserver());
     }
 
+    /**
+     * getting movies by filters and provided in filters page
+     * @param filters
+     */
     private void getMoviesByPage(Filters filters) {
         showLoading();
 
@@ -270,6 +315,10 @@ public class MovieListPresenter extends BasePresenter {
                 .subscribeWith(new GetMoviesPageObserver());
     }
 
+    /**
+     * getting movies for each page up to page provided in filters
+     * @param filters
+     */
     private void getMovieListForAllPages(Filters filters) {
         showLoading();
 
@@ -309,24 +358,41 @@ public class MovieListPresenter extends BasePresenter {
         }
     }
 
+    /**
+     * adding more movies to recyclerView
+     *
+     * @param moviesEntity
+     */
     private void renderAdditionalMovieListPage(MoviesEntity moviesEntity) {
         if (this.view != null) {
             this.view.renderAdditionalMovieListPage(moviesEntity);
         }
-
     }
 
+    /**
+     * rendering movies in recyclerView
+     * @param moviesEntity
+     */
     private void renderMoviesList(MoviesEntity moviesEntity) {
         if (this.view != null) {
             this.view.renderMoviesList(moviesEntity);
         }
     }
 
+    /**
+     * saving clicked image to disc
+     * @param imageName - image name
+     * @param imageSourcePath - image url
+     */
     public void onImageViewLongClick(String imageName, String imageSourcePath) {
         ImageSaveUtility.saveImageToDisk(AndroidApplication.getRunningActivity(), imageSourcePath, imageName, view);
     }
 
 
+    /**
+     * getting movies and rendering them to recyclerView and if recyclerView position saved  - > scroll To Moive
+     *
+     */
     private class GetMoviesObserver extends DisposableObserver<MoviesEntity> {
         @Override
         public void onNext(MoviesEntity moviesEntity) {
@@ -355,6 +421,10 @@ public class MovieListPresenter extends BasePresenter {
         }
     }
 
+    /**
+     * getting movies and rendering them to recyclerView and if recyclerView position saved  - > scroll To Movie
+     *
+     */
     private class GetMovieListForPagesObserver extends DisposableObserver<MoviesEntity> {
         @Override
         public void onNext(MoviesEntity moviesEntity) {
@@ -379,6 +449,10 @@ public class MovieListPresenter extends BasePresenter {
         }
     }
 
+    /**
+     * getting movies fro provided page observer, saving current page,
+     * adding new movies to old movies list and passing to recyclerView
+     */
     private class GetMoviesPageObserver extends DisposableObserver<MoviesEntity> {
         @Override
         public void onNext(MoviesEntity moviesEntity) {
@@ -404,6 +478,9 @@ public class MovieListPresenter extends BasePresenter {
         }
     }
 
+    /**
+     * getting userEntity
+     */
     private class GetUserObserver extends DisposableObserver<UserEntity> {
 
         @Override
@@ -423,6 +500,11 @@ public class MovieListPresenter extends BasePresenter {
         }
     }
 
+    /**
+     * getting userEntity with favorite movies
+     * onNext: if there is no movies in user favorites -> display nothing to show
+     * else render movies
+     */
     private class GetUserWithFavoriteMoviesObserver extends DisposableObserver<UserEntity> {
 
         @Override
@@ -457,6 +539,9 @@ public class MovieListPresenter extends BasePresenter {
         }
     }
 
+    /**
+     * updating user
+     */
     private class CompletableUpdateUserObserver implements CompletableObserver {
 
         @Override
@@ -476,6 +561,9 @@ public class MovieListPresenter extends BasePresenter {
         }
     }
 
+    /**
+     * adding new favorite movie to user favorites
+     */
     private class CompletableAddFavoriteMovieObserver implements CompletableObserver {
 
         @Override
@@ -495,7 +583,11 @@ public class MovieListPresenter extends BasePresenter {
         }
     }
 
-    private class SingleMarkAsFavoriteOnServer implements SingleObserver<MarkMovieAsFavoriteResultEntity> {
+
+    /**
+     * marking movie as favorite on server
+     */
+    private class SingleMarkMovieAsFavoriteOnServer implements SingleObserver<MarkMovieAsFavoriteResultEntity> {
 
         @Override
         public void onSubscribe(Disposable d) {
@@ -504,17 +596,19 @@ public class MovieListPresenter extends BasePresenter {
 
         @Override
         public void onSuccess(MarkMovieAsFavoriteResultEntity resultEntity) {
+            Log.e(TAG, resultEntity.getStatusMessage());
            // resultEntity.
         }
 
         @Override
         public void onError(Throwable e) {
             Log.e(TAG, e.getLocalizedMessage());
-            MovieListPresenter.this.showToast(R.string.main_error);
-            MovieListPresenter.this.hideLoading();
         }
     }
 
+    /**
+     * removing movie from favorites
+     */
     private class CompletableDeleteMovieFromFavoritesObserver implements CompletableObserver {
 
         @Override

@@ -78,7 +78,6 @@ public class MovieInfoTabFragment extends BaseFragment  {
 
         this.movieDetailsEntity = getMovieEntityFromArguments();
         renderInfoToTab();
-
     }
 
     private void renderInfoToTab() {

@@ -36,7 +36,7 @@
     <string name="parent_control_state">Parent control is </string>
     <string name="background_sync_state">Background sync is </string>
 
-    <string name="hint_to_enable_parent_control">You need to provide password to enable parent controle</string>
+    <string name="hint_to_enable_parent_control">You need to provide password to enable parent control</string>
     <string name="filter">filter</string>
     <string name="search">search</string>
     <string name="filter_header_title">Sort Movies By</string>
@@ -53,5 +53,11 @@
 
     <string name="main_presenter_logged_out">Logged out</string>
     <string name="main_presenter_logged_in">Logged in</string>
+
+    <string name="download_manager_img_download_started">Download started</string>
+    <string name="download_manager_img_download_finished">Download completed</string>
+    <string name="download_manager_img_download_failed">Download failed</string>
+
+
 
 </resources>

@@ -37,6 +37,11 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
         this.view = view;
     }
 
+    /**
+     * getting movie cast by movieId
+     *
+     * @param movieId
+     */
     public void getMovieCasts(int movieId) {
         showLoading();
 
@@ -46,6 +51,11 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
                 .subscribeWith(new GetMovieCastObserver());
     }
 
+    /**
+     * getting movie reviews by movieId
+     *
+     * @param movieId
+     */
     public void getMovieReviews(int movieId) {
         showLoading();
 
@@ -55,6 +65,10 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
                 .subscribeWith(new GetMovieReviewObserver());
     }
 
+    /**
+     * getting movie videos by movieId
+     * @param movieId
+     */
     public void getMovieVideos(int movieId) {
         showLoading();
 
@@ -64,6 +78,11 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
                 .subscribeWith(new GetMovieVideosObserver());
     }
 
+    /**
+     * saving clicked image to disc
+     * @param imageName - name of image
+     * @param imageSourcePath - url of image
+     */
     public void onImageViewLongClick(String imageName, String imageSourcePath) {
         ImageSaveUtility.saveImageToDisk(AndroidApplication.getRunningActivity(), imageSourcePath, imageName, view);
     }
@@ -100,6 +119,11 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
         RxDisposeHelper.dispose(this.movieVideosDisposable);
     }
 
+    /**
+     * getting movie casts
+     * onNext: remdering movie casts to casts fragment tab
+     * onError: diplaying nothing to show hint
+     */
     private class GetMovieCastObserver extends DisposableObserver<MovieCastsEntity> {
         @Override
         public void onNext(MovieCastsEntity movieCastsEntity) {
@@ -126,6 +150,11 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
         }
     }
 
+    /**
+     * getting movie reviews
+     * onNext: rendering movie review to reviews fragment tab
+     * onError: diplaying nothing to show hint
+     */
     private class GetMovieReviewObserver extends DisposableObserver<MovieReviewsEntity> {
         @Override
         public void onNext(MovieReviewsEntity movieReviewsEntity) {
@@ -152,6 +181,11 @@ public class MovieDetailsTabLayoutPresenter extends BasePresenter {
         }
     }
 
+    /**
+     * getting movie videos
+     * onNext: rendering movie videos to videos fragment tab
+     * onError: diplaying nothing to show hint
+     */
     private class GetMovieVideosObserver extends DisposableObserver<MovieVideosEntity> {
         @Override
         public void onNext(MovieVideosEntity movieVideosEntity) {

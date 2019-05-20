@@ -67,7 +67,7 @@ public class MainPresenter extends BasePresenter {
     }
 
     /**
-     * create new session is user isn`t guest
+     * create new session if user isn`t guest and get current session if it is available
      */
     public void createSession() {
         showLoading();
@@ -218,7 +218,7 @@ public class MainPresenter extends BasePresenter {
     }
 
     /**
-     * Start or stop background sync according to isChecked params
+     * Start or stop background sync according to isChecked param
      *
      * @param isChecked
      */
@@ -234,7 +234,7 @@ public class MainPresenter extends BasePresenter {
     }
 
     /**
-     * opens favorite movie list view  by openFavoriteMoviesListView(this.genresEntity);
+     * opens favorite movie list view by openFavoriteMoviesListView(this.genresEntity);
      */
     public void onFavoriteMenuItemClicked() {
         if (this.mainView != null) {
@@ -276,6 +276,10 @@ public class MainPresenter extends BasePresenter {
         }
     }
 
+    /**
+     * opens movie details according to movieId
+     * @param movieId
+     */
     public void onMovieItemClicked(int movieId) {
         this.mainView.openMovieDetailScreen(movieId);
     }
@@ -296,13 +300,18 @@ public class MainPresenter extends BasePresenter {
         logout();
     }
 
+    /**
+     * creating new session with username and password
+     *
+     * @param userName
+     * @param password
+     */
     public void onLoginButtonClicked(String userName, String password) {
-        dismissDialog();
         login(userName, password);
     }
 
     /**
-     * doing log in by username and password (createing new session)
+     * doing log in by username and password (creating new session)
      * @param userName
      * @param password
      */
@@ -316,6 +325,9 @@ public class MainPresenter extends BasePresenter {
                 .subscribe(new LoginSingleObserver());
     }
 
+    /**
+     *  refreshing session (simply by creating new session)
+     */
     private void refreshSession() {
         showLoading();
         this.authModel.refreshSession(userEntity)
@@ -324,6 +336,9 @@ public class MainPresenter extends BasePresenter {
                 .subscribe(new CreateSessionSingleObserver());
     }
 
+    /**
+     * invalidate session by setting empty values to userEntity
+     */
     private void logout() {
         if (this.mainView != null && userEntity != null) {
             this.authModel.invalidateSession(userEntity)
@@ -333,6 +348,11 @@ public class MainPresenter extends BasePresenter {
         }
     }
 
+    /**
+     * saving password by updating user with new password
+     *
+     * @param newPassword
+     */
     private void savePassword(String newPassword) {
         this.userEntity.setParentalControlPassword(newPassword);
         this.userEntity.setParentalControlEnabled(true);
@@ -343,6 +363,10 @@ public class MainPresenter extends BasePresenter {
                 .subscribe(new CompletableSavePasswordObserver());
     }
 
+    /**
+     * changing parental controle state according to isCheched
+     * @param isChecked
+     */
     private void updateParentalControlState(boolean isChecked) {
         this.userEntity.setParentalControlEnabled(isChecked);
         this.userModel.updateUser(userEntity)
@@ -351,6 +375,10 @@ public class MainPresenter extends BasePresenter {
                 .subscribe(new CompletableSetParentalControlStateObserver());
     }
 
+    /**
+     * changing Background movie sync state according to isCheched
+     * @param isChecked
+     */
     private void updateBackgroundSyncState(boolean isChecked) {
         this.userEntity.setBackgroundSyncEnabled(isChecked);
         this.userModel.updateUser(userEntity)
@@ -359,12 +387,17 @@ public class MainPresenter extends BasePresenter {
                 .subscribe(new CompletableSetBackgroundSyncStateObserver());
     }
 
+    /**
+     * syncing Favorites with server if there is open session
+     *
+     * @param userEntity
+     */
     private void syncFavoriteMoviesWithServer(UserEntity userEntity) {
         if (userEntity.isHasOpenSession()){
             this.userModel.syncFavoritesWithServer(userEntity)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
-                    .subscribe(new CompletableSyncObserver());
+                    .subscribe(new CompletableFavoriteMoviesSyncObserver());
         }
     }
 
@@ -471,6 +504,10 @@ public class MainPresenter extends BasePresenter {
         }
     }
 
+    /**
+     * providing search query from customVSearchView to make search by title
+     * @param query - search string
+     */
     private void newSearchQuery(String query) {
         filters.setIncludeAdult(!this.userEntity.isParentalControlEnabled());
         filters.setSearchQueryByTitle(query);
@@ -507,11 +544,17 @@ public class MainPresenter extends BasePresenter {
         }
     }
 
+    /**
+     * hiding LoginMenuItemt and showing LogoutMenuItem
+     */
     private void loggedIn() {
         hideLoginMenuItem();
         showLogoutMenuItem();
     }
 
+    /**
+     * showing LoginMenuItemt and hiding LogoutMenuItem
+     */
     private void loggedOut() {
         showLoginMenuItem();
         hideLogoutMenuItem();
@@ -535,19 +578,19 @@ public class MainPresenter extends BasePresenter {
 
     /**
      * syncing favorites with tmdb server
-     * onComplete: nothing
-     * onError: showing different results of marking movie as favorite
+     * onComplete: Log.e
+     * onError: Log.e
      */
-    private class CompletableSyncObserver implements CompletableObserver {
+    private class CompletableFavoriteMoviesSyncObserver implements CompletableObserver {
 
         @Override
         public void onSubscribe(Disposable d) {
-            Log.d(TAG, "Subscribed to  sync proces");
+            Log.d(TAG, "Subscribed to FavoriteMoviesSyncObserver sync proces");
         }
 
         @Override
         public void onComplete() {
-            Log.e(TAG, "onComplete CompletableSyncObserver");
+            Log.e(TAG, "onComplete CompletableFavoriteMoviesSyncObserver");
         }
 
         @Override
@@ -557,11 +600,11 @@ public class MainPresenter extends BasePresenter {
             }
 
             Log.e(TAG, e.getMessage() == null ? "": e.getMessage());
-            MainPresenter.this.showToast(
+/*            MainPresenter.this.showToast(
                     e.getMessage() == null
                             ? AndroidApplication.getRunningActivity().getApplicationContext().getResources()
                                     .getString(R.string.main_error)
-                            : e.getMessage());
+                            : e.getMessage());*/
         }
     }
 
@@ -591,7 +634,7 @@ public class MainPresenter extends BasePresenter {
 
     /**
      * getting session
-     * onSuccess: getting user, and hiding/showing logging/out menu items
+     * onSuccess: getting user if session is created, and hiding/showing logging/out menu items
      */
     private class CreateSessionSingleObserver implements SingleObserver<SessionEntity> {
 
@@ -621,7 +664,7 @@ public class MainPresenter extends BasePresenter {
 
     /**
      * creating new session
-     * onSuccess: hiding/showing logging/out menu items
+     * onSuccess: hiding/showing logging/out menu items and syncing favorites movies with server
      */
     private class LoginSingleObserver implements SingleObserver<SessionEntity> {
 
@@ -637,6 +680,7 @@ public class MainPresenter extends BasePresenter {
                 MainPresenter.this.hideLoading();
                 MainPresenter.this.setUsernameToHeaderView(userEntity.getTMDBUsername());
                 MainPresenter.this.showToast(R.string.main_presenter_logged_in);
+                MainPresenter.this.dismissDialog();
                 syncFavoriteMoviesWithServer(userEntity);
             } else {
                 loggedOut();
@@ -689,8 +733,8 @@ public class MainPresenter extends BasePresenter {
     }
 
     /**
-     * getting userEntity and genreEntity from network/db
-     * onNext: setting state of parentControlSwitcher and rendering genresEntity to customGenreView
+     * getting movies by title and showing result in customSearchView result box
+     * onNext: showing result in customSearchView result box
      */
     private class GetMovieByTitleObserver extends DisposableObserver<MoviesEntity> {
 

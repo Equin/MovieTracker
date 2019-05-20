@@ -48,6 +48,7 @@ public class MovieVideoTabFragment<V extends MovieVideosEntity> extends BaseFrag
 
     private MovieVideoTabFragmentInteractionListener movieVideoTabFragmentInteractionListener;
     private MovieDetailsTabLayoutPresenter movieDetailsTabLayoutPresenter;
+    private MovieVideosEntity movieVideosEntity;
 
     @BindView(R.id.recyclerView_videoList)
     RecyclerView recyclerViewVideo;
@@ -67,6 +68,11 @@ public class MovieVideoTabFragment<V extends MovieVideosEntity> extends BaseFrag
         return rootView;
     }
 
+    /**
+     * initializing MovieDetailsTabLayoutPresenter and getting MovieVideo
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -109,19 +115,25 @@ public class MovieVideoTabFragment<V extends MovieVideosEntity> extends BaseFrag
         }
     }
 
-    private MovieVideosEntity someMovieData;
-
+    /**
+     * setting VideoListAdapter with movieVideosEntity to recyclerViewVideo adding MovieCardItemDecorator and SnapScrollListener
+     * @param movieVideosEntity
+     */
     @Override
-    public void renderInfoToTab(MovieVideosEntity someMovieData) {
-        this.someMovieData = someMovieData;
+    public void renderInfoToTab(MovieVideosEntity movieVideosEntity) {
+        this.movieVideosEntity = movieVideosEntity;
 
-        VideoListAdapter reviewListAdapter = new VideoListAdapter(someMovieData, new ClickListener());
+        VideoListAdapter reviewListAdapter = new VideoListAdapter(movieVideosEntity, new ClickListener());
         this.recyclerViewVideo.setAdapter(reviewListAdapter);
 
         this.recyclerViewVideo.addItemDecoration(new MovieCardItemDecorator(RECYCLER_VIEW_CARD_ITEM_OFFSET_DPI));
         this.recyclerViewVideo.addOnScrollListener(new SnapScrollListener(this));
     }
 
+    /**
+     * changing recyclerViewVideo orientation according to configuration
+     * @param newConfig
+     */
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -158,14 +170,18 @@ public class MovieVideoTabFragment<V extends MovieVideosEntity> extends BaseFrag
         return -1;
     }
 
+    /**
+     * listener for movie video clicked
+     * open movie video on recyclerView item clicked
+     */
     private class ClickListener implements RecyclerView.OnClickListener {
         @Override
         public void onClick(View clickedView) {
             showLoading();
             int position = recyclerViewVideo.getChildAdapterPosition(clickedView);
             movieVideoTabFragmentInteractionListener.showYouTubePlayer(
-                    someMovieData.getMovieVideoResultEntities().get(position).getVideoKey(),
-                    someMovieData);
+                    movieVideosEntity.getMovieVideoResultEntities().get(position).getVideoKey(),
+                    movieVideosEntity);
         }
     }
 }

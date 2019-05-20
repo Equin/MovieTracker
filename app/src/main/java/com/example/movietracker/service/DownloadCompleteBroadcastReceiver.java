@@ -18,6 +18,13 @@ public class DownloadCompleteBroadcastReceiver extends BroadcastReceiver {
         this.downloadListenerView = downloadListenerView;
     }
 
+    /**
+     * receiving  ACTION_DOWNLOAD_COMPLETE event,
+     * checking if its event from this app by checking downloadId and showing Toast with appropriate value
+     *
+     * @param context
+     * @param intent
+     */
     @Override
     public void onReceive(Context context, Intent intent) {
         long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);

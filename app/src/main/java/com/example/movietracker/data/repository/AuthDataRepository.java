@@ -33,6 +33,11 @@ public class AuthDataRepository implements AuthRepository {
         this.userRepository = userRepository;
     }
 
+    /**
+     * creating user session if user isnt guest and hasnt opened session,
+     * else return current session or create empty session if user is guest
+     * @return Single<SessionEntity>
+     */
     @Override
     public Single<SessionEntity> createUserSession() {
         return this.userRepository.getUser().firstOrError().flatMap(userEntity -> {
@@ -48,6 +53,11 @@ public class AuthDataRepository implements AuthRepository {
         });
     }
 
+    /**
+     * update user with new session info
+     * @param sessionEntity
+     * @param userEntity
+     */
     private void updateUser(SessionEntity sessionEntity, UserEntity userEntity) {
         userEntity.setSessionId(sessionEntity.getSessionId());
         userEntity.setGuestUser(false);
@@ -55,6 +65,15 @@ public class AuthDataRepository implements AuthRepository {
         this.userRepository.updateUser(userEntity).subscribe();
     }
 
+    /**
+     * steps to crreate new session
+     * 1. get new token
+     * 2. validate token with username and password
+     * 3. using validated token create new session
+     * 4. update user with new session info
+     * @param userEntity
+     * @return Single<SessionEntity>
+     */
     private Single<SessionEntity> newSession(UserEntity userEntity) {
         return this.authApi.getToken().flatMap(requestTokenEntity ->
                 this.authApi.validateToken(
@@ -66,13 +85,11 @@ public class AuthDataRepository implements AuthRepository {
                 )
                         .flatMap(validatedRequestToken ->
                                 this.authApi.createSession(validatedRequestToken.getRequestToken()).doOnSuccess(sessionEntity ->  {
-                                    if (sessionEntity.isSuccess()) {
-                                      /*  this.userRepository.getUserDetailsFromServer().doOnSuccess(userDetailsEntity -> {
-                                            use
-                                        })*/
-                                    }
+                                            if (!sessionEntity.isSuccess()) {
+                                                //TODO - refreshSession few times and return guest session.
+                                            }
 
-                                    updateUser(sessionEntity, userEntity);
+                                            updateUser(sessionEntity, userEntity);
                                         }
                                 )
                         ));
@@ -88,6 +105,11 @@ public class AuthDataRepository implements AuthRepository {
         return newSession(userEntity);
     }
 
+    /**
+     * invalidate session by updating user with empty fields of password, sessionId and setting GuestUser(true), hasOpenSession(false)
+     * @param userEntity
+     * @return Completable
+     */
     @Override
     public Completable invalidateSession(UserEntity userEntity) {
         userEntity.setGuestUser(true);
