@@ -1,6 +1,6 @@
 package com.example.movietracker.view.model;
 
-import com.example.movietracker.data.entity.UserEntity;
+import com.example.movietracker.data.entity.user.UserEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 
 public class UserWithGenresEntity {

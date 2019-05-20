@@ -1,13 +1,11 @@
 package com.example.movietracker.view.fragment;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.movietracker.AndroidApplication;
@@ -144,7 +142,33 @@ public abstract class BaseFragment extends Fragment {
         createDialog(dialogView);
     }
 
-    protected void dismissDialog() {
+    protected void createLoginDialog(MainPresenter mainPresenter) {
+        LayoutInflater li = LayoutInflater.from(getContext());
+        View dialogView =  li.inflate(R.layout.login_dialog, null);
+        initializeLoginDialogContent(dialogView, mainPresenter);
+        createDialog(dialogView);
+    }
+
+    private void initializeLoginDialogContent(View dialogCustomVIew, MainPresenter mainPresenter) {
+        Button savePassword = dialogCustomVIew.findViewById(R.id.button_login);
+
+        EditText userNameEditText = dialogCustomVIew.findViewById(R.id.editText_login_username);
+        EditText passwordEditText = dialogCustomVIew.findViewById(R.id.editText_password);
+
+        userNameEditText.requestFocus();
+        KeyboardUtility.showKeyboard(this.getContext(), userNameEditText);
+
+        savePassword.setOnClickListener((click)-> {
+            String userName = userNameEditText.getText().toString();
+            String password = passwordEditText.getText().toString();
+
+            mainPresenter.onLoginButtonClicked(
+                    userName,
+                    password);
+        });
+    }
+
+    public void dismissDialog() {
         if (alertDialog != null) {
             alertDialog.dismiss();
             alertDialog = null;
@@ -189,7 +213,6 @@ public abstract class BaseFragment extends Fragment {
 
         checkPassword.setOnClickListener(click -> {
             String passwordValue = passwordEditText.getPasswordValue();
-
             mainPresenter.onCheckPasswordButtonClicked(
                     passwordValue);
         });
@@ -207,7 +230,7 @@ public abstract class BaseFragment extends Fragment {
             alertDialog = alertDialogBuilder.create();
         }
 
-        Button cancelButton = dialogCustomVIew.findViewById(R.id.button_cancel_password_reset);
+        Button cancelButton = dialogCustomVIew.findViewById(R.id.button_cancel_dialog);
         cancelButton.setOnClickListener(click -> alertDialog.dismiss());
 
         alertDialog.show();

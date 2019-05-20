@@ -4,10 +4,7 @@ import com.example.movietracker.data.database.MoviesDatabase;
 import com.example.movietracker.data.database.dao.GenresDao;
 import com.example.movietracker.data.database.dao.MovieDao;
 import com.example.movietracker.data.database.dao.MovieDetailDao;
-import com.example.movietracker.data.database.dao.UserDao;
-import com.example.movietracker.data.entity.MovieResultEntity;
-import com.example.movietracker.data.entity.UserEntity;
-import com.example.movietracker.data.entity.UserWithFavoriteMovies;
+import com.example.movietracker.data.entity.movie.MovieResultEntity;
 import com.example.movietracker.view.model.Filters;
 import com.example.movietracker.data.entity.entity_mapper.MovieCastsDataMapper;
 import com.example.movietracker.data.entity.entity_mapper.MovieReviewsDataMapper;
@@ -18,15 +15,13 @@ import com.example.movietracker.data.entity.movie_details.cast.MovieCastsEntity;
 import com.example.movietracker.data.entity.movie_details.MovieDetailsEntity;
 import com.example.movietracker.data.entity.movie_details.review.MovieReviewsEntity;
 import com.example.movietracker.data.entity.movie_details.video.MovieVideosEntity;
-import com.example.movietracker.data.entity.MoviesEntity;
+import com.example.movietracker.data.entity.movie.MoviesEntity;
 import com.example.movietracker.data.net.RestClient;
 import com.example.movietracker.data.net.api.MovieApi;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
@@ -34,17 +29,18 @@ import io.reactivex.schedulers.Schedulers;
 public class MovieDataRepository implements MovieRepository {
 
     private static final int MOVIE_PER_PAGE = 20;
-    private static final int DB_REQUEST_TIMEOUT = 2;
+
 
     private MovieApi movieApi;
     private GenresDao genresDao;
     private MovieDao movieDao;
     private MovieDetailDao movieDetailDao;
-    private UserDao userDao;
 
     private MovieVideosDataMapper movieVideosDataMapper;
     private MovieCastsDataMapper movieCastsDataMapper;
     private MovieReviewsDataMapper movieReviewsDataMapper;
+
+   private UserRepository userRepository;
 
     private MovieDataRepository() {}
 
@@ -57,15 +53,15 @@ public class MovieDataRepository implements MovieRepository {
     }
 
     @Override
-    public void init(RestClient restClient, MoviesDatabase moviesDatabase) {
+    public void init(RestClient restClient, MoviesDatabase moviesDatabase, UserRepository userRepository) {
         this.movieApi = restClient.getMovieApi();
         this.genresDao = moviesDatabase.getGenresDao();
         this.movieDao = moviesDatabase.getMovieDao();
-        this.userDao = moviesDatabase.getUserDao();
         this.movieDetailDao = moviesDatabase.getMovieDetailDao();
         this.movieCastsDataMapper = new MovieCastsDataMapper();
         this.movieVideosDataMapper = new MovieVideosDataMapper();
         this.movieReviewsDataMapper = new MovieReviewsDataMapper();
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -136,7 +132,7 @@ public class MovieDataRepository implements MovieRepository {
 
     private Observable<MoviesEntity> getMovieFavorites( Observable<MoviesEntity> moviesEntityObservable ) {
         return Observable.zip(
-                getUserWithFavorites().subscribeOn(Schedulers.newThread()),
+                this.userRepository.getUserWithFavorites().subscribeOn(Schedulers.newThread()),
                 moviesEntityObservable.subscribeOn(Schedulers.newThread()),
                 (userEntity, moviesEntity) -> {
 
@@ -279,69 +275,5 @@ public class MovieDataRepository implements MovieRepository {
     @Override
     public Observable<List<Integer>> getMoviesIdList() {
         return this.movieDao.getMoviesIdList();
-    }
-
-    /**
-     * getting user from UserEntity table, with 2 seconds timeout, if no emit by that time it
-     * throws TimeoutException, and in onErrorReturn returns default User
-     * @return UserEntity
-     */
-    @Override
-    public Observable<UserEntity> getUser() {
-        return this.userDao.getUser().timeout(DB_REQUEST_TIMEOUT, TimeUnit.SECONDS)
-                .onErrorReturn(throwable -> {
-                    UserEntity userEntity =  UserEntity.initialUser();
-                    userEntity.setParentalControlEnabled(true);
-                    this.userDao.addUser(userEntity);
-                    return userEntity;
-                });
-    }
-
-    /**
-     * getting user with favorites from DB, if there is no favorites in UserWithFavoritesEntity table
-     * -> gets user and checking his movieId field by getting movie from MovieResultEntity table
-     * @return userEntity with favorite movies
-     */
-    @Override
-    public Observable<UserEntity> getUserWithFavorites() {
-        return this.userDao.getUserWithFavorites().map(userEntities -> {
-            if (userEntities == null || userEntities.isEmpty()) {
-                userEntities = new ArrayList<>();
-                userEntities.add(this.userDao.getUserNotObservable());
-            }
-
-            UserEntity userEntity =  userEntities.get(0);
-
-            for(int i = 0; i < userEntities.size(); i++) {
-                MovieResultEntity movieResultEntity
-                        = this.movieDao.getMovieById(
-                                userEntities.get(i).getMovieId(), !userEntities.get(i).isParentalControlEnabled());
-
-                if(movieResultEntity != null) {
-                    movieResultEntity.setFavorite(true);
-                    userEntity.addToFavorites(movieResultEntity);
-                }
-            }
-
-            return userEntity;
-        });
-    }
-
-    @Override
-    public void addUser(UserEntity userEntity) {
-        this.userDao.addUser(userEntity);
-    }
-
-    @Override
-    public Completable updateUser(UserEntity userEntity) {
-        if(userEntity.getFavoriteMovies() != null && !userEntity.getFavoriteMovies().isEmpty()) {
-            this.userDao.addUserFavoriteMoviesRelation(userEntity);
-        }
-        return this.userDao.updateUser(userEntity);
-    }
-
-    @Override
-    public Completable deleteMovieFromFavorites(UserWithFavoriteMovies userWithFavoriteMovies) {
-      return this.userDao.deleteMovieFromFavorites(userWithFavoriteMovies);
     }
 }

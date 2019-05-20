@@ -6,9 +6,9 @@ import com.example.movietracker.data.database.dao.GenresDao;
 import com.example.movietracker.data.database.dao.MovieDao;
 import com.example.movietracker.data.database.dao.MovieDetailDao;
 import com.example.movietracker.data.database.dao.UserDao;
-import com.example.movietracker.data.entity.MovieResultEntity;
-import com.example.movietracker.data.entity.UserEntity;
-import com.example.movietracker.data.entity.UserWithFavoriteMovies;
+import com.example.movietracker.data.entity.movie.MovieResultEntity;
+import com.example.movietracker.data.entity.user.UserEntity;
+import com.example.movietracker.data.entity.user.UserWithFavoriteMovies;
 import com.example.movietracker.data.entity.genre.GenreEntity;
 import com.example.movietracker.data.entity.movie_details.MovieDetailsEntity;
 import com.example.movietracker.data.entity.movie_details.MovieWithGenres;
@@ -55,7 +55,7 @@ public abstract class MoviesDatabase extends RoomDatabase {
                                 public void onCreate(@NonNull SupportSQLiteDatabase db) {
                                     super.onCreate(db);
                                     Executors.newSingleThreadScheduledExecutor().execute(
-                                            () -> INSTANCE.getUserDao().addUser(UserEntity.initialUser()));
+                                            () -> INSTANCE.getUserDao().addUser(UserEntity.initialGuestUser()));
                                 }
                             })
                             .build();

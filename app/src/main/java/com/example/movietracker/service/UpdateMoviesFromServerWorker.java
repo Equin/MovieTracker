@@ -73,6 +73,7 @@ public class UpdateMoviesFromServerWorker extends Worker {
                 movieInfoModel.getMovieInfo(movieId),
                 movieDetailTabsModel.getMovieCasts(movieId),
                 movieDetailTabsModel.getMovieReviews(movieId),
-                movieDetailTabsModel.getMovieVideos(movieId), (movieInfo, movieCasts, movieReviews, movieVideos) -> movieInfo).subscribe();
+                movieDetailTabsModel.getMovieVideos(movieId),
+                (movieInfo, movieCasts, movieReviews, movieVideos) -> movieInfo).subscribe();
     }
 }

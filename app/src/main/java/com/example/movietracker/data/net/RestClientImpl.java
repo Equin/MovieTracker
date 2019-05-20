@@ -1,7 +1,9 @@
 package com.example.movietracker.data.net;
 
 import com.example.movietracker.data.date.DateTypeDeserializer;
+import com.example.movietracker.data.net.api.AuthApi;
 import com.example.movietracker.data.net.api.MovieApi;
+import com.example.movietracker.data.net.api.UserApi;
 import com.example.movietracker.data.net.interceptor.QueryParameterInterceptor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -52,5 +54,15 @@ public class RestClientImpl implements RestClient {
     @Override
     public MovieApi getMovieApi() {
         return retrofit.create(MovieApi.class);
+    }
+
+    @Override
+    public AuthApi getAuthApi() {
+        return retrofit.create(AuthApi.class);
+    }
+
+    @Override
+    public UserApi getUserApi() {
+        return retrofit.create(UserApi.class);
     }
 }

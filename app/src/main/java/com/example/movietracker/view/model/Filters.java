@@ -119,6 +119,16 @@ public class Filters implements Serializable {
         return sb.toString();
     }
 
+    private Filters(FiltersBuilder filtersBuilder) {
+        this.page = filtersBuilder.page;
+        this.selectedGenresIds = filtersBuilder.selectedGenresIds;
+        this.selectedGenres = filtersBuilder.selectedGenres;
+        this.includeAdult = filtersBuilder.includeAdult;
+        this.sortBy = filtersBuilder.sortBy;
+        this.order = filtersBuilder.order;
+        this.searchQueryByTitle = filtersBuilder.searchQueryByTitle;
+    }
+
     /*    public void setSelectedGenres(@NonNull GenresEntity genresEntity) {
 
         if (genresEntity.getGenres() != null) {
@@ -144,5 +154,67 @@ public class Filters implements Serializable {
         }
     }
 */
+
+    public static class FiltersBuilder {
+
+        public FiltersBuilder(Filters filters) {
+            this.page = filters.page;
+            this.selectedGenresIds = filters.selectedGenresIds;
+            this.selectedGenres = filters.selectedGenres;
+            this.includeAdult = filters.includeAdult;
+            this.sortBy = filters.sortBy;
+            this.order = filters.order;
+            this.searchQueryByTitle = filters.searchQueryByTitle;
+        }
+
+        public FiltersBuilder() {}
+
+        private int page;
+        private List<Integer> selectedGenresIds;
+        private List<GenreEntity> selectedGenres;
+        private boolean includeAdult;
+        private String sortBy;
+        private Order order;
+        private String searchQueryByTitle;
+
+
+        public FiltersBuilder setPage(int page) {
+            this.page = page;
+            return this;
+        }
+
+        public FiltersBuilder setSelectedGenresIds(List<Integer> selectedGenresIds) {
+            this.selectedGenresIds = selectedGenresIds;
+            return this;
+        }
+
+        public FiltersBuilder setSelectedGenres(List<GenreEntity> selectedGenres) {
+            this.selectedGenres = selectedGenres;
+            return this;
+        }
+
+        public FiltersBuilder setIncludeAdult(boolean includeAdult) {
+            this.includeAdult = includeAdult;
+            return this;
+        }
+
+        public FiltersBuilder setSortBy(String sortBy) {
+            this.sortBy = sortBy;
+            return this;
+        }
+
+        public FiltersBuilder setOrder(Order order) {
+            this.order = order;
+            return this;
+        }
+
+        public FiltersBuilder setSearchQueryByTitle(String searchQueryByTitle) {
+            this.searchQueryByTitle = searchQueryByTitle;
+            return this;
+        }
+        public Filters build() {
+            return new Filters(this);
+        }
+    }
 }
 

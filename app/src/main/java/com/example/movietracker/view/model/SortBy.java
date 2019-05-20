@@ -10,7 +10,6 @@ public enum SortBy {
     private String displayName;
     private String searchName;
 
-
     SortBy(String displayName, String searchName ) {
         this.displayName = displayName;
         this.searchName = searchName;

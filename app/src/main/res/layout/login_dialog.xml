@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/textView_old_password_hint"
+        android:id="@+id/textView_username_hint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
-        android:text="@string/password_reset_dialog_old_password_hint" />
+        android:text="@string/log_in_dialog_text_view_username" />
 
-    <com.example.movietracker.view.custom_view.CustomPasswordPinEditText
-        android:id="@+id/customPasswordPinEditText_old_password"
+    <EditText
+        android:id="@+id/editText_login_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView_old_password_hint"
+        android:layout_below="@+id/textView_username_hint"
         android:layout_marginTop="8dp"
-        app:should_request_focus = "true"/>
+        android:textAlignment="center"/>
 
     <TextView
-        android:id="@+id/textView_new_password_hint"
+        android:id="@+id/textView_password_hint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:layout_below="@+id/customPasswordPinEditText_old_password"
-        android:text="@string/password_reset_dialog_new_password_hint" />
+        android:layout_below="@+id/editText_login_username"
+        android:text="@string/log_in_dialog_text_view_password" />
 
-    <com.example.movietracker.view.custom_view.CustomPasswordPinEditText
-        android:id="@+id/customPasswordPinEditText_new_password"
+    <EditText
+        android:id="@+id/editText_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView_new_password_hint"
+        android:layout_below="@+id/textView_password_hint"
         android:layout_marginTop="8dp"
-        app:should_request_focus = "false"/>
+        android:textAlignment="center" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/customPasswordPinEditText_new_password"
+        android:layout_below="@+id/editText_password"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="16dp"
@@ -59,11 +59,11 @@
             android:text="@string/password_reset_dialog_button_cancel" />
 
         <Button
-            android:id="@+id/button_save_password"
+            android:id="@+id/button_login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="@string/password_reset_dialog_button_save" />
+            android:text="@string/log_in_dialog_text_view_login" />
     </LinearLayout>
 
 </RelativeLayout>

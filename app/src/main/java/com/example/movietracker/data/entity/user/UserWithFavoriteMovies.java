@@ -1,9 +1,11 @@
-package com.example.movietracker.data.entity;
+package com.example.movietracker.data.entity.user;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
+
+import com.example.movietracker.data.entity.movie.MovieResultEntity;
 
 @Entity(primaryKeys = {"movie_id", "user_id"},
         indices = {@Index("movie_id"), @Index("user_id")},

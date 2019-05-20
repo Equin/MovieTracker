@@ -14,8 +14,8 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.MovieResultEntity;
-import com.example.movietracker.data.entity.MoviesEntity;
+import com.example.movietracker.data.entity.movie.MovieResultEntity;
+import com.example.movietracker.data.entity.movie.MoviesEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.di.ClassProvider;
 import com.example.movietracker.listener.OnLastElementReachedListener;

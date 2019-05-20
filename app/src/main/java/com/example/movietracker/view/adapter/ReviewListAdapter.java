@@ -1,6 +1,5 @@
 package com.example.movietracker.view.adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +8,6 @@ import android.widget.TextView;
 import com.example.movietracker.R;
 import com.example.movietracker.data.entity.movie_details.review.MovieReviewResultEntity;
 import com.example.movietracker.data.entity.movie_details.review.MovieReviewsEntity;
-import com.example.movietracker.data.entity.MoviesEntity;
 
 import java.util.List;
 

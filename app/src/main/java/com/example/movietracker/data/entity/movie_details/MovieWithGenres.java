@@ -1,6 +1,6 @@
 package com.example.movietracker.data.entity.movie_details;
 
-import com.example.movietracker.data.entity.MovieResultEntity;
+import com.example.movietracker.data.entity.movie.MovieResultEntity;
 import com.example.movietracker.data.entity.genre.GenreEntity;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;

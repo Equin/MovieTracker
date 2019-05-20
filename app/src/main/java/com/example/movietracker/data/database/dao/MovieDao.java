@@ -1,6 +1,6 @@
 package com.example.movietracker.data.database.dao;
 
-import com.example.movietracker.data.entity.MovieResultEntity;
+import com.example.movietracker.data.entity.movie.MovieResultEntity;
 import com.example.movietracker.data.entity.movie_details.MovieWithGenres;
 import java.util.List;
 

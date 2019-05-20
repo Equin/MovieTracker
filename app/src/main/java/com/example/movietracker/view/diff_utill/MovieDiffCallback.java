@@ -1,10 +1,9 @@
 package com.example.movietracker.view.diff_utill;
 
-import com.example.movietracker.data.entity.MovieResultEntity;
+import com.example.movietracker.data.entity.movie.MovieResultEntity;
 
 import java.util.List;
 
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 
 /**

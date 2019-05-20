@@ -1,7 +1,6 @@
 package com.example.movietracker.view.fragment;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -11,12 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.MoviesEntity;
+import com.example.movietracker.data.entity.movie.MoviesEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.di.ClassProvider;
+import com.example.movietracker.model.model_impl.AuthModelImpl;
 import com.example.movietracker.model.model_impl.GenreModelImpl;
 import com.example.movietracker.model.model_impl.MovieModelImpl;
 import com.example.movietracker.model.model_impl.UserModelImpl;
@@ -127,9 +128,10 @@ public class MainFragment extends BaseFragment
                 new GenreModelImpl(),
                 new UserModelImpl(),
                 new MovieModelImpl(),
+                new AuthModelImpl(),
                 Filters.getInstance());
 
-        this.mainPresenter.getUser();
+        this.mainPresenter.createSession();
 
         this.navigationView.setNavigationItemSelectedListener(this);
         this.parentalControlSwitch = this.navigationView.getMenu()
@@ -293,8 +295,8 @@ public class MainFragment extends BaseFragment
     }
 
     @Override
-    public void dismissPasswordDialog() {
-        dismissDialog();
+    public void openLoginDialog() {
+        createLoginDialog(this.mainPresenter);
     }
 
     @Override
@@ -320,6 +322,32 @@ public class MainFragment extends BaseFragment
         }
 
         this.searchResultMovieListAdapter.reloadWithNewResults(moviesEntity);
+    }
+
+    @Override
+    public void showLoginMenuItem() {
+        navigationView.getMenu().findItem(R.id.log_in).setVisible(true);
+    }
+
+    @Override
+    public void hideLoginMenuItem() {
+        navigationView.getMenu().findItem(R.id.log_in).setVisible(false);
+    }
+
+    @Override
+    public void showLogoutMenuItem() {
+        navigationView.getMenu().findItem(R.id.log_out).setVisible(true);
+    }
+
+    @Override
+    public void hideLogoutMenuItem() {
+        navigationView.getMenu().findItem(R.id.log_out).setVisible(false);
+    }
+
+    @Override
+    public void setUsernameToHeaderView(String tmdbUsername) {
+        TextView username = navigationView.getHeaderView(0).findViewById(R.id.textView_user_name);
+        username.setText(tmdbUsername);
     }
 
     /**
@@ -392,6 +420,16 @@ public class MainFragment extends BaseFragment
             case R.id.favorite:
                 this.mainPresenter.onFavoriteMenuItemClicked();
                 this.drawerLayout.closeDrawer(GravityCompat.START);
+                return false;
+
+            case R.id.log_in:
+                this.drawerLayout.closeDrawer(GravityCompat.START);
+                this.mainPresenter.onLoginMenuItemClicked();
+                return false;
+
+            case R.id.log_out:
+                this.drawerLayout.closeDrawer(GravityCompat.START);
+                this.mainPresenter.onLogoutMenuItemClicked();
                 return false;
         }
         return true;

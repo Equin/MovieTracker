@@ -1,7 +1,7 @@
 package com.example.movietracker.model.model_impl;
 
 import com.example.movietracker.view.model.Filters;
-import com.example.movietracker.data.entity.MoviesEntity;
+import com.example.movietracker.data.entity.movie.MoviesEntity;
 import com.example.movietracker.data.repository.MovieRepository;
 import com.example.movietracker.di.ClassProvider;
 import com.example.movietracker.model.ModelContract;

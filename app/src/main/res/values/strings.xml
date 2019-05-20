@@ -3,7 +3,7 @@
     <string name="tmdb_api">144fd08a3ef3ff0aef7a4ff25cbb980d</string>
     <string name="youtube_api">AIzaSyDQ6YTOhJN3E4d1XXtCXAob7-SwP0RmEk4</string>
     <string name="main_fragment_toolbar_title"> </string>
-    <string name="main_error">Error occurred</string>
+    <string name="main_error">Error occurred, please try later</string>
     <string name="genres_title">Choose genres you want to WATCH!</string>
 
     <string name="player_error">Error initializing YouTube player: %s</string>
@@ -47,6 +47,11 @@
     <string name="password_reset_dialog_button_cancel">CANCEL</string>
     <string name="password_reset_dialog_button_check">CHECK</string>
     <string name="password_reset_dialog_enter_password_hint">Enter password</string>
+    <string name="log_in_dialog_text_view_username">Username</string>
+    <string name="log_in_dialog_text_view_password">Password</string>
+    <string name="log_in_dialog_text_view_login">LOGIN</string>
 
+    <string name="main_presenter_logged_out">Logged out</string>
+    <string name="main_presenter_logged_in">Logged in</string>
 
 </resources>

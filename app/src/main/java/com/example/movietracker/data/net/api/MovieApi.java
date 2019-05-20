@@ -5,9 +5,7 @@ import com.example.movietracker.data.entity.movie_details.cast.MovieCastsEntity;
 import com.example.movietracker.data.entity.movie_details.MovieDetailsEntity;
 import com.example.movietracker.data.entity.movie_details.review.MovieReviewsEntity;
 import com.example.movietracker.data.entity.movie_details.video.MovieVideosEntity;
-import com.example.movietracker.data.entity.MoviesEntity;
-
-import java.util.List;
+import com.example.movietracker.data.entity.movie.MoviesEntity;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;

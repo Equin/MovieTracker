@@ -1,8 +1,8 @@
 package com.example.movietracker.data.database.dao;
 
-import com.example.movietracker.data.entity.MovieResultEntity;
-import com.example.movietracker.data.entity.UserEntity;
-import com.example.movietracker.data.entity.UserWithFavoriteMovies;
+import com.example.movietracker.data.entity.movie.MovieResultEntity;
+import com.example.movietracker.data.entity.user.UserEntity;
+import com.example.movietracker.data.entity.user.UserWithFavoriteMovies;
 
 import java.util.List;
 import java.util.concurrent.Executors;

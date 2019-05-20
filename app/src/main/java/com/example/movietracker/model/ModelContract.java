@@ -1,9 +1,13 @@
 package com.example.movietracker.model;
 
-import com.example.movietracker.data.entity.UserEntity;
-import com.example.movietracker.data.entity.UserWithFavoriteMovies;
+import com.example.movietracker.data.entity.movie.MarkMovieAsFavoriteResultEntity;
+import com.example.movietracker.data.entity.movie.MarkMovieAsFavoriteRequestBodyEntity;
+import com.example.movietracker.data.entity.user.UserDetailsEntity;
+import com.example.movietracker.data.entity.session.SessionEntity;
+import com.example.movietracker.data.entity.user.UserEntity;
+import com.example.movietracker.data.entity.user.UserWithFavoriteMovies;
 import com.example.movietracker.view.model.Filters;
-import com.example.movietracker.data.entity.MoviesEntity;
+import com.example.movietracker.data.entity.movie.MoviesEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.data.entity.movie_details.MovieDetailsEntity;
 import com.example.movietracker.data.entity.movie_details.cast.MovieCastsEntity;
@@ -42,8 +46,18 @@ public class ModelContract {
     public interface UserModel {
         Observable<UserEntity> getUser();
         Observable<UserEntity> getUserWithFavorites();
+        Single<UserDetailsEntity> getUserDetails(UserEntity userEntity);
         void addUser(UserEntity userEntity);
         Completable updateUser(UserEntity userEntity);
         Completable deleteUserFromFavorites(UserWithFavoriteMovies userWithFavoriteMovies);
+        Completable syncFavoritesWithServer(UserEntity userEntity);
+        Single<MarkMovieAsFavoriteResultEntity> markAsFavorite(int accountId, MarkMovieAsFavoriteRequestBodyEntity favoriteRequestBody, String sessionId);
+    }
+
+    public interface AuthModel {
+        Single<SessionEntity> createSession();
+        Single<SessionEntity> login(UserEntity userEntity);
+        Single<SessionEntity> refreshSession(UserEntity userEntity);
+        Completable invalidateSession(UserEntity userEntity);
     }
 }

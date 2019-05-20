@@ -3,12 +3,8 @@ package com.example.movietracker.view.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
@@ -16,14 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.MovieResultEntity;
-import com.example.movietracker.data.entity.MoviesEntity;
-import com.example.movietracker.data.entity.genre.GenresEntity;
+import com.example.movietracker.data.entity.movie.MovieResultEntity;
+import com.example.movietracker.data.entity.movie.MoviesEntity;
 import com.example.movietracker.data.net.constant.NetConstant;
 import com.example.movietracker.view.diff_utill.MovieDiffCallback;
-import com.example.movietracker.view.helper.UtilityHelpers;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 

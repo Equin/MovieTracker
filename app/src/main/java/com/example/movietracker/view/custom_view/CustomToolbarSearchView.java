@@ -14,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import androidx.appcompat.widget.SearchView;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.movietracker.R;
@@ -182,6 +181,9 @@ public class CustomToolbarSearchView extends SearchView {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
+        if (linearLayoutParams == null) {
+            this.onActionViewExpanded();
+        }
         linearLayoutParams.width = ((View)getParent()).getWidth() - (convertDpToPixel(14, getContext()) * 2);
         relativeLayoutResultBox.requestLayout();
     }

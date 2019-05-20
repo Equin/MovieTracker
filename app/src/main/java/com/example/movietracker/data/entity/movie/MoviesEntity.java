@@ -1,16 +1,9 @@
-package com.example.movietracker.data.entity;
+package com.example.movietracker.data.entity.movie;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.UUID;
-
-import androidx.room.Entity;
-import androidx.room.Ignore;
-import androidx.room.PrimaryKey;
-import androidx.room.Relation;
 
 public class MoviesEntity {
 

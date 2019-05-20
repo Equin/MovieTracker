@@ -4,10 +4,12 @@ import android.util.Log;
 
 import com.example.movietracker.AndroidApplication;
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.MovieResultEntity;
-import com.example.movietracker.data.entity.MoviesEntity;
-import com.example.movietracker.data.entity.UserEntity;
-import com.example.movietracker.data.entity.UserWithFavoriteMovies;
+import com.example.movietracker.data.entity.movie.MarkMovieAsFavoriteResultEntity;
+import com.example.movietracker.data.entity.movie.MarkMovieAsFavoriteRequestBodyEntity;
+import com.example.movietracker.data.entity.movie.MovieResultEntity;
+import com.example.movietracker.data.entity.movie.MoviesEntity;
+import com.example.movietracker.data.entity.user.UserEntity;
+import com.example.movietracker.data.entity.user.UserWithFavoriteMovies;
 import com.example.movietracker.view.helper.ImageSaveUtility;
 import com.example.movietracker.view.helper.RxDisposeHelper;
 import com.example.movietracker.view.model.Filters;
@@ -18,6 +20,7 @@ import com.example.movietracker.view.model.MovieRecyclerItemPosition;
 import java.util.ArrayList;
 
 import io.reactivex.CompletableObserver;
+import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
@@ -148,6 +151,7 @@ public class MovieListPresenter extends BasePresenter {
     public void onFavoriteChecked(MovieResultEntity movie, boolean isChecked) {
         if (movie.isFavorite() != isChecked) {
             movie.setFavorite(isChecked);
+            addFavoriteMovieToTMDBServer(this.userEntity, movie);
             if (isChecked) {
                 this.userEntity.addToFavorites(movie);
                 addFavoriteMovie(this.userEntity);
@@ -159,6 +163,17 @@ public class MovieListPresenter extends BasePresenter {
                     updateUser(this.userEntity);
                 }
             }
+        }
+    }
+
+    private void addFavoriteMovieToTMDBServer(UserEntity userEntity, MovieResultEntity movie) {
+        MarkMovieAsFavoriteRequestBodyEntity markMovieAsFavoriteRequestBodyEntity
+                = new MarkMovieAsFavoriteRequestBodyEntity("movie", movie.getMovieId(), movie.isFavorite());
+        if(userEntity.isHasOpenSession()) {
+            this.userModel.markAsFavorite(userEntity.getUserId(), markMovieAsFavoriteRequestBodyEntity, userEntity.getSessionId())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(new SingleMarkAsFavoriteOnServer());
         }
     }
 
@@ -477,6 +492,26 @@ public class MovieListPresenter extends BasePresenter {
         public void onError(Throwable e) {
             Log.e(TAG, e.getLocalizedMessage());
             MovieListPresenter.this.showToast(R.string.main_error);
+        }
+    }
+
+    private class SingleMarkAsFavoriteOnServer implements SingleObserver<MarkMovieAsFavoriteResultEntity> {
+
+        @Override
+        public void onSubscribe(Disposable d) {
+            Log.d(TAG, "Subscribed to  this.authModel.createSession()");
+        }
+
+        @Override
+        public void onSuccess(MarkMovieAsFavoriteResultEntity resultEntity) {
+           // resultEntity.
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Log.e(TAG, e.getLocalizedMessage());
+            MovieListPresenter.this.showToast(R.string.main_error);
+            MovieListPresenter.this.hideLoading();
         }
     }
 

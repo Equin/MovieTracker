@@ -1,6 +1,6 @@
 package com.example.movietracker.view.contract;
 
-import com.example.movietracker.data.entity.MoviesEntity;
+import com.example.movietracker.data.entity.movie.MoviesEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 
 public interface MainView extends View {
@@ -13,9 +13,10 @@ public interface MainView extends View {
     void openNewPasswordDialog();
     void openCheckPasswordDialog();
     void openResetPasswordDialog();
+    void openLoginDialog();
 
     void dismissAllSelections();
-    void dismissPasswordDialog();
+    void dismissDialog();
 
     void setParentalControlEnabled(boolean parentalControlEnabled);
 
@@ -24,4 +25,12 @@ public interface MainView extends View {
     void setBackgroundSyncEnabled(boolean backgroundSyncEnabled);
 
     void showSearchResult(MoviesEntity moviesEntity);
+
+    void showLoginMenuItem();
+    void hideLoginMenuItem();
+
+    void showLogoutMenuItem();
+    void hideLogoutMenuItem();
+
+    void setUsernameToHeaderView(String tmdbUsername);
 }

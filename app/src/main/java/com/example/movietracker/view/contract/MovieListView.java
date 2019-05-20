@@ -1,6 +1,6 @@
 package com.example.movietracker.view.contract;
 
-import com.example.movietracker.data.entity.MoviesEntity;
+import com.example.movietracker.data.entity.movie.MoviesEntity;
 
 public interface MovieListView extends DownloadListenerView {
     void renderMoviesList(MoviesEntity moviesEntity);
