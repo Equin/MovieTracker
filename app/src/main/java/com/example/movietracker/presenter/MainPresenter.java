@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.movietracker.AndroidApplication;
 import com.example.movietracker.R;
+import com.example.movietracker.data.entity.movie.MarkMovieAsFavoriteResultEntity;
 import com.example.movietracker.data.entity.movie.MoviesEntity;
 import com.example.movietracker.data.entity.session.SessionEntity;
 import com.example.movietracker.data.entity.user.UserEntity;
@@ -45,6 +46,7 @@ public class MainPresenter extends BasePresenter {
     private UserEntity userEntity;
     private Disposable userDisposable;
     private Disposable movieDisposable;
+    private Disposable markAsFavoritesDisposable;
 
     private PublishRelay<String> searchQueryPublishSubject = PublishRelay.create();
 
@@ -99,6 +101,7 @@ public class MainPresenter extends BasePresenter {
         RxDisposeHelper.dispose(this.userDisposable);
         RxDisposeHelper.dispose(this.movieDisposable);
         RxDisposeHelper.dispose(this.movieDisposable);
+        RxDisposeHelper.dispose(this.markAsFavoritesDisposable);
     }
 
     /**
@@ -361,10 +364,10 @@ public class MainPresenter extends BasePresenter {
 
     private void syncFavoriteMoviesWithServer(UserEntity userEntity) {
         if (userEntity.isHasOpenSession()){
-            this.userModel.syncFavoritesWithServer(userEntity)
+           this.markAsFavoritesDisposable = this.userModel.syncFavoritesWithServer(userEntity)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
-                    .subscribe(new CompletableSyncObserver());
+                    .subscribeWith(new DisposableSyncObserver());
         }
     }
 
@@ -538,16 +541,13 @@ public class MainPresenter extends BasePresenter {
      * onComplete: nothing
      * onError: showing different results of marking movie as favorite
      */
-    private class CompletableSyncObserver implements CompletableObserver {
+    private class DisposableSyncObserver extends DisposableObserver<MarkMovieAsFavoriteResultEntity> {
+
 
         @Override
-        public void onSubscribe(Disposable d) {
-            Log.d(TAG, "Subscribed to  sync proces");
-        }
-
-        @Override
-        public void onComplete() {
-            Log.e(TAG, "onComplete CompletableSyncObserver");
+        public void onNext(MarkMovieAsFavoriteResultEntity markMovieAsFavoriteResultEntity) {
+            Log.e(TAG, markMovieAsFavoriteResultEntity.getStatusMessage());
+            RxDisposeHelper.dispose(markAsFavoritesDisposable);
         }
 
         @Override
@@ -557,11 +557,13 @@ public class MainPresenter extends BasePresenter {
             }
 
             Log.e(TAG, e.getMessage() == null ? "": e.getMessage());
-            MainPresenter.this.showToast(
-                    e.getMessage() == null
-                            ? AndroidApplication.getRunningActivity().getApplicationContext().getResources()
-                                    .getString(R.string.main_error)
-                            : e.getMessage());
+            RxDisposeHelper.dispose(markAsFavoritesDisposable);
+        }
+
+        @Override
+        public void onComplete() {
+            Log.e(TAG,  "onComplete DisposableeSyncObserver");
+            RxDisposeHelper.dispose(markAsFavoritesDisposable);
         }
     }
 

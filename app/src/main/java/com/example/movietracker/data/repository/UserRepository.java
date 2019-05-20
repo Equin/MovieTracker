@@ -21,9 +21,9 @@ public interface UserRepository {
     void addUser(UserEntity userEntity);
     Completable updateUser(UserEntity userEntity);
     Completable deleteMovieFromFavorites(UserWithFavoriteMovies userWithFavoriteMovies);
-    Completable syncFavoritesWithServer(UserEntity userEntity);
 
     Single<UserDetailsEntity> getUserDetailsFromServer(UserEntity userEntity);
-    Single<MarkMovieAsFavoriteResultEntity> markAsFavorite(int accountId, MarkMovieAsFavoriteRequestBodyEntity favoriteRequestBody, String sessionId);
-    Single<MoviesEntity> getFavoritesFromServer(int accountId, String sessionId, int page);
+    Observable<MarkMovieAsFavoriteResultEntity> markAsFavorite(int accountId, MarkMovieAsFavoriteRequestBodyEntity favoriteRequestBody, String sessionId);
+    Observable<MoviesEntity> getFavoritesFromServer(int accountId, String sessionId, int page);
+    Observable<MarkMovieAsFavoriteResultEntity> syncFavoritesWithServer(UserEntity userEntity);
 }

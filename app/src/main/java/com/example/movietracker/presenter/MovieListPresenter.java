@@ -20,7 +20,6 @@ import com.example.movietracker.view.model.MovieRecyclerItemPosition;
 import java.util.ArrayList;
 
 import io.reactivex.CompletableObserver;
-import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
@@ -52,6 +51,7 @@ public class MovieListPresenter extends BasePresenter {
     private Disposable movieDisposable;
     private Disposable moviePageDisposable;
     private Disposable movieListPagesDisposable;
+    private Disposable markAsFavoriteDisposable;
 
     /**
      * Instantiates a new Movie list presenter.
@@ -140,6 +140,7 @@ public class MovieListPresenter extends BasePresenter {
         RxDisposeHelper.dispose(this.movieDisposable);
         RxDisposeHelper.dispose(this.moviePageDisposable);
         RxDisposeHelper.dispose(this.movieListPagesDisposable);
+        RxDisposeHelper.dispose(this.markAsFavoriteDisposable);
     }
 
     /**
@@ -170,10 +171,10 @@ public class MovieListPresenter extends BasePresenter {
         MarkMovieAsFavoriteRequestBodyEntity markMovieAsFavoriteRequestBodyEntity
                 = new MarkMovieAsFavoriteRequestBodyEntity("movie", movie.getMovieId(), movie.isFavorite());
         if(userEntity.isHasOpenSession()) {
-            this.userModel.markAsFavorite(userEntity.getUserId(), markMovieAsFavoriteRequestBodyEntity, userEntity.getSessionId())
+            markAsFavoriteDisposable = this.userModel.markAsFavorite(userEntity.getUserId(), markMovieAsFavoriteRequestBodyEntity, userEntity.getSessionId())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
-                    .subscribe(new SingleMarkAsFavoriteOnServer());
+                    .subscribeWith(new SingleMarkAsFavoriteOnServer());
         }
     }
 
@@ -495,23 +496,26 @@ public class MovieListPresenter extends BasePresenter {
         }
     }
 
-    private class SingleMarkAsFavoriteOnServer implements SingleObserver<MarkMovieAsFavoriteResultEntity> {
+    private class SingleMarkAsFavoriteOnServer extends DisposableObserver<MarkMovieAsFavoriteResultEntity> {
 
         @Override
-        public void onSubscribe(Disposable d) {
-            Log.d(TAG, "Subscribed to  this.authModel.createSession()");
+        public void onComplete() {
+            Log.d(TAG, "onComplete mark as favorite ");
+            RxDisposeHelper.dispose(markAsFavoriteDisposable);
         }
 
         @Override
-        public void onSuccess(MarkMovieAsFavoriteResultEntity resultEntity) {
+        public void onNext(MarkMovieAsFavoriteResultEntity resultEntity) {
+
            // resultEntity.
+            RxDisposeHelper.dispose(markAsFavoriteDisposable);
         }
 
         @Override
         public void onError(Throwable e) {
             Log.e(TAG, e.getLocalizedMessage());
-            MovieListPresenter.this.showToast(R.string.main_error);
             MovieListPresenter.this.hideLoading();
+            RxDisposeHelper.dispose(markAsFavoriteDisposable);
         }
     }
 

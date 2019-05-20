@@ -53,12 +53,12 @@ public class UserModelImpl implements ModelContract.UserModel {
     }
 
     @Override
-    public Completable syncFavoritesWithServer(UserEntity userEntity) {
+    public  Observable<MarkMovieAsFavoriteResultEntity> syncFavoritesWithServer(UserEntity userEntity) {
         return this.userRepository.syncFavoritesWithServer(userEntity);
     }
 
     @Override
-    public Single<MarkMovieAsFavoriteResultEntity> markAsFavorite(
+    public  Observable<MarkMovieAsFavoriteResultEntity>markAsFavorite(
             int accountId,
             MarkMovieAsFavoriteRequestBodyEntity favoriteRequestBody,
             String sessionId) {

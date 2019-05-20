@@ -4,6 +4,8 @@ import com.example.movietracker.data.entity.movie.MarkMovieAsFavoriteResultEntit
 import com.example.movietracker.data.entity.movie.MarkMovieAsFavoriteRequestBodyEntity;
 import com.example.movietracker.data.entity.movie.MoviesEntity;
 import com.example.movietracker.data.entity.user.UserDetailsEntity;
+
+import io.reactivex.Observable;
 import io.reactivex.Single;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -17,8 +19,8 @@ public interface UserApi {
     Single<UserDetailsEntity> getUserDetails(@Query("session_id") String sessionId);
 
     @POST("account/{account_id}/favorite")
-    Single<MarkMovieAsFavoriteResultEntity> markAsFavorite(@Path("account_id") int accountId, @Body MarkMovieAsFavoriteRequestBodyEntity favoriteRequestBody, @Query("session_id") String sessionId);
+    Observable<MarkMovieAsFavoriteResultEntity> markAsFavorite(@Path("account_id") int accountId, @Body MarkMovieAsFavoriteRequestBodyEntity favoriteRequestBody, @Query("session_id") String sessionId);
 
     @GET("account/{account_id}/favorite/movies")
-    Single<MoviesEntity> getFavoriteMoviesFromServer(@Path("account_id") int accountId, @Query("session_id") String sessionId, @Query("page") int page);
+    Observable<MoviesEntity> getFavoriteMoviesFromServer(@Path("account_id") int accountId, @Query("session_id") String sessionId, @Query("page") int page);
 }

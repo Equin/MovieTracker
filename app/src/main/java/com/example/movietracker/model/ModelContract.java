@@ -50,8 +50,8 @@ public class ModelContract {
         void addUser(UserEntity userEntity);
         Completable updateUser(UserEntity userEntity);
         Completable deleteUserFromFavorites(UserWithFavoriteMovies userWithFavoriteMovies);
-        Completable syncFavoritesWithServer(UserEntity userEntity);
-        Single<MarkMovieAsFavoriteResultEntity> markAsFavorite(int accountId, MarkMovieAsFavoriteRequestBodyEntity favoriteRequestBody, String sessionId);
+        Observable<MarkMovieAsFavoriteResultEntity> syncFavoritesWithServer(UserEntity userEntity);
+        Observable<MarkMovieAsFavoriteResultEntity> markAsFavorite(int accountId, MarkMovieAsFavoriteRequestBodyEntity favoriteRequestBody, String sessionId);
     }
 
     public interface AuthModel {

@@ -113,23 +113,22 @@ public class UserDataRepository implements UserRepository {
     }
 
     @Override
-    public Completable syncFavoritesWithServer(UserEntity userEntity) {
-        return this.getUserWithFavorites().flatMapCompletable(userWithFavoritesFromDB ->
+    public Observable<MarkMovieAsFavoriteResultEntity> syncFavoritesWithServer(UserEntity userEntity) {
+        return this.getUserWithFavorites().flatMap(userWithFavoritesFromDB ->
                 this.getFavoritesFromServer(userEntity.getUserId(), userEntity.getSessionId(), 1)
-                        .flatMap(moviesEntity -> syncAllMovieFavorites(moviesEntity, userWithFavoritesFromDB)).flatMapCompletable(markAsFavoriteResultEntity ->
-                        Completable.error(new Throwable(markAsFavoriteResultEntity.getStatusMessage()))));
+                        .flatMap(moviesEntity -> syncAllMovieFavorites(moviesEntity, userWithFavoritesFromDB)));
     }
 
-    private Single<MarkMovieAsFavoriteResultEntity> syncAllMovieFavorites(
+    private Observable<MarkMovieAsFavoriteResultEntity> syncAllMovieFavorites(
             MoviesEntity moviesEntityFromServer,
             UserEntity localUserWithFavorites) {
         List<Observable<MoviesEntity>> requests = new ArrayList<>();
 
         if (moviesEntityFromServer.getMovies().isEmpty()) {
-            requests.add(addRequest(localUserWithFavorites, 1).toObservable());
+            requests.add(addRequest(localUserWithFavorites, 1));
         } else {
             for (int i = 1; i <= moviesEntityFromServer.getTotalPages(); i++) {
-                requests.add(addRequest(localUserWithFavorites, i).toObservable());
+                requests.add(addRequest(localUserWithFavorites, i));
             }
         }
 
@@ -173,8 +172,7 @@ public class UserDataRepository implements UserRepository {
             }
 
             return markAsFavoriteMoviesOnTmdbServer(markFavoriteRequestBodyEntities, localUserWithFavorites);
-
-        }).singleOrError();
+        });
     }
 
     private MarkMovieAsFavoriteResultEntity markAsFavoriteMoviesOnTmdbServer(
@@ -185,7 +183,7 @@ public class UserDataRepository implements UserRepository {
         for (MarkMovieAsFavoriteRequestBodyEntity markMovieAsFavoriteRequestBodyEntity : markFavoriteRequestBodyEntities) {
             favoriteRequest.add(
                     addMarkAsFavoriteRequest(markMovieAsFavoriteRequestBodyEntity,
-                            localUserWithFavorites).toObservable());
+                            localUserWithFavorites));
         }
 
         return Observable.zip(favoriteRequest, requestResult -> {
@@ -206,7 +204,7 @@ public class UserDataRepository implements UserRepository {
         }).blockingSingle();
     }
 
-    private Single<MarkMovieAsFavoriteResultEntity> addMarkAsFavoriteRequest(
+    private Observable<MarkMovieAsFavoriteResultEntity> addMarkAsFavoriteRequest(
             MarkMovieAsFavoriteRequestBodyEntity markMovieAsFavoriteRequestBodyEntity,
             UserEntity userEntity) {
         return this.markAsFavorite(
@@ -215,7 +213,7 @@ public class UserDataRepository implements UserRepository {
                 userEntity.getSessionId());
     }
 
-    private Single<MoviesEntity> addRequest(UserEntity localUserWithFavorites, int page) {
+    private Observable<MoviesEntity> addRequest(UserEntity localUserWithFavorites, int page) {
         return this.getFavoritesFromServer(
                 localUserWithFavorites.getUserId(),
                 localUserWithFavorites.getSessionId(),
@@ -228,7 +226,7 @@ public class UserDataRepository implements UserRepository {
     }
 
     @Override
-    public Single<MarkMovieAsFavoriteResultEntity> markAsFavorite(
+    public Observable<MarkMovieAsFavoriteResultEntity> markAsFavorite(
             int accountId,
             MarkMovieAsFavoriteRequestBodyEntity favoriteRequestBody,
             String sessionId) {
@@ -236,7 +234,7 @@ public class UserDataRepository implements UserRepository {
     }
 
     @Override
-    public Single<MoviesEntity> getFavoritesFromServer(int accountId, String sessionId, int page) {
+    public Observable<MoviesEntity> getFavoritesFromServer(int accountId, String sessionId, int page) {
         return this.userApi.getFavoriteMoviesFromServer(accountId, sessionId, page);
     }
 }
