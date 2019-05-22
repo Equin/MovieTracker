@@ -4,6 +4,7 @@ import com.example.movietracker.data.database.MoviesDatabase;
 import com.example.movietracker.data.database.dao.GenresDao;
 import com.example.movietracker.data.database.dao.MovieDao;
 import com.example.movietracker.data.database.dao.MovieDetailDao;
+import com.example.movietracker.data.entity.movie.MovieChangesEntity;
 import com.example.movietracker.data.entity.movie.MovieResultEntity;
 import com.example.movietracker.view.model.Filters;
 import com.example.movietracker.data.entity.entity_mapper.MovieCastsDataMapper;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
@@ -141,6 +143,41 @@ public class MovieDataRepository implements MovieRepository {
                 .onExceptionResumeNext(
                         this.movieDao.getMovieByTitle(filters.getSearchQueryByTitle(), filters.isIncludeAdult()).map(movieResultEntities ->
                                 new MoviesEntity(1,1, movieResultEntities)));
+    }
+
+    /**
+     * getting from server movies ids that has changes for past 24h
+     * @return Observable<MovieChangesEntity>
+     */
+    @Override
+    public Observable<MovieChangesEntity> getMoviesChanges() {
+        return this.movieApi.getMoviesChanges(1).flatMap(movieChangesEntity -> {
+            List<Observable<MovieChangesEntity>> requests = new ArrayList<>();
+           if (movieChangesEntity.getTotalPages() > 1) {
+               for (int i = 1; i <movieChangesEntity.getTotalPages(); i++) {
+                   requests.add(addMovieChangesRequest(i));
+               }
+           } else {
+              return Observable.just(movieChangesEntity);
+           }
+           return Observable.zip(requests, (moviesChangesList) -> {
+               MovieChangesEntity moviesChangesNewList = new MovieChangesEntity();
+
+               for (Object moviesChanges : moviesChangesList) {
+                   MovieChangesEntity movieChangesCast = (MovieChangesEntity) moviesChanges;
+
+                   moviesChangesNewList.addMovieChanges(movieChangesCast.getResults());
+                   moviesChangesNewList.setPage(movieChangesCast.getPage());
+                   moviesChangesNewList.setTotalPages(movieChangesCast.getTotalPages());
+               }
+
+               return moviesChangesNewList;
+           });
+        });
+    }
+
+    private Observable<MovieChangesEntity> addMovieChangesRequest(int page) {
+        return this.movieApi.getMoviesChanges(page);
     }
 
     @Override

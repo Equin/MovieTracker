@@ -2,6 +2,7 @@ package com.example.movietracker.model;
 
 import com.example.movietracker.data.entity.movie.MarkMovieAsFavoriteResultEntity;
 import com.example.movietracker.data.entity.movie.MarkMovieAsFavoriteRequestBodyEntity;
+import com.example.movietracker.data.entity.movie.MovieChangesEntity;
 import com.example.movietracker.data.entity.user.UserDetailsEntity;
 import com.example.movietracker.data.entity.session.SessionEntity;
 import com.example.movietracker.data.entity.user.UserEntity;
@@ -31,6 +32,7 @@ public class ModelContract {
         Observable<MoviesEntity> getMovieListForPagesWithFavorites(Filters filters);
         Observable<List<Integer>> getMoviesIdList();
         Observable<MoviesEntity> getMoviesByTitle(Filters filters);
+        Observable<MovieChangesEntity> getMoviesChanges();
     }
 
     public interface MovieInfoModel {

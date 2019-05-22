@@ -3,11 +3,16 @@ package com.example.movietracker.service;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.movietracker.data.entity.movie.MovieChangesResultEntity;
+import com.example.movietracker.data.entity.movie.MovieResultEntity;
 import com.example.movietracker.di.ClassProvider;
 import com.example.movietracker.model.ModelContract;
 import com.example.movietracker.model.model_impl.MovieDetailTabsModelImpl;
 import com.example.movietracker.model.model_impl.MovieInfoModelImpl;
 import com.example.movietracker.model.model_impl.MovieModelImpl;
+import com.example.movietracker.notification.PushNotificationSender;
+import com.example.movietracker.view.model.Filters;
+import com.example.movietracker.view.model.PushNotificationsMovieInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +31,7 @@ public class UpdateMoviesFromServerWorker extends Worker {
     private static final int MOVIE_COUNT_FOR_REQUEST = 2;
     private static final int DELAY_BETWEEN_REQUEST_MILLISECONDS = 10000;
     private  Context context;
+    private PushNotificationSender pushNotificationSender;
 
     public UpdateMoviesFromServerWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -36,9 +42,17 @@ public class UpdateMoviesFromServerWorker extends Worker {
     @Override
     public Result doWork() {
         ClassProvider.initialize(context);
+        pushNotificationSender = new PushNotificationSender(context);
+
         updateMoviesFromServer();
 
         return Result.success();
+    }
+
+    @Override
+    public void onStopped() {
+        super.onStopped();
+        ClassProvider.onDestroy();
     }
 
     /**
@@ -56,6 +70,22 @@ public class UpdateMoviesFromServerWorker extends Worker {
                 Log.e(TAG, "---------------------- ");
                 listWithTwoIds.clear();
             } }).subscribe();
+
+
+        movieModel.getMoviesChanges().flatMap(movieChangesEntity -> {
+            return movieModel.getMoviesWithFavorites(Filters.getInstance()).doOnNext(moviesEntity -> {
+                PushNotificationsMovieInfo pushNotificationsMovieInfo = new PushNotificationsMovieInfo();
+                for(MovieResultEntity movieResultEntity : moviesEntity.getMovies()) {
+                    MovieChangesResultEntity movieEntity =
+                            new MovieChangesResultEntity(movieResultEntity.getMovieId(), movieResultEntity.isAdult());
+
+                    if(movieChangesEntity.getResults().contains(movieEntity)) {
+                        pushNotificationsMovieInfo.addMoiveTitleItemToList(movieResultEntity.getMovieTitle());
+                    }
+                }
+                pushNotificationSender.sendNotification(pushNotificationsMovieInfo, 0);
+            });
+        }).subscribe();
     }
 
     /**

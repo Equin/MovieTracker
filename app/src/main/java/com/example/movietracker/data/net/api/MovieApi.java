@@ -1,6 +1,7 @@
 package com.example.movietracker.data.net.api;
 
 import com.example.movietracker.data.entity.genre.GenresEntity;
+import com.example.movietracker.data.entity.movie.MovieChangesEntity;
 import com.example.movietracker.data.entity.movie_details.cast.MovieCastsEntity;
 import com.example.movietracker.data.entity.movie_details.MovieDetailsEntity;
 import com.example.movietracker.data.entity.movie_details.review.MovieReviewsEntity;
@@ -36,4 +37,6 @@ public interface MovieApi {
     @GET("search/movie/")
     Observable<MoviesEntity> getMoviesByTitle(@Query("query") String query, @Query("include_adult")boolean isIncludeAdult);
 
+    @GET("movie/changes")
+    Observable<MovieChangesEntity> getMoviesChanges(@Query("page") int query);
 }

@@ -21,6 +21,8 @@ import com.example.movietracker.model.model_impl.AuthModelImpl;
 import com.example.movietracker.model.model_impl.GenreModelImpl;
 import com.example.movietracker.model.model_impl.MovieModelImpl;
 import com.example.movietracker.model.model_impl.UserModelImpl;
+import com.example.movietracker.view.model.NotificationBody;
+import com.example.movietracker.notification.PushNotificationSender;
 import com.example.movietracker.presenter.MainPresenter;
 import com.example.movietracker.service.UpdateMoviesFromServerWorker;
 import com.example.movietracker.view.FilterAlertDialog;
@@ -62,7 +64,7 @@ public class MainFragment extends BaseFragment
         SearchView.OnQueryTextListener {
 
     private static final String TAG = MainFragment.class.getCanonicalName();
-    private static final int BACKGROUND_SYNC_REPEAT_INTERVAL_MINUTES = 240;
+    private static final int BACKGROUND_SYNC_REPEAT_INTERVAL_MINUTES = 60 * 12;
 
     /**
      * The interface Main fragment interaction listener.
@@ -252,6 +254,8 @@ public class MainFragment extends BaseFragment
     @OnClick(R.id.main_button_filter)
     public void onFilterButtonClicked() {
         this.mainPresenter.onFilterButtonClicked();
+    /*    PushNotificationSender sender = new PushNotificationSender(this.getContext());
+        sender.sendNotification(new NotificationBody("Hello", "title"), 0);*/
     }
 
     @Optional
@@ -407,9 +411,9 @@ public class MainFragment extends BaseFragment
 
         PeriodicWorkRequest backgroundSyncWorkRequest = new PeriodicWorkRequest.Builder(
                 UpdateMoviesFromServerWorker.class,
-                BACKGROUND_SYNC_REPEAT_INTERVAL_MINUTES,
+                /*BACKGROUND_SYNC_REPEAT_INTERVAL_MINUTES*/ 1,
                 TimeUnit.MINUTES,
-                BACKGROUND_SYNC_REPEAT_INTERVAL_MINUTES + 2,
+                /*BACKGROUND_SYNC_REPEAT_INTERVAL_MINUTES + 2*/ 1,
                 TimeUnit.MINUTES)
                 .setConstraints(constraintsBuilder.build())
                 .build();

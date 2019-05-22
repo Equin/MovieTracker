@@ -1,6 +1,7 @@
 package com.example.movietracker.data.repository;
 
 import com.example.movietracker.data.database.MoviesDatabase;
+import com.example.movietracker.data.entity.movie.MovieChangesEntity;
 import com.example.movietracker.view.model.Filters;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.data.entity.movie_details.cast.MovieCastsEntity;
@@ -27,6 +28,7 @@ public interface MovieRepository {
     Observable<MovieVideosEntity> getMovieVideos(int movieId);
     Observable<MovieReviewsEntity> getMovieReviews(int movieId);
     Observable<MoviesEntity> getMoviesByTitle(Filters filters);
+    Observable<MovieChangesEntity> getMoviesChanges();
 
     Observable<List<Integer>> getMoviesIdList();
     void init(RestClient restClient, MoviesDatabase moviesDatabase, UserRepository userRepository);
