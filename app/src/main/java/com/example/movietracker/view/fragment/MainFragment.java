@@ -14,7 +14,6 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.example.movietracker.R;
-import com.example.movietracker.data.entity.movie.MoviesEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.di.ClassProvider;
 import com.example.movietracker.model.model_impl.AuthModelImpl;
@@ -24,7 +23,6 @@ import com.example.movietracker.model.model_impl.UserModelImpl;
 import com.example.movietracker.presenter.MainPresenter;
 import com.example.movietracker.service.UpdateMoviesFromServerWorker;
 import com.example.movietracker.view.FilterAlertDialog;
-import com.example.movietracker.view.adapter.SearchResultMovieListAdapter;
 import com.example.movietracker.view.contract.MainView;
 import com.example.movietracker.view.custom_view.CustomGenreView;
 import com.example.movietracker.view.custom_view.CustomToolbarSearchView;
@@ -38,7 +36,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.SearchView;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.RecyclerView;
@@ -58,8 +55,7 @@ import butterknife.Optional;
 public class MainFragment extends BaseFragment
         implements MainView,
         FilterAlertDialog.OnDoneButtonClickedListener,
-        NavigationView.OnNavigationItemSelectedListener,
-        SearchView.OnQueryTextListener {
+        NavigationView.OnNavigationItemSelectedListener{
 
     private static final String TAG = MainFragment.class.getCanonicalName();
     private static final int BACKGROUND_SYNC_REPEAT_INTERVAL_MINUTES = 240;
@@ -91,8 +87,7 @@ public class MainFragment extends BaseFragment
 
     private Switch parentalControlSwitch;
     private Switch backgroundSyncSwitch;
-    private CustomToolbarSearchView customToolbarSearchView;
-    private SearchResultMovieListAdapter searchResultMovieListAdapter;
+
     private MenuItem searchMenuItem;
 
     public MainFragment() {
@@ -127,7 +122,6 @@ public class MainFragment extends BaseFragment
                 this,
                 new GenreModelImpl(),
                 new UserModelImpl(),
-                new MovieModelImpl(),
                 new AuthModelImpl(),
                 Filters.getInstance());
 
@@ -159,7 +153,6 @@ public class MainFragment extends BaseFragment
         this.mainFragmentInteractionListener = null;
         this.parentalControlSwitch = null;
         this.backgroundSyncSwitch = null;
-        this.customToolbarSearchView = null;
         this.customGenreView = null;
         this.drawerLayout = null;
         this.navigationView = null;
@@ -194,8 +187,8 @@ public class MainFragment extends BaseFragment
     }
 
     /**
-     * initialize searchMenuItem and customSearchView providing it with SearchResultMovieListAdapter
-     * and OnQueryTextListener
+     * initialize searchMenuItem and customSearchView providing it with SearchFeatureRecyclerItemClickListener
+     * and MovieModelImpl
      * @param menu
      * @param inflater
      */
@@ -204,14 +197,7 @@ public class MainFragment extends BaseFragment
         inflater.inflate(R.menu.toolbar_actions_main_screen, menu);
 
         this.searchMenuItem = menu.findItem(R.id.action_search);
-        this.customToolbarSearchView = (CustomToolbarSearchView) this.searchMenuItem.getActionView();
-
-        this.searchResultMovieListAdapter
-                = new SearchResultMovieListAdapter(new MoviesEntity(), new ClickListener());
-
-        this.customToolbarSearchView.setRecyclerViewAdapter(this.searchResultMovieListAdapter);
-        this.customToolbarSearchView.setOnQueryTextListener(this);
-
+        ClassProvider.searchFeature.init((CustomToolbarSearchView) this.searchMenuItem.getActionView(), new MovieModelImpl(), new SearchFeatureRecyclerItemClickListener());
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -323,21 +309,6 @@ public class MainFragment extends BaseFragment
         }
     }
 
-    /**
-     * showing search results provided by customSearchView request
-     * @param moviesEntity
-     */
-    @Override
-    public void showSearchResult(MoviesEntity moviesEntity) {
-        if (moviesEntity.getMovies().isEmpty()) {
-            this.customToolbarSearchView.setVisibilityOfSearchResultBox(View.GONE);
-        } else {
-            this.customToolbarSearchView.setVisibilityOfSearchResultBox(View.VISIBLE);
-        }
-
-        this.searchResultMovieListAdapter.reloadWithNewResults(moviesEntity);
-    }
-
     @Override
     public void showLoginMenuItem() {
         navigationView.getMenu().findItem(R.id.log_in).setVisible(true);
@@ -365,26 +336,6 @@ public class MainFragment extends BaseFragment
     }
 
     /**
-     * filtering movies by title on text submit in searchView
-     * @param query - submitted query
-     */
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        this.mainPresenter.onSearchQueryTextChange(query);
-        return false;
-    }
-
-    /**
-     * filtering movies by title on text change in searchView
-     * @param newText
-     */
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        this.mainPresenter.onSearchQueryTextChange(newText);
-        return false;
-    }
-
-    /**
      * canceling background syncing
      */
     @Override
@@ -407,9 +358,9 @@ public class MainFragment extends BaseFragment
 
         PeriodicWorkRequest backgroundSyncWorkRequest = new PeriodicWorkRequest.Builder(
                 UpdateMoviesFromServerWorker.class,
-                BACKGROUND_SYNC_REPEAT_INTERVAL_MINUTES,
-                TimeUnit.MINUTES,
                 BACKGROUND_SYNC_REPEAT_INTERVAL_MINUTES + 2,
+                TimeUnit.MINUTES,
+                BACKGROUND_SYNC_REPEAT_INTERVAL_MINUTES,
                 TimeUnit.MINUTES)
                 .setConstraints(constraintsBuilder.build())
                 .build();
@@ -494,7 +445,7 @@ public class MainFragment extends BaseFragment
      * listener for movieRecyclerView items
      * getting movieId of clicked item and passing it to movieListPresenter
      */
-    private class ClickListener implements RecyclerView.OnClickListener {
+    private class SearchFeatureRecyclerItemClickListener implements RecyclerView.OnClickListener {
 
         @Override
         public void onClick(View view) {

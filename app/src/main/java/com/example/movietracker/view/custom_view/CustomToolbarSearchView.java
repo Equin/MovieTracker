@@ -1,5 +1,6 @@
 package com.example.movietracker.view.custom_view;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -19,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.movietracker.R;
 import com.example.movietracker.view.MovieCardItemDecorator;
 import com.example.movietracker.view.helper.RecyclerViewOrientationUtility;
-
 
 public class CustomToolbarSearchView extends SearchView {
 
@@ -118,8 +118,8 @@ public class CustomToolbarSearchView extends SearchView {
         if (relativeLayoutResultBox != null) return;
         visibleSearchViewRect = new Rect();
 
-        View view = (View)this.getParent();
-        view.getGlobalVisibleRect(visibleSearchViewRect);
+        View viewParent = (View)this.getParent();
+        viewParent.getGlobalVisibleRect(visibleSearchViewRect);
 
         relativeLayoutResultBox = new RelativeLayout(getContext());
         recyclerView = new RecyclerView(getContext());

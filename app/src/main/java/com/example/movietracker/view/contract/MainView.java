@@ -24,8 +24,6 @@ public interface MainView extends View {
     void startBackgroundSync();
     void setBackgroundSyncEnabled(boolean backgroundSyncEnabled);
 
-    void showSearchResult(MoviesEntity moviesEntity);
-
     void showLoginMenuItem();
     void hideLoginMenuItem();
 

@@ -13,6 +13,7 @@ import com.example.movietracker.data.repository.MovieDataRepository;
 import com.example.movietracker.data.repository.MovieRepository;
 import com.example.movietracker.data.repository.UserDataRepository;
 import com.example.movietracker.data.repository.UserRepository;
+import com.example.movietracker.feature.search_view.SearchFeature;
 import com.example.movietracker.view.FilterAlertDialog;
 
 public class ClassProvider {
@@ -28,6 +29,7 @@ public class ClassProvider {
     public static UserRepository userRepository;
     public static AuthRepository authRepository;
     public static FilterAlertDialog filterAlertDialog;
+    public static SearchFeature searchFeature;
 
     public static void initialize(Context context) {
 
@@ -48,6 +50,8 @@ public class ClassProvider {
         filterAlertDialog = FilterAlertDialog.getInstance();
         filterAlertDialog.init();
 
+        searchFeature = SearchFeature.getInstance();
+
         Log.d(TAG, "initialized");
     }
 
@@ -57,6 +61,8 @@ public class ClassProvider {
         moviesDatabase = null;
         filterAlertDialog.deleteFilterAlertDialog();
         filterAlertDialog = null;
+        searchFeature.destroy();
+        searchFeature = null;
 
         Log.d(TAG, "destroyed");
     }
