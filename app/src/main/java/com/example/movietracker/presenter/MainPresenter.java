@@ -15,9 +15,7 @@ import com.example.movietracker.view.contract.MainView;
 import com.example.movietracker.view.model.MarkAsFavoriteResultVariants;
 import com.example.movietracker.view.model.Option;
 import com.example.movietracker.view.model.UserWithGenresEntity;
-import com.jakewharton.rxrelay2.PublishRelay;
 
-import java.util.concurrent.TimeUnit;
 import io.reactivex.CompletableObserver;
 import io.reactivex.Observable;
 import io.reactivex.SingleObserver;
@@ -35,7 +33,6 @@ public class MainPresenter extends BasePresenter {
 
     private ModelContract.GenreModel genreModel;
     private ModelContract.UserModel userModel;
-    private ModelContract.MovieModel movieModel;
     private ModelContract.AuthModel authModel;
 
     private MainView mainView;
@@ -44,9 +41,6 @@ public class MainPresenter extends BasePresenter {
     private GenresEntity genresEntity;
     private UserEntity userEntity;
     private Disposable userDisposable;
-    private Disposable movieDisposable;
-
-    private PublishRelay<String> searchQueryPublishSubject = PublishRelay.create();
 
     /**
      * Instantiates a new Main presenter.
@@ -55,15 +49,13 @@ public class MainPresenter extends BasePresenter {
      */
     public MainPresenter(
             MainView mainView, ModelContract.GenreModel genreModel,
-            ModelContract.UserModel userModel, ModelContract.MovieModel movieModel,
+            ModelContract.UserModel userModel,
             ModelContract.AuthModel authModel, Filters filters) {
         this.mainView = mainView;
         this.genreModel = genreModel;
-        this.movieModel = movieModel;
         this.authModel = authModel;
         this.filters = filters;
         this.userModel = userModel;
-        configureSearch();
     }
 
     /**
@@ -97,8 +89,6 @@ public class MainPresenter extends BasePresenter {
         this.genresEntity = null;
         this.genreModel = null;
         RxDisposeHelper.dispose(this.userDisposable);
-        RxDisposeHelper.dispose(this.movieDisposable);
-        RxDisposeHelper.dispose(this.movieDisposable);
     }
 
     /**
@@ -113,19 +103,6 @@ public class MainPresenter extends BasePresenter {
                 .setOrder(option.getSortOrder())
                 .build();
         this.openMovieListView(this.genresEntity);
-    }
-
-    /**
-     * making request to server and db on search query of searchView text changed.
-     *
-     * @param newText the new text
-     */
-    public void onSearchQueryTextChange(String newText) {
-        if ("".equals(newText)) {
-            this.showSearchResult(new MoviesEntity());
-            return;
-        }
-        newSearchQuery(newText);
     }
 
     /**
@@ -482,7 +459,7 @@ public class MainPresenter extends BasePresenter {
 
     private void showSearchResult(MoviesEntity moviesEntity) {
         if (this.mainView != null) {
-            this.mainView.showSearchResult(moviesEntity);
+        //    this.mainView.showSearchResult(moviesEntity);
         }
     }
 
@@ -502,16 +479,6 @@ public class MainPresenter extends BasePresenter {
         if (this.mainView != null) {
             this.mainView.dismissDialog();
         }
-    }
-
-    /**
-     * providing search query from customVSearchView to make search by title
-     * @param query - search string
-     */
-    private void newSearchQuery(String query) {
-        filters.setIncludeAdult(!this.userEntity.isParentalControlEnabled());
-        filters.setSearchQueryByTitle(query);
-        searchQueryPublishSubject.accept(query);
     }
 
     private void setUsernameToHeaderView(String tmdbUsername) {
@@ -566,7 +533,7 @@ public class MainPresenter extends BasePresenter {
      * triggers only unique emits
      * and taking only new results from server and forgets the old ones (breaking old requests to server/db)
      */
-    private void configureSearch() {
+  /*  private void configureSearch() {
         this.movieDisposable = searchQueryPublishSubject
                 .debounce(300, TimeUnit.MILLISECONDS)
                 .distinctUntilChanged()
@@ -574,7 +541,7 @@ public class MainPresenter extends BasePresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new GetMovieByTitleObserver());
-    }
+    }*/
 
     /**
      * syncing favorites with tmdb server
@@ -709,6 +676,7 @@ public class MainPresenter extends BasePresenter {
         public void onNext(UserWithGenresEntity userWithGenresEntity) {
             genresEntity = userWithGenresEntity.getGenresEntity();
             userEntity = userWithGenresEntity.getUserEntity();
+            filters.setIncludeAdult(!userEntity.isParentalControlEnabled());
 
             syncFavoriteMoviesWithServer(userEntity);
 
@@ -721,31 +689,6 @@ public class MainPresenter extends BasePresenter {
             MainPresenter.this.changeBackgroundSyncState(userEntity.isBackgroundSyncEnabled());
             MainPresenter.this.renderGenreView(genresEntity);
             MainPresenter.this.setUsernameToHeaderView(userEntity.getTMDBUsername());
-            MainPresenter.this.hideLoading();
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            Log.e(TAG, e.getLocalizedMessage());
-            MainPresenter.this.showToast(R.string.main_error);
-            MainPresenter.this.hideLoading();
-        }
-    }
-
-    /**
-     * getting movies by title and showing result in customSearchView result box
-     * onNext: showing result in customSearchView result box
-     */
-    private class GetMovieByTitleObserver extends DisposableObserver<MoviesEntity> {
-
-        @Override
-        public void onComplete() {
-            Log.d(TAG, "Subscribed to getMovieByTitle");
-        }
-
-        @Override
-        public void onNext(MoviesEntity moviesEntity) {
-            MainPresenter.this.showSearchResult(moviesEntity);
             MainPresenter.this.hideLoading();
         }
 
@@ -799,6 +742,7 @@ public class MainPresenter extends BasePresenter {
                     AndroidApplication.getRunningActivity().getApplicationContext().getResources()
                             .getString(R.string.parent_control_state) + " "
                             + userEntity.isParentalControlEnabled());
+            filters.setIncludeAdult(!userEntity.isParentalControlEnabled());
         }
 
         @Override
