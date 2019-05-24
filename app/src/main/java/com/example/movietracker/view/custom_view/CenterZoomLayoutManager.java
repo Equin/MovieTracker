@@ -1,4 +1,4 @@
-package com.example.movietracker.listener;
+package com.example.movietracker.view.custom_view;
 
 import android.content.Context;
 import android.view.View;
@@ -8,8 +8,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class CenterZoomLayoutManager extends LinearLayoutManager {
 
-    private final float mShrinkAmount = 0.2f;
-    private final float mShrinkDistance = 0.8f;
+    public static final int CENTER_GAP_INT = 80;
+    //scaling percent 20%
+    private final float shrinkAmount = 0.2f;
+    //item view will be %20 smaller int 80% distance from center to edge
+    private final float shrinkDistance = 0.8f;
 
     public CenterZoomLayoutManager(Context context) {
         super(context);
@@ -24,7 +27,7 @@ public class CenterZoomLayoutManager extends LinearLayoutManager {
         int orientation = getOrientation();
         if (orientation == VERTICAL) {
             int scrolled = super.scrollVerticallyBy(dy, recycler, state);
-            scaleChilds(orientation, recycler, state);
+            scaleChilds(orientation);
             return scrolled;
         } else {
             return 0;
@@ -36,7 +39,7 @@ public class CenterZoomLayoutManager extends LinearLayoutManager {
         int orientation = getOrientation();
         if (orientation == HORIZONTAL) {
             int scrolled = super.scrollHorizontallyBy(dx, recycler, state);
-            scaleChilds(orientation, recycler, state);
+            scaleChilds(orientation);
 
             return scrolled;
         } else {
@@ -44,7 +47,7 @@ public class CenterZoomLayoutManager extends LinearLayoutManager {
         }
     }
 
-    private void scaleChilds(int orientation, RecyclerView.Recycler recycler, RecyclerView.State state) {
+    private void scaleChilds(int orientation) {
 
         float centerLayout;
         float childCenterLayout;
@@ -55,11 +58,10 @@ public class CenterZoomLayoutManager extends LinearLayoutManager {
             centerLayout = getHeight() / 2.f;
         }
 
-        float d1 = mShrinkDistance * centerLayout;
-        float s1 = 1.f - mShrinkAmount;
+        float scaleDistance = shrinkDistance * centerLayout;
+        float s1 = 1.f - shrinkAmount;
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
-
 
             if (orientation == HORIZONTAL) {
                 childCenterLayout =
@@ -69,20 +71,19 @@ public class CenterZoomLayoutManager extends LinearLayoutManager {
                         (getDecoratedBottom(child) + getDecoratedTop(child)) / 2.f;
             }
 
-            float d = Math.min(d1, Math.abs(centerLayout - childCenterLayout));
-            float scale = 1 + (s1 - 1) * (d) / (d1);
+            float distance = Math.min(scaleDistance, Math.abs(centerLayout - childCenterLayout));
+            float scale = 1 + (s1 - 1) * (distance) / (scaleDistance);
 
             child.setScaleX(scale);
             child.setScaleY(scale);
 
-            if(childCenterLayout >= (centerLayout  - 80)  && (centerLayout + 80) >= childCenterLayout) {
-                child.setElevation(10000);
-            } else  if (childCenterLayout < (centerLayout  - 80) ){
+            if(childCenterLayout >= (centerLayout  - CENTER_GAP_INT)  && (centerLayout + CENTER_GAP_INT) >= childCenterLayout) {
+                child.setElevation(Integer.MAX_VALUE);
+            } else  if (childCenterLayout < (centerLayout  - CENTER_GAP_INT) ){
                 child.setElevation(i);
-            } else if ((centerLayout + 80) < childCenterLayout) {
+            } else if ((centerLayout + CENTER_GAP_INT) < childCenterLayout) {
                 child.setElevation(-i);
             }
-
         }
     }
 
@@ -96,5 +97,4 @@ public class CenterZoomLayoutManager extends LinearLayoutManager {
             scrollHorizontallyBy(0, recycler, state);
         }
     }
-
 }

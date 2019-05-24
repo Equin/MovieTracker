@@ -82,7 +82,10 @@ public class AuthDataRepository implements AuthRepository {
                                 userEntity.getTMDBPassword(),
                                 requestTokenEntity.getRequestToken()
                         )
-                )
+                ).doOnError((e)-> {
+                    updateUser(new SessionEntity(false, ""), userEntity);
+                   createUserSession();
+                })
                         .flatMap(validatedRequestToken ->
                                 this.authApi.createSession(validatedRequestToken.getRequestToken()).doOnSuccess(sessionEntity ->  {
                                             if (!sessionEntity.isSuccess()) {

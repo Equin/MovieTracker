@@ -1,4 +1,4 @@
-package com.example.movietracker.view;
+package com.example.movietracker.view.item_decorators;
 
 import android.graphics.Rect;
 import android.view.View;

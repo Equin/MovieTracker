@@ -5,7 +5,7 @@ import android.content.res.Configuration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.movietracker.listener.CenterZoomLayoutManager;
+import com.example.movietracker.view.custom_view.CenterZoomLayoutManager;
 
 public class RecyclerViewOrientationUtility {
 

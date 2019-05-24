@@ -6,8 +6,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import static com.example.movietracker.listener.RecyclerViewHelper.isActionAllowed;
-import static com.example.movietracker.listener.RecyclerViewHelper.isLastElement;
+import static com.example.movietracker.view.helper.RecyclerViewHelper.isActionAllowed;
+import static com.example.movietracker.view.helper.RecyclerViewHelper.isLastElement;
 
 public  class SnapScrollListener extends RecyclerView.OnScrollListener {
 

@@ -4,15 +4,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.movietracker.view.adapter.MovieListAdapter;
 
-import static com.example.movietracker.listener.RecyclerViewHelper.isActionAllowed;
-import static com.example.movietracker.listener.RecyclerViewHelper.isLastElement;
+import static com.example.movietracker.view.helper.RecyclerViewHelper.isActionAllowed;
+import static com.example.movietracker.view.helper.RecyclerViewHelper.isLastElement;
 
-public class CenterScrollListener extends RecyclerView.OnScrollListener {
+public class LastElementScrollListener extends RecyclerView.OnScrollListener {
 
     private Fragment fragment;
-    RecyclerView.LayoutManager layoutManager;
 
-    public CenterScrollListener(Fragment fragment) {
+    public LastElementScrollListener(Fragment fragment) {
         this.fragment = fragment;
     }
 
@@ -20,7 +19,6 @@ public class CenterScrollListener extends RecyclerView.OnScrollListener {
     public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
         super.onScrollStateChanged(recyclerView, newState);
 
-        layoutManager = recyclerView.getLayoutManager();
         if (RecyclerView.SCROLL_STATE_IDLE == newState) {
 
             if (isLastElement(recyclerView)
