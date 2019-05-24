@@ -41,7 +41,7 @@ public  class SnapScrollListener extends RecyclerView.OnScrollListener {
     }
 
     private boolean isActionAllowed(RecyclerView recyclerView) {
-        return (recyclerView.getAdapter().getItemCount() == MAXIMUM_COUNT_OF_MOVIES_PER_PAGE);
+        return (recyclerView.getAdapter().getItemCount() >= MAXIMUM_COUNT_OF_MOVIES_PER_PAGE);
     }
 
     private int getScrollDistanceOfColumnClosestToTop(final RecyclerView recyclerView) {
