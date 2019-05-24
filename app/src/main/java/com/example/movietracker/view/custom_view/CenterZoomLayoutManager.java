@@ -76,14 +76,15 @@ public class CenterZoomLayoutManager extends LinearLayoutManager {
 
             child.setScaleX(scale);
             child.setScaleY(scale);
+            child.setElevation(scale);
 
-            if(childCenterLayout >= (centerLayout  - CENTER_GAP_INT)  && (centerLayout + CENTER_GAP_INT) >= childCenterLayout) {
+          /*  if(childCenterLayout >= (centerLayout  - CENTER_GAP_INT)  && (centerLayout + CENTER_GAP_INT) >= childCenterLayout) {
                 child.setElevation(Integer.MAX_VALUE);
             } else  if (childCenterLayout < (centerLayout  - CENTER_GAP_INT) ){
                 child.setElevation(i);
             } else if ((centerLayout + CENTER_GAP_INT) < childCenterLayout) {
                 child.setElevation(-i);
-            }
+            }*/
         }
     }
 
