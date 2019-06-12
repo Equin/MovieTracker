@@ -72,20 +72,19 @@ public class UpdateMoviesFromServerWorker extends Worker {
             } }).subscribe();
 
 
-        movieModel.getMoviesChanges().flatMap(movieChangesEntity -> {
-            return movieModel.getMoviesWithFavorites(Filters.getInstance()).doOnNext(moviesEntity -> {
-                PushNotificationsMovieInfo pushNotificationsMovieInfo = new PushNotificationsMovieInfo();
-                for(MovieResultEntity movieResultEntity : moviesEntity.getMovies()) {
-                    MovieChangesResultEntity movieEntity =
-                            new MovieChangesResultEntity(movieResultEntity.getMovieId(), movieResultEntity.isAdult());
+        movieModel.getMoviesChanges().flatMap(movieChangesEntity ->
+                movieModel.getMoviesWithFavorites(Filters.getInstance()).doOnNext(moviesEntity -> {
+                    PushNotificationsMovieInfo pushNotificationsMovieInfo = new PushNotificationsMovieInfo();
+                    for(MovieResultEntity movieResultEntity : moviesEntity.getMovies()) {
+                        MovieChangesResultEntity movieEntity =
+                                new MovieChangesResultEntity(movieResultEntity.getMovieId(), movieResultEntity.isAdult());
 
-                    if(movieChangesEntity.getResults().contains(movieEntity)) {
-                        pushNotificationsMovieInfo.addMoiveTitleItemToList(movieResultEntity.getMovieTitle());
+                        if(movieChangesEntity.getResults().contains(movieEntity)) {
+                            pushNotificationsMovieInfo.addMoiveTitleItemToList(movieResultEntity.getMovieTitle());
+                        }
                     }
-                }
-                pushNotificationSender.sendNotification(pushNotificationsMovieInfo, 0);
-            });
-        }).subscribe();
+                    pushNotificationSender.sendNotification(pushNotificationsMovieInfo, 0);
+                })).subscribe();
     }
 
     /**
@@ -94,6 +93,11 @@ public class UpdateMoviesFromServerWorker extends Worker {
      * @param movieId
      */
     private void makeRequests(int movieId) {
+
+        if (ClassProvider.movieRepository == null) {
+            ClassProvider.initialize(this.context);
+        }
+
         ModelContract.MovieInfoModel movieInfoModel= new MovieInfoModelImpl();
         ModelContract.MovieDetailTabsModel movieDetailTabsModel = new MovieDetailTabsModelImpl();
 

@@ -6,11 +6,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import static com.example.movietracker.view.helper.RecyclerViewHelper.isActionAllowed;
+import static com.example.movietracker.view.helper.RecyclerViewHelper.isLastElement;
+
 public  class SnapScrollListener extends RecyclerView.OnScrollListener {
 
     private static final int TOP_OFFSET = 50;
     private static final int BOTTOM_OFFSET = 70;
-    private static final int MAXIMUM_COUNT_OF_MOVIES_PER_PAGE = 20;
 
     private Fragment fragment;
 
@@ -20,6 +22,8 @@ public  class SnapScrollListener extends RecyclerView.OnScrollListener {
 
     @Override
     public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+        super.onScrollStateChanged(recyclerView, newState);
+
         if (RecyclerView.SCROLL_STATE_IDLE == newState) {
             final int scrollDistance = getScrollDistanceOfColumnClosestToTop(recyclerView);
             if (scrollDistance != 0) {
@@ -33,15 +37,6 @@ public  class SnapScrollListener extends RecyclerView.OnScrollListener {
                 ((OnLastElementReachedListener)fragment).lastElementReached();
             }
         }
-    }
-
-    private boolean isLastElement(RecyclerView recyclerView) {
-        final LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
-        return (recyclerView.getAdapter().getItemCount() - 1) == manager.findLastVisibleItemPosition();
-    }
-
-    private boolean isActionAllowed(RecyclerView recyclerView) {
-        return (recyclerView.getAdapter().getItemCount() == MAXIMUM_COUNT_OF_MOVIES_PER_PAGE);
     }
 
     private int getScrollDistanceOfColumnClosestToTop(final RecyclerView recyclerView) {

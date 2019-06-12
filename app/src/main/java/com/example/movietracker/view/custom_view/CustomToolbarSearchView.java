@@ -1,6 +1,5 @@
 package com.example.movietracker.view.custom_view;
 
-import android.animation.Animator;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -18,7 +17,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.movietracker.R;
-import com.example.movietracker.view.MovieCardItemDecorator;
+import com.example.movietracker.view.item_decorators.MovieCardItemDecorator;
 import com.example.movietracker.view.helper.RecyclerViewOrientationUtility;
 
 public class CustomToolbarSearchView extends SearchView {

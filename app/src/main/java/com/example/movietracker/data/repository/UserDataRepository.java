@@ -56,7 +56,7 @@ public class UserDataRepository implements UserRepository {
     public Observable<UserEntity> getUser() {
         return this.userDao.getUser().timeout(DB_REQUEST_TIMEOUT, TimeUnit.SECONDS)
                 .onErrorReturn(throwable -> {
-                    UserEntity userEntity =  UserEntity.initialUser();
+                    UserEntity userEntity =  UserEntity.initialGuestUser();
                     userEntity.setParentalControlEnabled(true);
                     this.userDao.addUser(userEntity);
                     return userEntity;

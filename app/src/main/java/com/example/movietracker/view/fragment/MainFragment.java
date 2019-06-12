@@ -60,7 +60,8 @@ public class MainFragment extends BaseFragment
         NavigationView.OnNavigationItemSelectedListener{
 
     private static final String TAG = MainFragment.class.getCanonicalName();
-    private static final int BACKGROUND_SYNC_REPEAT_INTERVAL_MINUTES = 60 * 12;
+   // private static final int BACKGROUND_SYNC_REPEAT_INTERVAL_MINUTES = 60 * 12;
+    private static final int BACKGROUND_SYNC_REPEAT_INTERVAL_MINUTES =15;
 
     /**
      * The interface Main fragment interaction listener.
@@ -357,7 +358,7 @@ public class MainFragment extends BaseFragment
                 .setRequiredNetworkType(NetworkType.NOT_ROAMING);
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            constraintsBuilder.setRequiresDeviceIdle(true);
+          //  constraintsBuilder.setRequiresDeviceIdle(true);
         }
 
         PeriodicWorkRequest backgroundSyncWorkRequest = new PeriodicWorkRequest.Builder(

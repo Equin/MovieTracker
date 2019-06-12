@@ -45,7 +45,7 @@
             android:id="@+id/imageView_moviePoster"
             android:layout_width="130dp"
             android:layout_height="150dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="16dp"
             android:background="@color/colorPrimaryDark"
             android:padding="2dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -97,14 +97,14 @@
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="24dp"
             android:layout_marginEnd="8dp"
             android:background="@drawable/favorite_toggle_button_bg"
             android:text=""
             android:textOff=""
             android:textOn=""
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imageView_moviePoster"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

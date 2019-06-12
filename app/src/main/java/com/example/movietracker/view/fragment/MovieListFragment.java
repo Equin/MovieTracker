@@ -18,13 +18,14 @@ import com.example.movietracker.data.entity.movie.MovieResultEntity;
 import com.example.movietracker.data.entity.movie.MoviesEntity;
 import com.example.movietracker.data.entity.genre.GenresEntity;
 import com.example.movietracker.di.ClassProvider;
+import com.example.movietracker.listener.LastElementScrollListener;
 import com.example.movietracker.listener.OnLastElementReachedListener;
-import com.example.movietracker.listener.SnapScrollListener;
 import com.example.movietracker.model.model_impl.MovieModelImpl;
 import com.example.movietracker.model.model_impl.UserModelImpl;
 import com.example.movietracker.presenter.MovieListPresenter;
+
+import com.example.movietracker.view.item_decorators.CenterDecoration;
 import com.example.movietracker.view.FilterAlertDialog;
-import com.example.movietracker.view.MovieCardItemDecorator;
 import com.example.movietracker.view.adapter.MovieListAdapter;
 import com.example.movietracker.view.contract.MovieListView;
 import com.example.movietracker.view.helper.RecyclerViewOrientationUtility;
@@ -39,7 +40,9 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,7 +57,8 @@ public class MovieListFragment extends BaseFragment
     private static final String ARG_GENRES_ENTITY = "args_genres_entity";
     private static final String ARG_SHOW_FAVORITE_MOVIES = "args_show_favorite_movies";
     private static final String TAG = MovieListFragment.class.getCanonicalName();
-    private static final int RECYCLER_VIEW_CARD_ITEM_OFFSET_DPI = 8;
+    private static final int RECYCLER_VIEW_CARD_ITEM_OFFSET_PX = -30;
+    private static final int RECYCLER_VIEW_CARD_ITEM_COVER_OFFSET_PX = -50;
 
     public interface MovieListFragmentInteractionListener {
         void showMovieDetailScreen(int movieId);
@@ -124,10 +128,13 @@ public class MovieListFragment extends BaseFragment
         this.movieListPresenter.initialize(shouldShowFavoriteMoviesList());
         this.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshListener());
 
-        RecyclerViewOrientationUtility.setLayoutManagerToRecyclerView(
+        RecyclerViewOrientationUtility.setCenterZoomLayoutManagerToRecyclerView(
                 this.movieRecyclerView,
                 getContext().getResources().getConfiguration().orientation);
-        this.movieRecyclerView.addItemDecoration(new MovieCardItemDecorator(RECYCLER_VIEW_CARD_ITEM_OFFSET_DPI));
+
+        SnapHelper helper = new LinearSnapHelper();
+        helper.attachToRecyclerView(movieRecyclerView);
+        this.movieRecyclerView.addItemDecoration(new CenterDecoration(RECYCLER_VIEW_CARD_ITEM_OFFSET_PX, RECYCLER_VIEW_CARD_ITEM_COVER_OFFSET_PX));
     }
 
     private void setupActionToolbar() {
@@ -214,7 +221,7 @@ public class MovieListFragment extends BaseFragment
             this.movieRecyclerView.setHasFixedSize(true);
 
             this.movieRecyclerView.setAdapter(movieListAdapter);
-            this.movieRecyclerView.addOnScrollListener(new SnapScrollListener(this));
+            this.movieRecyclerView.addOnScrollListener(new LastElementScrollListener(this));
         }
 
         if (this.swipeRefreshLayout != null) {

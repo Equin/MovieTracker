@@ -23,17 +23,17 @@ public class Filters implements Serializable {
         private static final Filters INSTANCE = new Filters();
     }
 
-    public static Filters getInstance(){
+    public static Filters getInstance() {
         return SingletonHelper.INSTANCE;
     }
 
     private Filters() {
-        page = 1;
-        sortBy = SortBy.POPULARITY.getSearchName();
-        selectedGenresIds = new ArrayList<>();
-        selectedGenres = new ArrayList<>();
-        order = Order.DESC;
-        searchQueryByTitle = "";
+        this.page = 1;
+        this.sortBy = SortBy.POPULARITY.getSearchName();
+        this.selectedGenresIds = new ArrayList<>();
+        this.selectedGenres = new ArrayList<>();
+        this.order = Order.DESC;
+        this.searchQueryByTitle = "";
         includeAdult = true;
     }
 
@@ -47,7 +47,7 @@ public class Filters implements Serializable {
     }
 
     public int getPage() {
-        return page;
+        return  this.page;
     }
 
     public void setPage(int page) {
@@ -55,7 +55,7 @@ public class Filters implements Serializable {
     }
 
     public boolean isIncludeAdult() {
-        return includeAdult;
+        return  this.includeAdult;
     }
 
     public void setIncludeAdult(boolean includeAdult) {
@@ -63,7 +63,7 @@ public class Filters implements Serializable {
     }
 
     public String getSortBy() {
-        return sortBy;
+        return  this.sortBy;
     }
 
     public void setSortBy(@NonNull String sortBy) {
@@ -72,7 +72,7 @@ public class Filters implements Serializable {
 
     @Nullable
     public Order getOrder() {
-        return order;
+        return  this.order;
     }
 
     public void setOrder(@NonNull Order order) {
@@ -80,7 +80,7 @@ public class Filters implements Serializable {
     }
 
     public String getSearchQueryByTitle() {
-        return searchQueryByTitle;
+        return  this.searchQueryByTitle;
     }
 
     public void setSearchQueryByTitle(String searchQueryByTitle) {
@@ -107,7 +107,7 @@ public class Filters implements Serializable {
     }
 
     public List<Integer> getSelectedGenresIds() {
-        return selectedGenresIds;
+        return  this.selectedGenresIds;
     }
 
     public String getCommaSeparatedGenres() {
@@ -121,13 +121,15 @@ public class Filters implements Serializable {
     }
 
     private Filters(FiltersBuilder filtersBuilder) {
-        this.page = filtersBuilder.page;
-        this.selectedGenresIds = filtersBuilder.selectedGenresIds;
+        getInstance().setPage(filtersBuilder.page);
+        getInstance().setIncludeAdult(filtersBuilder.includeAdult);
+        getInstance().setSortBy(filtersBuilder.sortBy);
+        getInstance().setOrder(filtersBuilder.order);
+        getInstance().setSearchQueryByTitle(filtersBuilder.searchQueryByTitle);
+
         this.selectedGenres = filtersBuilder.selectedGenres;
-        this.includeAdult = filtersBuilder.includeAdult;
-        this.sortBy = filtersBuilder.sortBy;
-        this.order = filtersBuilder.order;
-        this.searchQueryByTitle = filtersBuilder.searchQueryByTitle;
+        this.selectedGenresIds = filtersBuilder.selectedGenresIds;
+
     }
 
     /*    public void setSelectedGenres(@NonNull GenresEntity genresEntity) {

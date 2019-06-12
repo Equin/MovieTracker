@@ -60,7 +60,7 @@ public class AuthDataRepository implements AuthRepository {
      */
     private void updateUser(SessionEntity sessionEntity, UserEntity userEntity) {
         userEntity.setSessionId(sessionEntity.getSessionId());
-        userEntity.setGuestUser(false);
+        userEntity.setGuestUser(!sessionEntity.isSuccess());
         userEntity.setHasOpenSession(sessionEntity.isSuccess());
         this.userRepository.updateUser(userEntity).subscribe();
     }
@@ -82,7 +82,10 @@ public class AuthDataRepository implements AuthRepository {
                                 userEntity.getTMDBPassword(),
                                 requestTokenEntity.getRequestToken()
                         )
-                )
+                ).doOnError((e)-> {
+                    updateUser(new SessionEntity(false, ""), userEntity);
+                   createUserSession();
+                })
                         .flatMap(validatedRequestToken ->
                                 this.authApi.createSession(validatedRequestToken.getRequestToken()).doOnSuccess(sessionEntity ->  {
                                             if (!sessionEntity.isSuccess()) {
