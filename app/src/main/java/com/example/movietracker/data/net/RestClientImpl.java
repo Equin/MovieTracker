@@ -1,25 +1,36 @@
 package com.example.movietracker.data.net;
 
+import com.example.movietracker.data.date.DateTypeDeserializer;
+import com.example.movietracker.data.net.api.AuthApi;
 import com.example.movietracker.data.net.api.MovieApi;
+import com.example.movietracker.data.net.api.UserApi;
 import com.example.movietracker.data.net.interceptor.QueryParameterInterceptor;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import java.util.Date;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-@Singleton
 public class RestClientImpl implements RestClient {
 
-    private final Retrofit retrofit;
+    private Retrofit retrofit;
 
-    @Inject
-    public RestClientImpl(String baseUrl) {
+    private RestClientImpl() {}
 
+    private static class SingletonHelper {
+        private static final RestClientImpl INSTANCE = new RestClientImpl();
+    }
+
+    public static RestClientImpl getInstance(){
+        return SingletonHelper.INSTANCE;
+    }
+
+    @Override
+    public void init(String baseUrl) {
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -28,9 +39,13 @@ public class RestClientImpl implements RestClient {
                 .addInterceptor(new QueryParameterInterceptor())
                 .build();
 
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(Date.class, new DateTypeDeserializer());
+        Gson gson = gsonBuilder.create();
+
         this.retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(okHttpClient)
                 .build();
@@ -39,5 +54,15 @@ public class RestClientImpl implements RestClient {
     @Override
     public MovieApi getMovieApi() {
         return retrofit.create(MovieApi.class);
+    }
+
+    @Override
+    public AuthApi getAuthApi() {
+        return retrofit.create(AuthApi.class);
+    }
+
+    @Override
+    public UserApi getUserApi() {
+        return retrofit.create(UserApi.class);
     }
 }

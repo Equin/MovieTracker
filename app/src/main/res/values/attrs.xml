@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CustomPasswordPinEditText">
+        <attr name="should_request_focus" format="boolean" />
+    </declare-styleable>
+</resources>

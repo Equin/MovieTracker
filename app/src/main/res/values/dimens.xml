@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="phone_number_verification_code_edit_text_width">48dp</dimen>
+    <dimen name="phone_number_verification_code_edit_text_height">48dp</dimen>
+    <dimen name="phone_number_verification_code_edit_text_margins">8dp</dimen>
+    <dimen name="movie_details_tab_layout_height">48dp</dimen>
+</resources>

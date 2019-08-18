@@ -2,41 +2,30 @@ package com.example.movietracker;
 
 import android.app.Activity;
 import android.app.Application;
-
-import com.example.movietracker.di.components.ApplicationComponent;
-import com.example.movietracker.di.components.DaggerApplicationComponent;
-import com.example.movietracker.di.modules.ApplicationModule;
+import com.squareup.leakcanary.LeakCanary;
 
 public class AndroidApplication extends Application {
-    private ApplicationComponent applicationComponent;
 
-    private Activity runningActivity;
+    private static Activity runningActivity;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        this.initializeInjector();
+
+        this.initializeLeakDetection();
     }
 
-    private void initializeInjector() {
-        this.applicationComponent = DaggerApplicationComponent.builder()
-                .applicationModule(new ApplicationModule(this))
-                .build();
+    public static Activity getRunningActivity() {
+        return AndroidApplication.runningActivity;
     }
 
-    public ApplicationComponent getApplicationComponent() {
-        return this.applicationComponent;
+    public static void setRunningActivity(Activity runningActivity) {
+        AndroidApplication.runningActivity = runningActivity;
     }
 
-    public void setApplicationComponent(ApplicationComponent applicationComponent) {
-        this.applicationComponent = applicationComponent;
-    }
-
-    public Activity getRunningActivity() {
-        return this.runningActivity;
-    }
-
-    public void setRunningActivity(Activity runningActivity) {
-        this.runningActivity = runningActivity;
+    private void initializeLeakDetection() {
+        if (BuildConfig.DEBUG) {
+            LeakCanary.install(this);
+        }
     }
 }

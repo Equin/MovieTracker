@@ -1,7 +1,63 @@
 <resources>
     <string name="app_name">MovieTracker</string>
     <string name="tmdb_api">144fd08a3ef3ff0aef7a4ff25cbb980d</string>
+    <string name="youtube_api">AIzaSyDQ6YTOhJN3E4d1XXtCXAob7-SwP0RmEk4</string>
     <string name="main_fragment_toolbar_title"> </string>
-    <string name="main_error">Error occurred</string>
+    <string name="main_error">Error occurred, please try later</string>
     <string name="genres_title">Choose genres you want to WATCH!</string>
+
+    <string name="player_error">Error initializing YouTube player: %s</string>
+    <string name="seek_to">Jump To</string>
+    <string name="seek_to_hint">Seconds</string>
+    <string name="movie_details_nothing_to_show">Sorry, nothing to show</string>
+    <string name="alert_dialog_done_button_text">DONE</string>
+    <string name="alert_dialog_desc">Desc</string>
+    <string name="alert_dialog_asc">Asc</string>
+
+    <string name="movie_list_there_are_no_pages">There are no more pages</string>
+
+    <string name="detail_imdb_title">IMDb</string>
+    <string name="detail_n_a_title">N/A</string>
+    <string name="detail_custom">Custom</string>
+    <string name="detail_metascore_title">Metascore</string>
+    <string name="detail_tmdb_title">TMDb</string>
+    <string name="cast_name_placeholder">Cast name</string>
+
+    <string name="new_password_saved">New password saved</string>
+    <string name="movie_removed_from_favorite">Movie removed from favorites</string>
+    <string name="movie_added_to_favorite">Movie added to favorites</string>
+
+    <string name="empty_new_password_field">New password field is empty</string>
+    <string name="empty_old_password_field">Old password field is empty</string>
+    <string name="empty_password_field">Password field is`nt full</string>
+    <string name="wrong_old_password">Wrong old password</string>
+    <string name="wrong_password">Wrong password</string>
+
+    <string name="parent_control_state">Parent control is </string>
+    <string name="background_sync_state">Background sync is </string>
+
+    <string name="hint_to_enable_parent_control">You need to provide password to enable parent control</string>
+    <string name="filter">filter</string>
+    <string name="search">search</string>
+    <string name="filter_header_title">Sort Movies By</string>
+    <string name="movie_list_favorite_header">Favorites</string>
+    <string name="password_reset_dialog_new_password_hint">Enter new password</string>
+    <string name="password_reset_dialog_old_password_hint">Enter old password</string>
+    <string name="password_reset_dialog_button_save">SAVE</string>
+    <string name="password_reset_dialog_button_cancel">CANCEL</string>
+    <string name="password_reset_dialog_button_check">CHECK</string>
+    <string name="password_reset_dialog_enter_password_hint">Enter password</string>
+    <string name="log_in_dialog_text_view_username">Username</string>
+    <string name="log_in_dialog_text_view_password">Password</string>
+    <string name="log_in_dialog_text_view_login">LOGIN</string>
+
+    <string name="main_presenter_logged_out">Logged out</string>
+    <string name="main_presenter_logged_in">Logged in</string>
+
+    <string name="download_manager_img_download_started">Download started</string>
+    <string name="download_manager_img_download_finished">Download completed</string>
+    <string name="download_manager_img_download_failed">Download failed</string>
+
+
+
 </resources>

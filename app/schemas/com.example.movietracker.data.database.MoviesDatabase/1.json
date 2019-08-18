@@ -1,0 +1,558 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "1d06db8ced6312f93b791b76e242ae88",
+    "entities": [
+      {
+        "tableName": "GenreEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`genreId` INTEGER NOT NULL, `genreName` TEXT, `isSelected` INTEGER NOT NULL, PRIMARY KEY(`genreId`))",
+        "fields": [
+          {
+            "fieldPath": "genreId",
+            "columnName": "genreId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "genreName",
+            "columnName": "genreName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isSelected",
+            "columnName": "isSelected",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "genreId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "MovieResultEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`movieId` INTEGER NOT NULL, `movieTitle` TEXT, `posterPath` TEXT, `genreIds` TEXT, `isAdult` INTEGER NOT NULL, `movieOverview` TEXT, `movieVoteAverage` REAL NOT NULL, `movieReleaseDate` INTEGER, `moviePopularity` REAL NOT NULL, PRIMARY KEY(`movieId`))",
+        "fields": [
+          {
+            "fieldPath": "movieId",
+            "columnName": "movieId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "movieTitle",
+            "columnName": "movieTitle",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "posterPath",
+            "columnName": "posterPath",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "genreIds",
+            "columnName": "genreIds",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isAdult",
+            "columnName": "isAdult",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "movieOverview",
+            "columnName": "movieOverview",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "movieVoteAverage",
+            "columnName": "movieVoteAverage",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "movieReleaseDate",
+            "columnName": "movieReleaseDate",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "moviePopularity",
+            "columnName": "moviePopularity",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "movieId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "MovieCastResultEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`castId` INTEGER NOT NULL, `castName` TEXT, `castImagePath` TEXT, `castOrder` INTEGER NOT NULL, `movieId` INTEGER NOT NULL, PRIMARY KEY(`castId`))",
+        "fields": [
+          {
+            "fieldPath": "castId",
+            "columnName": "castId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "castName",
+            "columnName": "castName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "castImagePath",
+            "columnName": "castImagePath",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "castOrder",
+            "columnName": "castOrder",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "movieId",
+            "columnName": "movieId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "castId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "MovieReviewResultEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`reviewId` TEXT NOT NULL, `reviewAuthor` TEXT, `reviewContent` TEXT, `reviewUrl` TEXT, `movieId` INTEGER NOT NULL, PRIMARY KEY(`reviewId`))",
+        "fields": [
+          {
+            "fieldPath": "reviewId",
+            "columnName": "reviewId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reviewAuthor",
+            "columnName": "reviewAuthor",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "reviewContent",
+            "columnName": "reviewContent",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "reviewUrl",
+            "columnName": "reviewUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "movieId",
+            "columnName": "movieId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "reviewId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "MovieVideoResultEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`videoId` TEXT NOT NULL, `iso639` TEXT, `iso3166` TEXT, `videoKey` TEXT, `videoName` TEXT, `videoSite` TEXT, `videoSize` INTEGER NOT NULL, `videoType` TEXT, `movieId` INTEGER NOT NULL, PRIMARY KEY(`videoId`))",
+        "fields": [
+          {
+            "fieldPath": "videoId",
+            "columnName": "videoId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "iso639",
+            "columnName": "iso639",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "iso3166",
+            "columnName": "iso3166",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "videoKey",
+            "columnName": "videoKey",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "videoName",
+            "columnName": "videoName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "videoSite",
+            "columnName": "videoSite",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "videoSize",
+            "columnName": "videoSize",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "videoType",
+            "columnName": "videoType",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "movieId",
+            "columnName": "movieId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "videoId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "MovieDetailsEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`movieId` INTEGER NOT NULL, `imdbId` TEXT, `movieTitle` TEXT, `moviePosterPath` TEXT, `movieTagline` TEXT, `imdbVoteCount` INTEGER NOT NULL, `imdbVoteAverage` REAL NOT NULL, `movieOverview` TEXT, `movieReleaseDate` INTEGER, `movieRuntime` INTEGER NOT NULL, PRIMARY KEY(`movieId`))",
+        "fields": [
+          {
+            "fieldPath": "movieId",
+            "columnName": "movieId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "imdbId",
+            "columnName": "imdbId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "movieTitle",
+            "columnName": "movieTitle",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "moviePosterPath",
+            "columnName": "moviePosterPath",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "movieTagline",
+            "columnName": "movieTagline",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "imdbVoteCount",
+            "columnName": "imdbVoteCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "imdbVoteAverage",
+            "columnName": "imdbVoteAverage",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "movieOverview",
+            "columnName": "movieOverview",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "movieReleaseDate",
+            "columnName": "movieReleaseDate",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "movieRuntime",
+            "columnName": "movieRuntime",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "movieId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "MovieWithGenres",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`movie_id` INTEGER NOT NULL, `genre_id` INTEGER NOT NULL, PRIMARY KEY(`movie_id`, `genre_id`), FOREIGN KEY(`movie_id`) REFERENCES `MovieResultEntity`(`movieId`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`genre_id`) REFERENCES `GenreEntity`(`genreId`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "movieId",
+            "columnName": "movie_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "genreId",
+            "columnName": "genre_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "movie_id",
+            "genre_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_MovieWithGenres_movie_id",
+            "unique": false,
+            "columnNames": [
+              "movie_id"
+            ],
+            "createSql": "CREATE  INDEX `index_MovieWithGenres_movie_id` ON `${TABLE_NAME}` (`movie_id`)"
+          },
+          {
+            "name": "index_MovieWithGenres_genre_id",
+            "unique": false,
+            "columnNames": [
+              "genre_id"
+            ],
+            "createSql": "CREATE  INDEX `index_MovieWithGenres_genre_id` ON `${TABLE_NAME}` (`genre_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "MovieResultEntity",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "movie_id"
+            ],
+            "referencedColumns": [
+              "movieId"
+            ]
+          },
+          {
+            "table": "GenreEntity",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "genre_id"
+            ],
+            "referencedColumns": [
+              "genreId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "UserEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` INTEGER NOT NULL, `parentalControlPassword` TEXT, `isParentalControlEnabled` INTEGER NOT NULL, `masterPassword` TEXT, `isBackgroundSyncEnabled` INTEGER NOT NULL, `isGuestUser` INTEGER NOT NULL, `TMDBPassword` TEXT, `TMDBUsername` TEXT, `isHasOpenSession` INTEGER NOT NULL, `sessionId` TEXT, `movie_id` INTEGER NOT NULL, PRIMARY KEY(`userId`))",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "parentalControlPassword",
+            "columnName": "parentalControlPassword",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isParentalControlEnabled",
+            "columnName": "isParentalControlEnabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "masterPassword",
+            "columnName": "masterPassword",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isBackgroundSyncEnabled",
+            "columnName": "isBackgroundSyncEnabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isGuestUser",
+            "columnName": "isGuestUser",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "TMDBPassword",
+            "columnName": "TMDBPassword",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "TMDBUsername",
+            "columnName": "TMDBUsername",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isHasOpenSession",
+            "columnName": "isHasOpenSession",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sessionId",
+            "columnName": "sessionId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "movieId",
+            "columnName": "movie_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "userId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "UserWithFavoriteMovies",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`movie_id` INTEGER NOT NULL, `user_id` INTEGER NOT NULL, PRIMARY KEY(`movie_id`, `user_id`), FOREIGN KEY(`movie_id`) REFERENCES `MovieResultEntity`(`movieId`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`user_id`) REFERENCES `UserEntity`(`userId`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "movieId",
+            "columnName": "movie_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "movie_id",
+            "user_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_UserWithFavoriteMovies_movie_id",
+            "unique": false,
+            "columnNames": [
+              "movie_id"
+            ],
+            "createSql": "CREATE  INDEX `index_UserWithFavoriteMovies_movie_id` ON `${TABLE_NAME}` (`movie_id`)"
+          },
+          {
+            "name": "index_UserWithFavoriteMovies_user_id",
+            "unique": false,
+            "columnNames": [
+              "user_id"
+            ],
+            "createSql": "CREATE  INDEX `index_UserWithFavoriteMovies_user_id` ON `${TABLE_NAME}` (`user_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "MovieResultEntity",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "movie_id"
+            ],
+            "referencedColumns": [
+              "movieId"
+            ]
+          },
+          {
+            "table": "UserEntity",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id"
+            ],
+            "referencedColumns": [
+              "userId"
+            ]
+          }
+        ]
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"1d06db8ced6312f93b791b76e242ae88\")"
+    ]
+  }
+}
