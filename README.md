@@ -65,7 +65,7 @@ It is a test task application with 5 screens:
 
 <div align="center">
 <img src="/img/hor_main.jpeg?raw=false" width="300" alt="hor_main" title="Horizontal main screen"/> 
-  <img src="/img/hor_sort.jpeg?raw=true" height="300" alt="hor_sort" title="Horizontal Sort By dialog"/> 
+  <img src="/img/hor_sort.jpeg?raw=true" width="300" alt="hor_sort" title="Horizontal Sort By dialog"/> 
 </div>
 
 
