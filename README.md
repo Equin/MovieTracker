@@ -30,11 +30,16 @@ It is a test task application with 5 screens:
 <img src="/img/movie_list.jpeg?raw=true" height="300" alt="movie_list info" title="List of movies"/> 
 <img src="/img/menu.jpeg?raw=true" height="300" alt="menu" title="Menu"/> 
 </div>
+
+<br/>
+
 <div align="center">
 <img src="/img/favorite_list.jpeg?raw=true" height="300" alt="favorite_list" title="List of favorites"/>
 <img src="/img/info.jpeg?raw=true" height="300" alt="info" title="Movie info"/> 
 <img src="/img/cast.jpeg?raw=true" height="300" alt="cast" title="Movie cast"/> 
 </div>
+
+<br/>
 
 <div align="center">
 <img src="/img/review.jpeg?raw=true" height="300" alt="review" title="Movie review"/>
@@ -42,18 +47,26 @@ It is a test task application with 5 screens:
 <img src="/img/youtube.jpeg?raw=true" height="300" alt="trailer" title="Watch thrailers"/> 
 </div>
 
+<br/>
+
 <div align="center">
 <img src="/img/search.jpeg?raw=true" height="300" alt="search" title="Movies serach toolbar"/>
-<img src="/img/reset_password.jpeg?raw=true" height="300" alt="reset_password" title="Reset password dialog"/> 
-<img src="/img/hor_sort.jpeg?raw=true" height="300" alt="hor_sort" title="Horizontal Sort By dialog"/> 
+<img src="/img/reset_password.jpg?raw=true" height="300" alt="reset_password" title="Reset password dialog"/> 
 </div>
+
+<br/>
 
 <div align="center">
-<img src="/img/hor_movies_list.jpeg?raw=true" height="300" alt="hor_movies_list" title="Horizontal list of movies"/>
-<img src="/img/hor_casts.jpeg?raw=true" height="300" alt="hor_casts" title="Horizontal movie casts"/> 
-<img src="/img/hor_main.jpeg?raw=true" height="300" alt="hor_main" title="Horizontal main screen"/> 
+<img src="/img/hor_movies_list.jpeg?raw=false" width="300" alt="hor_movies_list" title="Horizontal list of movies"/>
+<img src="/img/hor_casts.jpeg?raw=false" width="300" alt="hor_casts" title="Horizontal movie casts"/> 
 </div>
 
+<br/>
+
+<div align="center">
+<img src="/img/hor_main.jpeg?raw=false" width="300" alt="hor_main" title="Horizontal main screen"/> 
+  <img src="/img/hor_sort.jpeg?raw=true" height="300" alt="hor_sort" title="Horizontal Sort By dialog"/> 
+</div>
 
 
 ## Libraries and technologies used
